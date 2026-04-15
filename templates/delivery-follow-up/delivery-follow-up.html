@@ -77,41 +77,15 @@
 
   #importInput { display: none; }
 
-  /* ── Seleção Múltipla de Períodos ── */
+  /* ── Campos de Seleção ── */
   #f-periodo {
     background: var(--white);
-    scrollbar-width: thin;
-    scrollbar-color: var(--gray-300) var(--gray-100);
   }
 
-  #f-periodo::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #f-periodo::-webkit-scrollbar-track {
-    background: var(--gray-100);
-    border-radius: 4px;
-  }
-
-  #f-periodo::-webkit-scrollbar-thumb {
-    background: var(--gray-300);
-    border-radius: 4px;
-  }
-
-  #f-periodo::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-400);
-  }
-
-  #f-periodo option {
-    padding: 6px 8px;
-    border-radius: 2px;
-    margin: 1px;
-  }
-
-  #f-periodo option:checked {
-    background: var(--tr-green-light) !important;
-    color: var(--tr-green-dark) !important;
-    font-weight: 600;
+  #f-periodo:focus {
+    outline: none;
+    border-color: var(--tr-green-mid);
+    box-shadow: 0 0 0 2px rgba(26,92,58,0.12);
   }
 
   #periodo-stats {
@@ -247,11 +221,13 @@
         </div>
       </div>
       <div class="field-group">
-        <label>Sprint / Período <small style="color: var(--gray-500);">(Selecione múltiplos com Ctrl+Click)</small></label>
-        <select id="f-periodo" multiple onchange="atualizarPeriodos(this)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.88rem; min-height: 120px;">
+        <label>Sprint / Período</label>
+        <select id="f-periodo" onchange="atualizarPeriodos(this)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.88rem;">
+          <option value="">Selecione um sprint/período...</option>
+          <!-- 2026 Sprints -->
           <option value="Sprint 13 - Q2 2026">Sprint 13 - Q2 2026</option>
           <option value="Sprint 14 - Q2 2026">Sprint 14 - Q2 2026</option>
-          <option value="Sprint 15 - Q2 2026" selected>Sprint 15 - Q2 2026</option>
+          <option value="Sprint 15 - Q2 2026">Sprint 15 - Q2 2026</option>
           <option value="Sprint 16 - Q2 2026">Sprint 16 - Q2 2026</option>
           <option value="Sprint 17 - Q3 2026">Sprint 17 - Q3 2026</option>
           <option value="Sprint 18 - Q3 2026">Sprint 18 - Q3 2026</option>
@@ -261,23 +237,42 @@
           <option value="Sprint 22 - Q4 2026">Sprint 22 - Q4 2026</option>
           <option value="Sprint 23 - Q4 2026">Sprint 23 - Q4 2026</option>
           <option value="Sprint 24 - Q4 2026">Sprint 24 - Q4 2026</option>
-          <option value="Q2 2026 - Consolidação">Q2 2026 - Consolidação</option>
-          <option value="Q3 2026 - Planejamento">Q3 2026 - Planejamento</option>
-          <option value="Q4 2026 - Entrega">Q4 2026 - Entrega</option>
-          <option value="Release 1.0 - Q2">Release 1.0 - Q2</option>
-          <option value="Release 2.0 - Q3">Release 2.0 - Q3</option>
-          <option value="Release 3.0 - Q4">Release 3.0 - Q4</option>
-          <option value="Datacloud - Sprint 15">Datacloud - Sprint 15</option>
-          <option value="LegalOne - Sprint 15">LegalOne - Sprint 15</option>
-          <option value="Mastersaf - Sprint 15">Mastersaf - Sprint 15</option>
-          <option value="Infrastructure - Q2 2026">Infrastructure - Q2 2026</option>
-          <option value="Migration Phase 1">Migration Phase 1</option>
-          <option value="Migration Phase 2">Migration Phase 2</option>
-          <option value="Pilot Program - Q2">Pilot Program - Q2</option>
-          <option value="Production Rollout - Q3">Production Rollout - Q3</option>
+          <!-- 2027 Sprints -->
+          <option value="Sprint 1 - Q1 2027">Sprint 1 - Q1 2027</option>
+          <option value="Sprint 2 - Q1 2027">Sprint 2 - Q1 2027</option>
+          <option value="Sprint 3 - Q1 2027">Sprint 3 - Q1 2027</option>
+          <option value="Sprint 4 - Q1 2027">Sprint 4 - Q1 2027</option>
+          <option value="Sprint 5 - Q1 2027">Sprint 5 - Q1 2027</option>
+          <option value="Sprint 6 - Q1 2027">Sprint 6 - Q1 2027</option>
+          <option value="Sprint 7 - Q2 2027">Sprint 7 - Q2 2027</option>
+          <option value="Sprint 8 - Q2 2027">Sprint 8 - Q2 2027</option>
+          <option value="Sprint 9 - Q2 2027">Sprint 9 - Q2 2027</option>
+          <option value="Sprint 10 - Q2 2027">Sprint 10 - Q2 2027</option>
+          <option value="Sprint 11 - Q2 2027">Sprint 11 - Q2 2027</option>
+          <option value="Sprint 12 - Q2 2027">Sprint 12 - Q2 2027</option>
+          <option value="Sprint 13 - Q3 2027">Sprint 13 - Q3 2027</option>
+          <option value="Sprint 14 - Q3 2027">Sprint 14 - Q3 2027</option>
+          <option value="Sprint 15 - Q3 2027">Sprint 15 - Q3 2027</option>
+          <option value="Sprint 16 - Q3 2027">Sprint 16 - Q3 2027</option>
+          <option value="Sprint 17 - Q3 2027">Sprint 17 - Q3 2027</option>
+          <option value="Sprint 18 - Q3 2027">Sprint 18 - Q3 2027</option>
+          <option value="Sprint 19 - Q4 2027">Sprint 19 - Q4 2027</option>
+          <option value="Sprint 20 - Q4 2027">Sprint 20 - Q4 2027</option>
+          <option value="Sprint 21 - Q4 2027">Sprint 21 - Q4 2027</option>
+          <option value="Sprint 22 - Q4 2027">Sprint 22 - Q4 2027</option>
+          <option value="Sprint 23 - Q4 2027">Sprint 23 - Q4 2027</option>
+          <option value="Sprint 24 - Q4 2027">Sprint 24 - Q4 2027</option>
+          <!-- Quarters -->
+          <option value="Q2 2026">Q2 2026</option>
+          <option value="Q3 2026">Q3 2026</option>
+          <option value="Q4 2026">Q4 2026</option>
+          <option value="Q1 2027">Q1 2027</option>
+          <option value="Q2 2027">Q2 2027</option>
+          <option value="Q3 2027">Q3 2027</option>
+          <option value="Q4 2027">Q4 2027</option>
         </select>
-        <div id="periodo-stats" style="margin-top: 6px; padding: 6px 10px; background: var(--gray-50); border-radius: 4px; font-size: 0.75rem; color: var(--gray-600);">
-          📅 <span id="selected-count">1</span> período(s) selecionado(s): <span id="selected-periods">Sprint 15 - Q2 2026</span>
+        <div id="periodo-stats" style="display: none; margin-top: 6px; padding: 6px 10px; background: var(--gray-50); border-radius: 4px; font-size: 0.75rem; color: var(--gray-600);">
+          📅 Período selecionado: <span id="selected-period"></span>
         </div>
       </div>
       <div class="field-group"><label>Data do Follow-up</label><input type="date" id="f-data"></div>
@@ -507,9 +502,7 @@
   // ── Label ──
   window.atualizarLabel = function() {
     const produto = document.getElementById('f-produto').value.trim();
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
-    const periodo = selectedPeriods.length > 0 ? selectedPeriods.join(' + ') : '';
+    const periodo = document.getElementById('f-periodo').value.trim();
 
     const label = document.getElementById('versionLabel');
     label.textContent = (produto && periodo) ? produto + ' · ' + periodo : 'Preencha Produto e Periodo';
@@ -517,30 +510,20 @@
 
   window.atualizarPeriodos = function(selectElement) {
     const statsDiv = document.getElementById('periodo-stats');
-    const countSpan = document.getElementById('selected-count');
-    const periodsSpan = document.getElementById('selected-periods');
+    const periodSpan = document.getElementById('selected-period');
 
-    const selectedOptions = Array.from(selectElement.selectedOptions);
-    const selectedValues = selectedOptions.map(opt => opt.value);
+    if (selectElement.value) {
+      periodSpan.textContent = selectElement.value;
+      statsDiv.style.display = 'block';
 
-    countSpan.textContent = selectedOptions.length;
+      // Atualizar label
+      atualizarLabel();
 
-    if (selectedOptions.length > 0) {
-      if (selectedOptions.length <= 3) {
-        periodsSpan.textContent = selectedValues.join(', ');
-      } else {
-        periodsSpan.textContent = selectedValues.slice(0, 2).join(', ') + ` e mais ${selectedOptions.length - 2}`;
-      }
+      // Toast informativo
+      toast(`📅 Período selecionado: ${selectElement.value}`, 'success');
     } else {
-      periodsSpan.textContent = 'Nenhum período selecionado';
-    }
-
-    // Atualizar label
-    atualizarLabel();
-
-    // Mostrar toast informativo para seleções múltiplas
-    if (selectedOptions.length > 1) {
-      toast(`📅 ${selectedOptions.length} períodos selecionados para análise consolidada`, 'info');
+      statsDiv.style.display = 'none';
+      atualizarLabel();
     }
   };
 
@@ -600,13 +583,9 @@
 
   function getStorageKey() {
     const produto = document.getElementById('f-produto').value.trim();
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
-
-    if (!produto || selectedPeriods.length === 0) return null;
-
-    const periodoKey = selectedPeriods[0]; // Usa o primeiro período para a chave
-    return STORAGE_PREFIX + produto.toLowerCase().replace(/\s+/g, '-') + '_' + periodoKey.toLowerCase().replace(/\s+/g, '-');
+    const periodo = document.getElementById('f-periodo').value.trim();
+    if (!produto || !periodo) return null;
+    return STORAGE_PREFIX + produto.toLowerCase().replace(/\s+/g, '-') + '_' + periodo.toLowerCase().replace(/\s+/g, '-');
   }
 
   function slugify(str) {
@@ -621,13 +600,9 @@
   // ── Serialize / Deserialize ──
   function serializeForm() {
     const data = {};
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
-
     data.meta = {
       produto: document.getElementById('f-produto').value,
-      periodo: selectedPeriods.length > 0 ? selectedPeriods : [],
-      periodoDisplay: selectedPeriods.join(' + '), // Para compatibilidade com PPTX
+      periodo: document.getElementById('f-periodo').value,
       data: document.getElementById('f-data').value,
       responsavel: document.getElementById('f-responsavel').value
     };
@@ -663,33 +638,11 @@
         atualizarProduto(produtoSelect);
       }
 
-      // Restaurar seleções múltiplas de período
+      document.getElementById('f-periodo').value = data.meta.periodo || '';
+
+      // Disparar atualização do período se houver valor
       const periodoSelect = document.getElementById('f-periodo');
-      const savedPeriodos = data.meta.periodo || [];
-
-      // Limpar seleções existentes
-      Array.from(periodoSelect.options).forEach(option => {
-        option.selected = false;
-      });
-
-      // Restaurar seleções
-      if (Array.isArray(savedPeriodos)) {
-        savedPeriodos.forEach(periodo => {
-          const option = Array.from(periodoSelect.options).find(opt => opt.value === periodo);
-          if (option) {
-            option.selected = true;
-          }
-        });
-      } else if (savedPeriodos) {
-        // Compatibilidade com formato antigo (string simples)
-        const option = Array.from(periodoSelect.options).find(opt => opt.value === savedPeriodos);
-        if (option) {
-          option.selected = true;
-        }
-      }
-
-      // Disparar atualização
-      if (periodoSelect.selectedOptions.length > 0) {
+      if (periodoSelect.value) {
         atualizarPeriodos(periodoSelect);
       }
       document.getElementById('f-data').value = data.meta.data || '';
@@ -773,7 +726,7 @@
 
     const data = serializeForm();
     const produto = slugify(data.meta.produto);
-    const periodo = slugify(data.meta.periodoDisplay || (Array.isArray(data.meta.periodo) ? data.meta.periodo[0] : data.meta.periodo));
+    const periodo = slugify(data.meta.periodo);
     if (!produto || !periodo) { toast('Preencha Produto e Periodo', 'error'); return; }
 
     const filename = produto + '_' + periodo + '.json';
@@ -791,7 +744,7 @@
       }
 
       const body = {
-        message: 'followup: ' + (data.meta.produto || produto) + ' · ' + (data.meta.periodoDisplay || data.meta.periodo || periodo),
+        message: 'followup: ' + (data.meta.produto || produto) + ' · ' + (data.meta.periodo || periodo),
         content: content
       };
       if (sha) body.sha = sha;
@@ -1154,7 +1107,7 @@
     const data = serializeForm();
     const meta = data.meta || {};
     const produto = meta.produto || '[Produto]';
-    const periodo = meta.periodoDisplay || (Array.isArray(meta.periodo) ? meta.periodo.join(' + ') : meta.periodo) || '[Periodo]';
+    const periodo = meta.periodo || '[Periodo]';
 
     const pptx = new PptxGenJS();
     pptx.layout = 'LAYOUT_WIDE';

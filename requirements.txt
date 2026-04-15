@@ -1,0 +1,11 @@
+# TR Change System - Dependências Python
+#
+# Para gerar PPTX a partir dos templates de delivery follow-up
+#
+# Instalação:
+#   pip install -r requirements.txt
+#
+# Uso do gerador:
+#   python templates/delivery-follow-up/generate_pptx.py dados/exemplo.json
+
+python-pptx>=0.6.21

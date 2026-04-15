@@ -1,10 +1,27 @@
 {
   "meta": {
-    "produto": "Azure DevOps - TR GGO",
+    "produto": "Thomson Reuters - Latin America Portfolio",
     "periodo": "Sprint 15 - Q2 2026",
     "data": "2026-04-15",
     "responsavel": "Adriana Dorigao - Change Agent",
-    "fonte": "Azure DevOps APIs - Coleta Automática"
+    "fonte": "Azure DevOps APIs - Coleta Automática",
+    "projetos_principais": [
+      "Datacloud",
+      "Domínio",
+      "Legal Content",
+      "LegalOne",
+      "Mastersaf DF-e",
+      "Mastersaf DW",
+      "Mastersaf Fiscal Solutions",
+      "Mastersaf Interfaces",
+      "OBI",
+      "OneSource BR",
+      "ONVIO BR",
+      "Projetos de Infraestrutura/Operações",
+      "South Latam",
+      "Tax Declaration Framework",
+      "TR Fintech"
+    ]
   },
   "kpi-assumidas": 85,
   "kpi-realizadas": 68,

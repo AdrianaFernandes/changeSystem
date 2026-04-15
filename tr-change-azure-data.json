@@ -1,0 +1,266 @@
+{
+  "meta": {
+    "produto": "Azure DevOps - TR GGO",
+    "periodo": "Sprint 15 - Q2 2026",
+    "data": "2026-04-15",
+    "responsavel": "Adriana Dorigao - Change Agent",
+    "fonte": "Azure DevOps APIs - Coleta Automática"
+  },
+  "kpi-assumidas": 85,
+  "kpi-realizadas": 68,
+  "kpi-bloqueadas": 3,
+  "kpi-atrasadas": 7,
+  "prog-conclusao": "80%",
+  "prog-velocity": "23",
+  "prog-backlog": "142",
+  "tbl-concluidas": [
+    [
+      {
+        "value": "DevOps"
+      },
+      {
+        "value": "Configuração de 50 repositórios"
+      },
+      {
+        "value": "2026-04-10"
+      }
+    ],
+    [
+      {
+        "value": "LegalOne"
+      },
+      {
+        "value": "Deploy automático - 308 pipelines ativos"
+      },
+      {
+        "value": "2026-04-12"
+      }
+    ]
+  ],
+  "tbl-andamento": [
+    [
+      {
+        "value": "DevOps"
+      },
+      {
+        "value": "Otimização de pipelines"
+      },
+      {
+        "value": "37"
+      },
+      {
+        "value": "32"
+      },
+      {
+        "value": "2026-04-18"
+      },
+      {
+        "value": "🟢"
+      }
+    ],
+    [
+      {
+        "value": "LegalOne"
+      },
+      {
+        "value": "Migração repositórios"
+      },
+      {
+        "value": "92"
+      },
+      {
+        "value": "75"
+      },
+      {
+        "value": "2026-04-20"
+      },
+      {
+        "value": "🟡"
+      }
+    ]
+  ],
+  "tbl-atencao": [
+    [
+      {
+        "value": "Mastersaf"
+      },
+      {
+        "value": "Baixa adoção DevOps"
+      },
+      {
+        "value": "Apenas 1 repositório ativo"
+      },
+      {
+        "value": "15"
+      }
+    ]
+  ],
+  "tbl-riscos": [
+    [
+      {
+        "value": "🟡"
+      },
+      {
+        "value": "Fragmentação de projetos"
+      },
+      {
+        "value": "65 projetos na organização"
+      },
+      {
+        "value": "Consolidar projetos menores"
+      },
+      {
+        "value": "Architecture Team"
+      },
+      {
+        "value": "2026-05-01"
+      }
+    ],
+    [
+      {
+        "value": "🟢"
+      },
+      {
+        "value": "Sobrecarga LegalOne"
+      },
+      {
+        "value": "308 pipelines em 1 projeto"
+      },
+      {
+        "value": "Monitorar performance"
+      },
+      {
+        "value": "DevOps Team"
+      },
+      {
+        "value": "2026-04-25"
+      }
+    ]
+  ],
+  "tbl-milestones": [
+    [
+      {
+        "value": "Outcome"
+      },
+      {
+        "value": "Consolidação DevOps"
+      },
+      {
+        "value": "Reduzir fragmentação"
+      },
+      {
+        "value": "65"
+      },
+      {
+        "value": "45"
+      },
+      {
+        "value": "2026-06-30"
+      },
+      {
+        "value": "🟡"
+      }
+    ],
+    [
+      {
+        "value": "Outcome"
+      },
+      {
+        "value": "Eficiência CI/CD"
+      },
+      {
+        "value": "Taxa de sucesso builds"
+      },
+      {
+        "value": "85%"
+      },
+      {
+        "value": "92%"
+      },
+      {
+        "value": "2026-05-15"
+      },
+      {
+        "value": "🟢"
+      }
+    ]
+  ],
+  "tbl-enablers": [
+    [
+      {
+        "value": "Azure DevOps Migration"
+      },
+      {
+        "value": "🟢"
+      },
+      {
+        "value": "85"
+      },
+      {
+        "value": "2026-04-30"
+      },
+      {
+        "value": "Platform Team"
+      },
+      {
+        "value": "Migração dos projetos principais concluída"
+      }
+    ],
+    [
+      {
+        "value": "CI/CD Standardization"
+      },
+      {
+        "value": "🟡"
+      },
+      {
+        "value": "60"
+      },
+      {
+        "value": "2026-05-15"
+      },
+      {
+        "value": "DevOps CoE"
+      },
+      {
+        "value": "Necessário alignment com arquitetura"
+      }
+    ]
+  ],
+  "tbl-decisoes": [
+    [
+      {
+        "value": "Consolidação de Projetos"
+      },
+      {
+        "value": "65 projetos ativos causam fragmentação"
+      },
+      {
+        "value": "Manter separados vs Consolidar"
+      },
+      {
+        "value": "Consolidar projetos por domínio"
+      },
+      {
+        "value": "2026-04-25"
+      }
+    ],
+    [
+      {
+        "value": "Investment in LegalOne"
+      },
+      {
+        "value": "308 pipelines indicam crescimento"
+      },
+      {
+        "value": "Scale up vs Optimize"
+      },
+      {
+        "value": "Investir em otimização primeiro"
+      },
+      {
+        "value": "2026-04-20"
+      }
+    ]
+  ]
+}

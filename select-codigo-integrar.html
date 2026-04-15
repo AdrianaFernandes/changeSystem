@@ -1,0 +1,102 @@
+<!-- CÓDIGO PARA INTEGRAR NO TEMPLATE DELIVERY FOLLOW-UP -->
+<!-- Substitua o campo "Programa / Produto" existente por este código -->
+
+<div class="form-group">
+    <label for="meta-produto">PROGRAMA / PRODUTO</label>
+    <select id="meta-produto" onchange="updateProductInfo(this)">
+        <option value="">Selecione um programa/produto...</option>
+        <option value="Datacloud" data-repos="145" data-pipelines="305">Datacloud</option>
+        <option value="Domínio" data-repos="0" data-pipelines="0">Domínio</option>
+        <option value="Legal Content" data-repos="1" data-pipelines="0">Legal Content</option>
+        <option value="LegalOne" data-repos="92" data-pipelines="308">LegalOne</option>
+        <option value="Mastersaf DF-e" data-repos="1" data-pipelines="1">Mastersaf DF-e</option>
+        <option value="Mastersaf DW" data-repos="0" data-pipelines="0">Mastersaf DW</option>
+        <option value="Mastersaf Fiscal Solutions" data-repos="1" data-pipelines="1">Mastersaf Fiscal Solutions</option>
+        <option value="Mastersaf Interfaces" data-repos="1" data-pipelines="0">Mastersaf Interfaces</option>
+        <option value="OBI" data-repos="1" data-pipelines="3">OBI</option>
+        <option value="OneSource BR" data-repos="1" data-pipelines="0">OneSource BR</option>
+        <option value="ONVIO BR" data-repos="1" data-pipelines="0">ONVIO BR</option>
+        <option value="Projetos de Infraestrutura/Operações" data-repos="50" data-pipelines="37">Projetos de Infraestrutura/Operações</option>
+        <option value="South Latam" data-repos="5" data-pipelines="0">South Latam</option>
+        <option value="Tax Declaration Framework" data-repos="1" data-pipelines="3">Tax Declaration Framework</option>
+        <option value="TR Fintech" data-repos="1" data-pipelines="1">TR Fintech</option>
+    </select>
+    <small id="product-stats" style="display: none; margin-top: 8px; color: #666;">
+        📊 <span id="repos-count">0</span> repositórios • <span id="pipelines-count">0</span> pipelines
+    </small>
+</div>
+
+<script>
+function updateProductInfo(selectElement) {
+    const statsDiv = document.getElementById('product-stats');
+    const reposSpan = document.getElementById('repos-count');
+    const pipelinesSpan = document.getElementById('pipelines-count');
+
+    if (selectElement.value) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const repos = selectedOption.dataset.repos || '0';
+        const pipelines = selectedOption.dataset.pipelines || '0';
+
+        reposSpan.textContent = repos;
+        pipelinesSpan.textContent = pipelines;
+        statsDiv.style.display = 'block';
+
+        // Auto-popular outros campos se necessário
+        updateRelatedFields(selectElement.value, repos, pipelines);
+    } else {
+        statsDiv.style.display = 'none';
+    }
+}
+
+function updateRelatedFields(produto, repos, pipelines) {
+    // Auto-popular KPIs baseados nos dados reais
+    const kpiAssumidasInput = document.querySelector('input[placeholder*="assumidas"]');
+    const kpiRealizadasInput = document.querySelector('input[placeholder*="realizadas"]');
+    const velocityInput = document.querySelector('input[placeholder*="velocity"]');
+
+    if (kpiAssumidasInput) {
+        kpiAssumidasInput.value = repos;
+    }
+
+    if (kpiRealizadasInput) {
+        // Estimativa: 85% das assumidas como realizadas
+        kpiRealizadasInput.value = Math.round(repos * 0.85);
+    }
+
+    if (velocityInput) {
+        // Estimativa: pipelines / 4 (média semanal)
+        velocityInput.value = Math.round(pipelines / 4);
+    }
+
+    // Disparar eventos para atualizar outros campos dependentes
+    document.dispatchEvent(new CustomEvent('productChanged', {
+        detail: { produto, repos, pipelines }
+    }));
+}
+</script>
+
+<!-- CSS adicional para estilizar -->
+<style>
+#meta-produto {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+}
+
+#meta-produto:focus {
+    outline: none;
+    border-color: #133C2C;
+    box-shadow: 0 0 0 2px rgba(19, 60, 44, 0.1);
+}
+
+#product-stats {
+    font-size: 12px;
+    padding: 4px 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: block;
+}
+</style>

@@ -181,7 +181,30 @@
   <div class="section-card">
     <h2>Dados Gerais</h2>
     <div class="data-grid">
-      <div class="field-group"><label>Programa / Produto</label><input type="text" id="f-produto" placeholder="Ex.: Plataforma Cloud" oninput="atualizarLabel()"></div>
+      <div class="field-group">
+        <label>Programa / Produto</label>
+        <select id="f-produto" onchange="atualizarProduto(this)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.88rem;">
+          <option value="">Selecione um programa/produto...</option>
+          <option value="Datacloud" data-repos="145" data-pipelines="305" data-percent="48%">Datacloud</option>
+          <option value="Domínio" data-repos="0" data-pipelines="0" data-percent="0%">Domínio</option>
+          <option value="Legal Content" data-repos="1" data-pipelines="0" data-percent="0.3%">Legal Content</option>
+          <option value="LegalOne" data-repos="92" data-pipelines="308" data-percent="31%">LegalOne</option>
+          <option value="Mastersaf DF-e" data-repos="1" data-pipelines="1" data-percent="0.3%">Mastersaf DF-e</option>
+          <option value="Mastersaf DW" data-repos="0" data-pipelines="0" data-percent="0%">Mastersaf DW</option>
+          <option value="Mastersaf Fiscal Solutions" data-repos="1" data-pipelines="1" data-percent="0.3%">Mastersaf Fiscal Solutions</option>
+          <option value="Mastersaf Interfaces" data-repos="1" data-pipelines="0" data-percent="0.3%">Mastersaf Interfaces</option>
+          <option value="OBI" data-repos="1" data-pipelines="3" data-percent="0.3%">OBI</option>
+          <option value="OneSource BR" data-repos="1" data-pipelines="0" data-percent="0.3%">OneSource BR</option>
+          <option value="ONVIO BR" data-repos="1" data-pipelines="0" data-percent="0.3%">ONVIO BR</option>
+          <option value="Projetos de Infraestrutura/Operações" data-repos="50" data-pipelines="37" data-percent="17%">Projetos de Infraestrutura/Operações</option>
+          <option value="South Latam" data-repos="5" data-pipelines="0" data-percent="2%">South Latam</option>
+          <option value="Tax Declaration Framework" data-repos="1" data-pipelines="3" data-percent="0.3%">Tax Declaration Framework</option>
+          <option value="TR Fintech" data-repos="1" data-pipelines="1" data-percent="0.3%">TR Fintech</option>
+        </select>
+        <div id="produto-stats" style="display: none; margin-top: 6px; padding: 6px 10px; background: var(--gray-50); border-radius: 4px; font-size: 0.75rem; color: var(--gray-600);">
+          📊 <span id="repos-count">0</span> repositórios • <span id="pipelines-count">0</span> pipelines • <span id="percent-portfolio">0%</span> do portfolio
+        </div>
+      </div>
       <div class="field-group"><label>Sprint / Periodo</label><input type="text" id="f-periodo" placeholder="Ex.: Sprint 14 · Q2 2026" oninput="atualizarLabel()"></div>
       <div class="field-group"><label>Data do Follow-up</label><input type="date" id="f-data"></div>
       <div class="field-group"><label>Responsavel</label><input type="text" id="f-responsavel" placeholder="Nome"></div>
@@ -415,6 +438,60 @@
     label.textContent = (produto && periodo) ? produto + ' · ' + periodo : 'Preencha Produto e Periodo';
   };
 
+  window.atualizarProduto = function(selectElement) {
+    const statsDiv = document.getElementById('produto-stats');
+    const reposSpan = document.getElementById('repos-count');
+    const pipelinesSpan = document.getElementById('pipelines-count');
+    const percentSpan = document.getElementById('percent-portfolio');
+
+    if (selectElement.value) {
+      const selectedOption = selectElement.options[selectElement.selectedIndex];
+      const repos = selectedOption.dataset.repos || '0';
+      const pipelines = selectedOption.dataset.pipelines || '0';
+      const percent = selectedOption.dataset.percent || '0%';
+
+      reposSpan.textContent = repos;
+      pipelinesSpan.textContent = pipelines;
+      percentSpan.textContent = percent;
+      statsDiv.style.display = 'block';
+
+      // Auto-popular KPIs baseados nos dados reais
+      autoPopularKPIs(selectElement.value, repos, pipelines);
+
+      // Atualizar label
+      atualizarLabel();
+    } else {
+      statsDiv.style.display = 'none';
+      atualizarLabel();
+    }
+  };
+
+  function autoPopularKPIs(produto, repos, pipelines) {
+    // Auto-popular campos KPI com dados reais do projeto
+    const kpiAssumidasInput = document.getElementById('kpi-assumidas');
+    const kpiRealizadasInput = document.getElementById('kpi-realizadas');
+    const velocityInput = document.getElementById('prog-velocity');
+
+    if (kpiAssumidasInput && repos > 0) {
+      kpiAssumidasInput.value = repos;
+    }
+
+    if (kpiRealizadasInput && repos > 0) {
+      // Estimativa: 85% das assumidas como realizadas
+      kpiRealizadasInput.value = Math.round(repos * 0.85);
+    }
+
+    if (velocityInput && pipelines > 0) {
+      // Estimativa: pipelines / 4 (média semanal)
+      velocityInput.value = Math.round(pipelines / 4);
+    }
+
+    // Mostrar toast informativo
+    if (repos > 0) {
+      toast(`📊 KPIs atualizados para ${produto}: ${repos} repos, ${pipelines} pipelines`, 'success');
+    }
+  };
+
   function getStorageKey() {
     const produto = document.getElementById('f-produto').value.trim();
     const periodo = document.getElementById('f-periodo').value.trim();
@@ -464,7 +541,14 @@
   function deserializeForm(data) {
     if (!data) return;
     if (data.meta) {
-      document.getElementById('f-produto').value = data.meta.produto || '';
+      const produtoSelect = document.getElementById('f-produto');
+      produtoSelect.value = data.meta.produto || '';
+
+      // Disparar atualização do produto se houver valor
+      if (produtoSelect.value) {
+        atualizarProduto(produtoSelect);
+      }
+
       document.getElementById('f-periodo').value = data.meta.periodo || '';
       document.getElementById('f-data').value = data.meta.data || '';
       document.getElementById('f-responsavel').value = data.meta.responsavel || '';

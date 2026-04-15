@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delivery Follow-up — TR Change System</title>
+<link rel="stylesheet" href="../../assets/css/change-system.css">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+  .toolbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--tr-green-dark); color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 24px; font-size: 0.82rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .toolbar .version-label { flex: 1; opacity: 0.8; font-size: 0.75rem; }
+  .toolbar button {
+    background: rgba(255,255,255,0.15); color: var(--white); border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 14px; border-radius: 5px; font-family: inherit; font-size: 0.78rem;
+    font-weight: 600; cursor: pointer; transition: background 0.15s; white-space: nowrap;
+  }
+  .toolbar button:hover { background: rgba(255,255,255,0.25); }
+  .toolbar button.primary { background: rgba(34,197,94,0.35); border-color: rgba(34,197,94,0.5); }
+  .toolbar button.primary:hover { background: rgba(34,197,94,0.5); }
+  .toolbar .sep { opacity: 0.2; font-size: 1.2rem; }
+
+  .data-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .data-grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 12px; }
+  .data-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .kpi-card .kpi-auto { width: 80px; text-align: center; font-size: 2rem; font-weight: 800; line-height: 1; font-family: inherit; color: #6d28d9; }
+
+  .kpi-card { text-align: center; padding: 18px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-md); position: relative; }
+  .kpi-card .kpi-input {
+    width: 80px; text-align: center; font-size: 2rem; font-weight: 800; line-height: 1;
+    border: none; border-bottom: 2px solid var(--gray-200); background: transparent;
+    font-family: inherit; outline: none; transition: border-color 0.15s;
+  }
+  .kpi-card .kpi-input:focus { border-bottom-color: var(--tr-green-mid); }
+  .kpi-card .kpi-input.blue { color: #1e40af; }
+  .kpi-card .kpi-input.green { color: #166534; }
+  .kpi-card .kpi-input.red { color: #991b1b; }
+  .kpi-card .kpi-input.amber { color: #92400e; }
+  .kpi-card .kpi-label { font-size: 0.68rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 6px; }
+
+  .ed-table { width: 100%; border-collapse: collapse; }
+  .ed-table th {
+    background: var(--gray-50); font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.4px; color: var(--gray-500); padding: 8px 10px; text-align: left;
+  }
+  .ed-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .ed-table input, .ed-table textarea, .ed-table select {
+    width: 100%; padding: 5px 8px; border: 1px solid var(--gray-200); border-radius: 4px;
+    font-family: inherit; font-size: 0.84rem;
+  }
+  .ed-table input:focus, .ed-table textarea:focus { outline: none; border-color: var(--tr-green-mid); box-shadow: 0 0 0 2px rgba(26,92,58,0.12); }
+  .ed-table textarea { min-height: 36px; resize: vertical; }
+  .ed-table select { width: auto; min-width: 90px; }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 8px; }
+  .btn-add {
+    background: var(--tr-green-light); color: var(--tr-green-dark); border: 1px solid var(--tr-green-mid);
+    padding: 5px 14px; border-radius: 5px; font-family: inherit; font-size: 0.78rem;
+    font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-add:hover { background: #d0e6d8; }
+  .btn-del {
+    background: none; border: none; color: var(--gray-400); cursor: pointer;
+    font-size: 1rem; padding: 0 4px; line-height: 1;
+  }
+  .btn-del:hover { color: var(--sem-red); }
+
+  .sem-select {
+    padding: 4px 6px; border: 1px solid var(--gray-200); border-radius: 4px;
+    font-size: 0.85rem; text-align: center; cursor: pointer;
+  }
+
+  #importInput { display: none; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.45); justify-content: center; align-items: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 12px; padding: 28px 32px;
+    max-width: 520px; width: 90%; box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal h3 { margin: 0 0 16px; color: var(--tr-green-dark); }
+  .modal label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+  .modal input[type="text"], .modal input[type="password"] {
+    width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 6px;
+    font-family: inherit; font-size: 0.88rem; margin-bottom: 14px; box-sizing: border-box;
+  }
+  .modal input:focus { outline: none; border-color: var(--tr-green-mid); }
+  .modal .hint { font-size: 0.75rem; color: var(--gray-500); margin: -10px 0 14px; line-height: 1.4; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .modal-actions button {
+    padding: 8px 20px; border-radius: 6px; font-family: inherit; font-weight: 600;
+    font-size: 0.84rem; cursor: pointer; border: 1px solid var(--gray-200);
+  }
+  .modal-actions .btn-save { background: var(--tr-green-dark); color: var(--white); border: none; }
+  .modal-actions .btn-cancel { background: var(--white); color: var(--gray-700); }
+
+  /* ── Histórico panel ── */
+  .hist-overlay {
+    display: none; position: fixed; top: 0; right: 0; bottom: 0; z-index: 400;
+    width: 380px; background: var(--white); box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    flex-direction: column; overflow: hidden;
+  }
+  .hist-overlay.active { display: flex; }
+  .hist-header {
+    background: var(--tr-green-dark); color: var(--white); padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .hist-header h3 { margin: 0; font-size: 1rem; }
+  .hist-close { background: none; border: none; color: var(--white); font-size: 1.4rem; cursor: pointer; padding: 0 4px; }
+  .hist-list { flex: 1; overflow-y: auto; padding: 12px; }
+  .hist-item {
+    padding: 12px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+    margin-bottom: 8px; cursor: pointer; transition: all 0.15s;
+  }
+  .hist-item:hover { border-color: var(--tr-green-mid); background: var(--tr-green-light); }
+  .hist-item .hi-title { font-weight: 700; color: var(--gray-900); font-size: 0.88rem; }
+  .hist-item .hi-meta { font-size: 0.75rem; color: var(--gray-500); margin-top: 3px; }
+  .hist-empty { text-align: center; padding: 40px 20px; color: var(--gray-500); font-size: 0.88rem; }
+  .hist-loading { text-align: center; padding: 40px 20px; color: var(--gray-500); }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    padding: 12px 24px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+    z-index: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    font-family: inherit;
+  }
+  .toast.show { opacity: 1; }
+  .toast.success { background: #166534; color: white; }
+  .toast.error { background: #991b1b; color: white; }
+  .toast.info { background: var(--tr-green-dark); color: white; }
+
+  @media print {
+    .toolbar, .btn-add, .btn-del, .btn-row, #importInput, .hist-overlay, .modal-overlay, .callout, .toast { display: none !important; }
+    .kpi-card .kpi-input { border-bottom: none; }
+    .ed-table input, .ed-table textarea, .ed-table select { border: none; padding: 2px 4px; box-shadow: none; }
+    .page { margin-top: 0; box-shadow: none; }
+    @page { size: landscape; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar no-print">
+  <span class="version-label" id="versionLabel">Preencha Produto e Periodo</span>
+  <button onclick="salvarRascunho()" title="Salva no seu navegador enquanto preenche">Rascunho</button>
+  <span class="sep">|</span>
+  <button class="primary" onclick="gerarPPTX()" title="Gera e baixa a apresentacao executiva">Gerar PPTX</button>
+  <button class="primary" onclick="publicar()" title="Salva no repositorio compartilhado">Publicar</button>
+  <button onclick="toggleHistorico()" title="Ver follow-ups anteriores">Historico</button>
+  <button onclick="abrirConfig()" title="Configurar conexao com o repositorio">Config</button>
+</div>
+
+<div class="page">
+  <div class="header-bar" style="margin: -32px -40px 24px; border-radius: 0;">
+    <div class="label">TR Change System · Delivery Follow-up</div>
+    <h1>Delivery Follow-up</h1>
+    <div class="subtitle">Preencha, gere o PPTX e publique — tudo no navegador</div>
+  </div>
+
+  <!-- COMO USAR -->
+  <div class="callout callout-info no-print" style="margin-bottom:16px; font-size:0.85rem; line-height:1.7;">
+    <strong>Como usar:</strong>
+    &#10102; Preencha os campos abaixo &nbsp;
+    &#10103; Clique <strong>Gerar PPTX</strong> para baixar a apresentacao &nbsp;
+    &#10104; Clique <strong>Publicar</strong> para salvar no repositorio (primeira vez: configure o token em <strong>Config</strong>)
+  </div>
+
+  <!-- DADOS GERAIS -->
+  <div class="section-card">
+    <h2>Dados Gerais</h2>
+    <div class="data-grid">
+      <div class="field-group"><label>Programa / Produto</label><input type="text" id="f-produto" placeholder="Ex.: Plataforma Cloud" oninput="atualizarLabel()"></div>
+      <div class="field-group"><label>Sprint / Periodo</label><input type="text" id="f-periodo" placeholder="Ex.: Sprint 14 · Q2 2026" oninput="atualizarLabel()"></div>
+      <div class="field-group"><label>Data do Follow-up</label><input type="date" id="f-data"></div>
+      <div class="field-group"><label>Responsavel</label><input type="text" id="f-responsavel" placeholder="Nome"></div>
+    </div>
+  </div>
+
+  <!-- PENDÊNCIAS DA ÚLTIMA REUNIÃO -->
+  <div class="section-card" style="border-left: 4px solid var(--tr-green-mid);">
+    <h2>Pendencias da ultima Reuniao</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Itens pendentes do follow-up anterior que precisam de acompanhamento.</p>
+    <table class="ed-table" id="tbl-pendencias">
+      <thead><tr><th>Pendencia</th><th style="width:100px;">Owner</th><th style="width:90px;">Status</th><th>Observacao</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Descricao da pendencia"></td><td><input placeholder="Owner"></td><td><select class="sem-select"><option>🟡</option><option>🟢</option><option>🔴</option></select></td><td><input placeholder="Observacao / resolucao"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Descricao da pendencia"></td><td><input placeholder="Owner"></td><td><select class="sem-select"><option>🟡</option><option>🟢</option><option>🔴</option></select></td><td><input placeholder="Observacao / resolucao"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-pendencias')">+ Adicionar pendencia</button></div>
+  </div>
+
+  <!-- DASHBOARD KPIs -->
+  <div class="section-card">
+    <h2>1. Dashboard Consolidado</h2>
+    <div class="data-grid-5">
+      <div class="kpi-card"><input class="kpi-input blue" type="number" min="0" value="0" data-field="kpi-assumidas"><div class="kpi-label">Entregas Assumidas</div></div>
+      <div class="kpi-card"><input class="kpi-input green" type="number" min="0" value="0" data-field="kpi-realizadas"><div class="kpi-label">Entregas Realizadas</div></div>
+      <div class="kpi-card"><span class="kpi-auto" id="kpi-andamento-auto">0</span><div class="kpi-label">Iniciativas em Andamento</div></div>
+      <div class="kpi-card"><input class="kpi-input red" type="number" min="0" value="0" data-field="kpi-bloqueadas"><div class="kpi-label">Bloqueadas</div></div>
+      <div class="kpi-card"><input class="kpi-input amber" type="number" min="0" value="0" data-field="kpi-atrasadas"><div class="kpi-label">Atrasadas</div></div>
+    </div>
+
+    <h3 style="margin-top:16px;">Progresso</h3>
+    <div class="data-grid-3">
+      <div class="field-group"><label>% Conclusao</label><input type="text" data-field="prog-conclusao" placeholder="Ex.: 72%"></div>
+      <div class="field-group"><label>Velocity (features/sprint)</label><input type="text" data-field="prog-velocity" placeholder="Ex.: 8"></div>
+      <div class="field-group"><label>Features no Backlog</label><input type="text" data-field="prog-backlog" placeholder="Ex.: 23"></div>
+    </div>
+
+    <h3 style="margin-top:20px;">1.1 Consolidado por Frente</h3>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Quebre os números por área / frente de desenvolvimento.</p>
+    <table class="ed-table" id="tbl-frentes">
+      <thead><tr><th>Frente</th><th style="width:110px;">Total Features</th><th style="width:100px;">Entregues</th><th style="width:110px;">Em Andamento</th><th style="width:100px;">Atrasadas</th><th style="width:80px;">Meta %</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Ex.: Contábil"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" max="100" placeholder="100" style="width:60px;"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Ex.: Folha"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" placeholder="0"></td><td><input type="number" min="0" max="100" placeholder="100" style="width:60px;"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-frentes')">+ Adicionar frente</button></div>
+  </div>
+
+  <!-- ENTREGAS DO PERÍODO -->
+  <div class="section-card">
+    <h2>2. Principais Entregas do Periodo</h2>
+
+    <h3>Entregas Concluidas</h3>
+    <table class="ed-table" id="tbl-concluidas">
+      <thead><tr><th>Frente</th><th>Entrega</th><th style="width:100px;">Data</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao da entrega"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao da entrega"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao da entrega"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-concluidas',3)">+ Adicionar entrega</button></div>
+
+    <h3 style="margin-top:16px;">Em Andamento</h3>
+    <table class="ed-table" id="tbl-andamento">
+      <thead><tr><th>Frente</th><th>Entrega</th><th style="width:70px;">Previsto</th><th style="width:70px;">Realizado</th><th style="width:100px;">Target</th><th style="width:70px;">Status</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao"></td><td><input placeholder="%"></td><td><input placeholder="%"></td><td><input type="date"></td><td><select class="sem-select"><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao"></td><td><input placeholder="%"></td><td><input placeholder="%"></td><td><input type="date"></td><td><select class="sem-select"><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-andamento',6)">+ Adicionar item</button></div>
+
+    <h3 style="margin-top:16px;">Itens em Atencao</h3>
+    <table class="ed-table" id="tbl-atencao">
+      <thead><tr><th>Frente</th><th>Item</th><th>Motivo</th><th style="width:80px;">Dias atraso</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Frente"></td><td><input placeholder="Descricao"></td><td><input placeholder="Motivo"></td><td><input type="number" min="0" placeholder="0"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-atencao',4)">+ Adicionar item</button></div>
+  </div>
+
+  <!-- RISCOS E PLANO DE AÇÃO -->
+  <div class="section-card">
+    <h2>3. Riscos e Plano de Acao</h2>
+    <table class="ed-table" id="tbl-riscos">
+      <thead><tr><th style="width:60px;">Sev.</th><th>Risco</th><th>Area Afetada</th><th>Plano de Acao</th><th style="width:110px;">Owner</th><th style="width:90px;">Prazo</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><select class="sem-select"><option>🔴</option><option>🟡</option><option>🟢</option></select></td><td><input placeholder="Descricao do risco"></td><td><input placeholder="Area"></td><td><input placeholder="Acao"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><select class="sem-select"><option>🟡</option><option>🔴</option><option>🟢</option></select></td><td><input placeholder="Descricao do risco"></td><td><input placeholder="Area"></td><td><input placeholder="Acao"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><select class="sem-select"><option>🟡</option><option>🔴</option><option>🟢</option></select></td><td><input placeholder="Descricao do risco"></td><td><input placeholder="Area"></td><td><input placeholder="Acao"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-riscos',6)">+ Adicionar risco</button></div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="section-card">
+    <h2>4. Roadmap</h2>
+    <table class="ed-table" id="tbl-milestones">
+      <thead><tr><th style="width:90px;">Tipo</th><th>Iniciativa / Frente</th><th>Resultado esperado</th><th style="width:90px;" class="roadmap-col3">Baseline</th><th style="width:90px;" class="roadmap-col4">Valor Atual</th><th style="width:100px;">Previsao</th><th style="width:70px;">Status</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><select class="sem-select" onchange="onRoadmapTipoChange(this)"><option value="Outcome">Outcome</option><option value="Projeto">Projeto</option></select></td><td><input placeholder="Ex.: Adocao Cloud"></td><td><input placeholder="Ex.: NPS de 72 para 80"></td><td><input placeholder="Ex.: 72" class="roadmap-c3"></td><td><input placeholder="Ex.: 76" class="roadmap-c4"></td><td><input type="date"></td><td><select class="sem-select"><option>🟢</option><option>🟡</option><option>🔴</option><option>⬜</option></select></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><select class="sem-select" onchange="onRoadmapTipoChange(this)"><option value="Outcome">Outcome</option><option value="Projeto">Projeto</option></select></td><td><input placeholder="Ex.: Reducao de Churn"></td><td><input placeholder="Ex.: Churn de 5% para 3%"></td><td><input placeholder="Ex.: 5%" class="roadmap-c3"></td><td><input placeholder="Ex.: 4.2%" class="roadmap-c4"></td><td><input type="date"></td><td><select class="sem-select"><option>🟢</option><option>🟡</option><option>🔴</option><option>⬜</option></select></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><select class="sem-select" onchange="onRoadmapTipoChange(this)"><option value="Projeto">Projeto</option><option value="Outcome">Outcome</option></select></td><td><input placeholder="Ex.: Migracao Plataforma"></td><td><input placeholder="Ex.: 100% clientes migrados"></td><td><input placeholder="Ex.: 40%" class="roadmap-c3"></td><td><input placeholder="Ex.: 65%" class="roadmap-c4"></td><td><input type="date"></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRoadmapRow()">+ Adicionar item</button></div>
+  </div>
+
+  <!-- ENABLERS -->
+  <div class="section-card">
+    <h2>5. Enablers</h2>
+    <table class="ed-table" id="tbl-enablers">
+      <thead><tr><th>Iniciativa</th><th style="width:100px;">Status</th><th style="width:80px;">Progresso</th><th style="width:90px;">Previsao</th><th style="width:100px;">Owner</th><th>Observacoes</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td><input placeholder="Nome da iniciativa"></td><td><select><option>On Track</option><option>Atencao</option><option>Bloqueado</option></select></td><td><input type="number" min="0" max="100" placeholder="%" style="width:60px;"></td><td><input type="date"></td><td><input placeholder="Owner"></td><td><input placeholder="Observacao"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Nome da iniciativa"></td><td><select><option>On Track</option><option>Atencao</option><option>Bloqueado</option></select></td><td><input type="number" min="0" max="100" placeholder="%" style="width:60px;"></td><td><input type="date"></td><td><input placeholder="Owner"></td><td><input placeholder="Observacao"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td><input placeholder="Nome da iniciativa"></td><td><select><option>On Track</option><option>Atencao</option><option>Bloqueado</option></select></td><td><input type="number" min="0" max="100" placeholder="%" style="width:60px;"></td><td><input type="date"></td><td><input placeholder="Owner"></td><td><input placeholder="Observacao"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addRow('tbl-enablers',6)">+ Adicionar enabler</button></div>
+  </div>
+
+  <!-- DECISÕES NECESSÁRIAS (final) -->
+  <div class="section-card" style="border-left: 4px solid var(--sem-amber);">
+    <h2>6. Decisoes Necessarias</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Itens que requerem decisao da lideranca neste follow-up.</p>
+    <table class="ed-table" id="tbl-decisoes">
+      <thead><tr><th style="width:30px;">#</th><th>Decisao</th><th>Contexto</th><th>Opcoes</th><th>Recomendacao</th><th style="width:90px;">Prazo</th><th style="width:30px;"></th></tr></thead>
+      <tbody>
+        <tr><td style="text-align:center; font-weight:600; color:var(--gray-400);">1</td><td><input placeholder="Decisao"></td><td><input placeholder="Contexto resumido"></td><td><input placeholder="A / B / C"></td><td><input placeholder="Recomendacao" style="font-weight:600;"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+        <tr><td style="text-align:center; font-weight:600; color:var(--gray-400);">2</td><td><input placeholder="Decisao"></td><td><input placeholder="Contexto resumido"></td><td><input placeholder="A / B / C"></td><td><input placeholder="Recomendacao" style="font-weight:600;"></td><td><input type="date"></td><td><button class="btn-del" onclick="delRow(this)">x</button></td></tr>
+      </tbody>
+    </table>
+    <div class="btn-row"><button class="btn-add" onclick="addDecisaoRow()">+ Adicionar decisao</button></div>
+  </div>
+
+  <div class="footer">
+    Thomson Reuters · TR Change System · Delivery Follow-up · Confidencial
+  </div>
+</div>
+
+<!-- HISTÓRICO PANEL -->
+<div class="hist-overlay" id="histPanel">
+  <div class="hist-header">
+    <h3>Historico</h3>
+    <button class="hist-close" onclick="toggleHistorico()">&times;</button>
+  </div>
+  <div class="hist-list" id="histList">
+    <div class="hist-loading">Carregando...</div>
+  </div>
+</div>
+
+<!-- CONFIG MODAL -->
+<div class="modal-overlay" id="configModal">
+  <div class="modal">
+    <h3>Configuracao</h3>
+    <label>GitHub Token (Personal Access Token)</label>
+    <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    <div class="hint">
+      Crie em <a href="https://github.com/settings/tokens/new?scopes=repo&description=TR+Change+System" target="_blank">github.com/settings/tokens</a> com scope <strong>repo</strong>. O token fica salvo apenas no seu navegador.
+    </div>
+    <label>Repositorio (owner/repo)</label>
+    <input type="text" id="cfg-repo" placeholder="mmbTR/TR-Change-System">
+    <label>Pasta de dados</label>
+    <input type="text" id="cfg-path" placeholder="templates/delivery-follow-up/dados">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharConfig()">Cancelar</button>
+      <button class="btn-save" onclick="salvarConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<input type="file" id="importInput" accept=".json" onchange="importarJSON(event)">
+
+<script>
+(function() {
+
+  const STORAGE_PREFIX = 'tr-followup-';
+  const CFG_KEY = 'tr-followup-config';
+  const DEFAULTS = { repo: 'mmbTR/TR-Change-System', path: 'templates/delivery-follow-up/dados' };
+
+  // ── Toast ──
+  function toast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + (type || 'info');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = 'toast', 3500);
+  }
+
+  // ── Config ──
+  function getConfig() {
+    try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function cfg(key) { return getConfig()[key] || DEFAULTS[key] || ''; }
+
+  window.abrirConfig = function() {
+    const c = getConfig();
+    document.getElementById('cfg-token').value = c.token || '';
+    document.getElementById('cfg-repo').value = c.repo || DEFAULTS.repo;
+    document.getElementById('cfg-path').value = c.path || DEFAULTS.path;
+    document.getElementById('configModal').classList.add('active');
+  };
+  window.fecharConfig = function() {
+    document.getElementById('configModal').classList.remove('active');
+  };
+  window.salvarConfig = function() {
+    const config = {
+      token: document.getElementById('cfg-token').value.trim(),
+      repo: document.getElementById('cfg-repo').value.trim() || DEFAULTS.repo,
+      path: document.getElementById('cfg-path').value.trim() || DEFAULTS.path
+    };
+    localStorage.setItem(CFG_KEY, JSON.stringify(config));
+    fecharConfig();
+    toast('Configuracao salva', 'success');
+  };
+
+  // ── Label ──
+  window.atualizarLabel = function() {
+    const produto = document.getElementById('f-produto').value.trim();
+    const periodo = document.getElementById('f-periodo').value.trim();
+    const label = document.getElementById('versionLabel');
+    label.textContent = (produto && periodo) ? produto + ' · ' + periodo : 'Preencha Produto e Periodo';
+  };
+
+  function getStorageKey() {
+    const produto = document.getElementById('f-produto').value.trim();
+    const periodo = document.getElementById('f-periodo').value.trim();
+    if (!produto || !periodo) return null;
+    return STORAGE_PREFIX + produto.toLowerCase().replace(/\s+/g, '-') + '_' + periodo.toLowerCase().replace(/\s+/g, '-');
+  }
+
+  function slugify(str) {
+    return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '').replace(/^-+/, '');
+  }
+
+  function fmtDate(val) {
+    if (!val) return '';
+    try { const d = new Date(val); return d.toLocaleDateString('pt-BR'); } catch(e) { return val; }
+  }
+
+  // ── Serialize / Deserialize ──
+  function serializeForm() {
+    const data = {};
+    data.meta = {
+      produto: document.getElementById('f-produto').value,
+      periodo: document.getElementById('f-periodo').value,
+      data: document.getElementById('f-data').value,
+      responsavel: document.getElementById('f-responsavel').value
+    };
+    document.querySelectorAll('[data-field]').forEach(el => {
+      data[el.getAttribute('data-field')] = el.value;
+    });
+    const tables = ['tbl-pendencias','tbl-frentes','tbl-concluidas','tbl-andamento','tbl-atencao','tbl-riscos','tbl-milestones','tbl-enablers','tbl-decisoes'];
+    tables.forEach(id => {
+      const tbl = document.getElementById(id);
+      if (!tbl) return;
+      const rows = [];
+      tbl.querySelectorAll('tbody tr').forEach(tr => {
+        const cells = [];
+        tr.querySelectorAll('input, select, textarea').forEach(el => {
+          cells.push({ tag: el.tagName.toLowerCase(), type: el.type || '', value: el.value });
+        });
+        rows.push(cells);
+      });
+      data[id] = rows;
+    });
+    data._savedAt = new Date().toISOString();
+    return data;
+  }
+
+  function deserializeForm(data) {
+    if (!data) return;
+    if (data.meta) {
+      document.getElementById('f-produto').value = data.meta.produto || '';
+      document.getElementById('f-periodo').value = data.meta.periodo || '';
+      document.getElementById('f-data').value = data.meta.data || '';
+      document.getElementById('f-responsavel').value = data.meta.responsavel || '';
+    }
+    document.querySelectorAll('[data-field]').forEach(el => {
+      const key = el.getAttribute('data-field');
+      if (data[key] !== undefined) el.value = data[key];
+    });
+    const tables = ['tbl-pendencias','tbl-frentes','tbl-concluidas','tbl-andamento','tbl-atencao','tbl-riscos','tbl-milestones','tbl-enablers','tbl-decisoes'];
+    tables.forEach(id => {
+      if (!data[id]) return;
+      const tbl = document.getElementById(id);
+      if (!tbl) return;
+      const tbody = tbl.querySelector('tbody');
+      const templateRow = tbody.querySelector('tr');
+      if (!templateRow) return;
+      while (tbody.rows.length < data[id].length) {
+        const clone = templateRow.cloneNode(true);
+        clone.querySelectorAll('input, textarea').forEach(el => { el.value = ''; });
+        tbody.appendChild(clone);
+      }
+      while (tbody.rows.length > data[id].length && tbody.rows.length > 1) {
+        tbody.removeChild(tbody.lastElementChild);
+      }
+      data[id].forEach((cells, i) => {
+        if (!tbody.rows[i]) return;
+        const inputs = tbody.rows[i].querySelectorAll('input, select, textarea');
+        cells.forEach((cell, j) => {
+          if (inputs[j]) inputs[j].value = cell.value;
+        });
+      });
+      if (id === 'tbl-decisoes') renumberDecisoes();
+    });
+    atualizarLabel();
+    updateAndamentoCount();
+    document.querySelectorAll('#tbl-milestones tbody select').forEach(sel => {
+      if (sel.closest('td') === sel.closest('tr').querySelector('td')) onRoadmapTipoChange(sel);
+    });
+  }
+
+  // ── Rascunho (local) ──
+  window.salvarRascunho = function() {
+    const key = getStorageKey();
+    if (!key) { toast('Preencha Produto e Periodo antes de salvar.', 'error'); return; }
+    localStorage.setItem(key, JSON.stringify(serializeForm()));
+    toast('Rascunho salvo no navegador', 'success');
+  };
+
+  // ── Importar JSON local ──
+  window.importarJSON = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        deserializeForm(JSON.parse(e.target.result));
+        toast('Importado: ' + file.name, 'success');
+      } catch (err) { toast('Erro ao importar: ' + err.message, 'error'); }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  // ── GitHub API helpers ──
+  function ghHeaders() {
+    const token = cfg('token');
+    const h = { 'Accept': 'application/vnd.github.v3+json' };
+    if (token) h['Authorization'] = 'token ' + token;
+    return h;
+  }
+
+  function ghApiUrl(filePath) {
+    return 'https://api.github.com/repos/' + cfg('repo') + '/contents/' + filePath;
+  }
+
+  // ── Publicar ──
+  window.publicar = async function() {
+    const token = cfg('token');
+    if (!token) { abrirConfig(); toast('Configure o token primeiro', 'info'); return; }
+
+    const data = serializeForm();
+    const produto = slugify(data.meta.produto);
+    const periodo = slugify(data.meta.periodo);
+    if (!produto || !periodo) { toast('Preencha Produto e Periodo', 'error'); return; }
+
+    const filename = produto + '_' + periodo + '.json';
+    const filePath = cfg('path') + '/' + filename;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+
+    toast('Publicando...', 'info');
+
+    try {
+      let sha = null;
+      const checkResp = await fetch(ghApiUrl(filePath), { headers: ghHeaders() });
+      if (checkResp.ok) {
+        const existing = await checkResp.json();
+        sha = existing.sha;
+      }
+
+      const body = {
+        message: 'followup: ' + (data.meta.produto || produto) + ' · ' + (data.meta.periodo || periodo),
+        content: content
+      };
+      if (sha) body.sha = sha;
+
+      const resp = await fetch(ghApiUrl(filePath), {
+        method: 'PUT',
+        headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      if (resp.ok) {
+        toast('Publicado com sucesso: ' + filename, 'success');
+      } else {
+        const err = await resp.json();
+        toast('Erro: ' + (err.message || resp.status), 'error');
+      }
+    } catch (e) {
+      toast('Erro de conexao: ' + e.message, 'error');
+    }
+  };
+
+  // ── Historico ──
+  window.toggleHistorico = function() {
+    const panel = document.getElementById('histPanel');
+    if (panel.classList.contains('active')) {
+      panel.classList.remove('active');
+    } else {
+      panel.classList.add('active');
+      carregarHistorico();
+    }
+  };
+
+  async function carregarHistorico() {
+    const list = document.getElementById('histList');
+    list.innerHTML = '<div class="hist-loading">Carregando...</div>';
+
+    try {
+      const resp = await fetch(ghApiUrl(cfg('path')), { headers: ghHeaders() });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const files = await resp.json();
+      const jsons = (Array.isArray(files) ? files : []).filter(f => f.name.endsWith('.json')).reverse();
+
+      if (jsons.length === 0) {
+        list.innerHTML = '<div class="hist-empty">Nenhum follow-up publicado ainda.<br>Preencha e clique <strong>Publicar</strong>.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      for (const f of jsons) {
+        const div = document.createElement('div');
+        div.className = 'hist-item';
+        const name = f.name.replace('.json', '').replace(/_/g, ' · ').replace(/-/g, ' ');
+        div.innerHTML = '<div class="hi-title">' + name + '</div><div class="hi-meta">' + f.name + '</div>';
+        div.onclick = () => carregarDoRepo(f.download_url, f.name);
+        list.appendChild(div);
+      }
+    } catch (e) {
+      const token = cfg('token');
+      if (!token) {
+        list.innerHTML = '<div class="hist-empty">Configure o token em <strong>Config</strong> para ver o historico.<br><br><small>Se o repositorio for publico, o historico carrega sem token.</small></div>';
+      } else {
+        list.innerHTML = '<div class="hist-empty">Erro ao carregar: ' + e.message + '</div>';
+      }
+    }
+  }
+
+  async function carregarDoRepo(url, filename) {
+    toast('Carregando ' + filename + '...', 'info');
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      deserializeForm(data);
+      toast('Carregado: ' + filename, 'success');
+      document.getElementById('histPanel').classList.remove('active');
+    } catch (e) {
+      toast('Erro: ' + e.message, 'error');
+    }
+  }
+
+  // ── Table row management ──
+  window.addRow = function(tableId) {
+    const tbl = document.getElementById(tableId);
+    const tbody = tbl.querySelector('tbody');
+    const templateRow = tbody.querySelector('tr');
+    if (!templateRow) return;
+    const clone = templateRow.cloneNode(true);
+    clone.querySelectorAll('input, textarea').forEach(el => { el.value = ''; });
+    clone.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
+    tbody.appendChild(clone);
+    updateAndamentoCount();
+  };
+
+  window.addDecisaoRow = function() {
+    addRow('tbl-decisoes');
+    renumberDecisoes();
+  };
+
+  function renumberDecisoes() {
+    const tbl = document.getElementById('tbl-decisoes');
+    if (!tbl) return;
+    tbl.querySelectorAll('tbody tr').forEach((tr, i) => {
+      const first = tr.querySelector('td');
+      if (first) first.textContent = (i + 1);
+    });
+  }
+
+  window.delRow = function(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.closest('tbody');
+    if (tbody.rows.length <= 1) return;
+    tr.remove();
+    if (tbody.closest('#tbl-decisoes')) renumberDecisoes();
+    updateAndamentoCount();
+  };
+
+  // ── Iniciativas em Andamento (auto-computed) ──
+  function updateAndamentoCount() {
+    const tbl = document.getElementById('tbl-andamento');
+    if (!tbl) return;
+    let count = 0;
+    tbl.querySelectorAll('tbody tr').forEach(tr => {
+      const inputs = tr.querySelectorAll('input, select, textarea');
+      const hasData = Array.from(inputs).some(el => (el.value || '').trim() !== '' && el.value !== '0');
+      if (hasData) count++;
+    });
+    const el = document.getElementById('kpi-andamento-auto');
+    if (el) el.textContent = count;
+  }
+
+  document.getElementById('tbl-andamento').addEventListener('input', updateAndamentoCount);
+
+  // ── Roadmap Tipo toggle ──
+  window.onRoadmapTipoChange = function(sel) {
+    const tr = sel.closest('tr');
+    if (!tr) return;
+    const tipo = sel.value;
+    const c3 = tr.querySelector('.roadmap-c3');
+    const c4 = tr.querySelector('.roadmap-c4');
+    if (tipo === 'Projeto') {
+      if (c3) c3.placeholder = 'Ex.: 40%';
+      if (c4) c4.placeholder = 'Ex.: 65%';
+    } else {
+      if (c3) c3.placeholder = 'Ex.: 72';
+      if (c4) c4.placeholder = 'Ex.: 76';
+    }
+  };
+
+  window.addRoadmapRow = function() {
+    addRow('tbl-milestones');
+    const tbl = document.getElementById('tbl-milestones');
+    const lastRow = tbl.querySelector('tbody tr:last-child');
+    if (lastRow) {
+      const sel = lastRow.querySelector('select');
+      if (sel) onRoadmapTipoChange(sel);
+    }
+  };
+
+  // ── PPTX Generation (PptxGenJS) ──
+  const TR = { dark: '133C2C', mid: '1A5C3A', light: 'E8F0EB' };
+  const SEM = { green: '22C55E', amber: 'F59E0B', red: 'EF4444' };
+  const GR = { '50': 'F9FAFB', '200': 'E5E7EB', '500': '6B7280', '700': '374151', '900': '111827' };
+  const BLUE = '1E40AF';
+
+  const EMOJI_MAP = {
+    '\u{1F7E2}': { label: 'On Track', color: SEM.green },
+    '\u{1F7E1}': { label: 'Atencao', color: SEM.amber },
+    '\u{1F534}': { label: 'Critico',  color: SEM.red },
+    '\u2B1C':    { label: 'Futuro',   color: GR['200'] },
+    'On Track':  { label: 'On Track', color: SEM.green },
+    'Atencao':   { label: 'Atencao',  color: SEM.amber },
+    'Bloqueado': { label: 'Bloqueado',color: SEM.red },
+  };
+
+  function cv(row, i) { return (row && row[i]) ? (row[i].value || '') : ''; }
+
+  function rowEmpty(row) {
+    return row.every(c => (c.value || '').trim() === '' || c.value === '0');
+  }
+
+  function goodRows(rows) {
+    return (rows || []).filter(r => !rowEmpty(r));
+  }
+
+  function emojiLabel(raw) { return (EMOJI_MAP[raw] || {}).label || raw; }
+  function emojiColor(raw) { return (EMOJI_MAP[raw] || {}).color || GR['500']; }
+
+  function addSlideHeader(slide, label, title, subtitle) {
+    slide.addShape('rect', { x: 0, y: 0, w: '100%', h: 1.15, fill: { color: TR.dark } });
+    slide.addText([
+      { text: label.toUpperCase() + '\n', options: { fontSize: 8, bold: true, color: 'FFFFFF' } },
+      { text: title, options: { fontSize: 20, bold: true, color: 'FFFFFF' } },
+      ...(subtitle ? [{ text: '\n' + subtitle, options: { fontSize: 10, color: 'FFFFFF' } }] : [])
+    ], { x: 0.5, y: 0.15, w: 12, h: 0.95, valign: 'top' });
+  }
+
+  function addSlideFooter(slide) {
+    slide.addText('Thomson Reuters · Delivery Follow-up · Confidencial', {
+      x: 0, y: 7.05, w: '100%', h: 0.35, align: 'center', fontSize: 7, color: GR['500']
+    });
+  }
+
+  function tblOpts(x, y, w, colW, headerRow, dataRows) {
+    const rows = [headerRow, ...dataRows];
+    return {
+      x: x, y: y, w: w, colW: colW,
+      border: { pt: 0.5, color: GR['200'] },
+      rowH: 0.35,
+      autoPage: false,
+      rows: rows.map((row, ri) => row.map((cell, ci) => {
+        if (ri === 0) {
+          return { text: cell, options: { fill: { color: TR.dark }, color: 'FFFFFF', fontSize: 8, bold: true, valign: 'middle' } };
+        }
+        return { text: cell, options: { fill: { color: ri % 2 === 1 ? 'FFFFFF' : GR['50'] }, fontSize: 9, color: GR['900'], valign: 'middle' } };
+      }))
+    };
+  }
+
+  function applyStatusCell(tblRows, rowIdx, colIdx, raw) {
+    if (!tblRows[rowIdx] || !tblRows[rowIdx][colIdx]) return;
+    tblRows[rowIdx][colIdx] = {
+      text: emojiLabel(raw),
+      options: { ...tblRows[rowIdx][colIdx].options, fill: { color: emojiColor(raw) }, color: 'FFFFFF', bold: true, fontSize: 8 }
+    };
+  }
+
+  // ── Cover & Transition slide builders ──
+  const TR_RED = 'D14210';
+  const BEIGE = 'F5E6C8';
+  const BEIGE_LINE = 'C4A46A';
+
+  function buildSprintLabel(periodo, dataVal) {
+    const sm = (periodo || '').match(/sprint\s*(\d+)/i);
+    const num = sm ? sm[1].padStart(2, '0') : '';
+    let year = '';
+    if (dataVal) { try { year = new Date(dataVal).getFullYear(); } catch(e){} }
+    if (!year) { const ym = (periodo || '').match(/20\d{2}/); if (ym) year = ym[0]; }
+    return (year && num) ? year + '_S' + num : periodo;
+  }
+
+  function addCoverSlide(pptx, produto, periodo, dataVal) {
+    const s = pptx.addSlide();
+    s.background = { color: 'FFFFFF' };
+
+    const lines = [
+      { y: 0.6, x1: 2.5, x2: 13.4, dotX: 2.5 },
+      { y: 2.2, x1: -0.1, x2: 8.5,  dotX: 1.2 },
+      { y: 4.8, x1: -0.1, x2: 9.5,  dotX: 8.0 },
+    ];
+    lines.forEach(l => {
+      s.addShape('rect', { x: l.x1, y: l.y - 0.03, w: l.x2 - l.x1, h: 0.06, fill: { color: TR_RED } });
+      s.addShape('ellipse', { x: l.dotX - 0.12, y: l.y - 0.12, w: 0.24, h: 0.24, fill: { color: TR_RED } });
+    });
+
+    s.addText('Delivery Follow-up', {
+      x: 2.0, y: 2.7, w: 9, h: 1.0, fontSize: 40, fontFace: 'Arial',
+      color: GR['900'], bold: false
+    });
+
+    s.addText(produto, { x: 2.0, y: 3.6, w: 9, h: 0.4, fontSize: 14, color: GR['700'] });
+    s.addText(buildSprintLabel(periodo, dataVal), { x: 2.0, y: 3.95, w: 9, h: 0.35, fontSize: 14, color: GR['700'] });
+    s.addText(fmtDate(dataVal) || '', { x: 2.0, y: 5.2, w: 9, h: 0.35, fontSize: 14, color: GR['700'] });
+
+    s.addText('Thomson Reuters', {
+      x: 10.5, y: 6.7, w: 2.5, h: 0.4, align: 'right', fontSize: 10, color: GR['500']
+    });
+  }
+
+  function addTransitionSlide(pptx, title) {
+    const s = pptx.addSlide();
+    s.background = { color: BEIGE };
+
+    const arcs = [
+      { x: 3, y: -2, w: 8, h: 10 }, { x: 1, y: 0, w: 10, h: 9 },
+      { x: 5, y: -1, w: 6, h: 11 }, { x: -1, y: 1, w: 12, h: 7 },
+    ];
+    arcs.forEach(a => {
+      s.addShape('ellipse', {
+        x: a.x, y: a.y, w: a.w, h: a.h,
+        fill: { type: 'none' }, line: { color: BEIGE_LINE, pt: 1.2 }
+      });
+    });
+
+    const dots = [{ x: 1.5, y: 1.8 }, { x: 6.5, y: 0.8 }, { x: 10.5, y: 5.5 }];
+    dots.forEach(d => {
+      s.addShape('ellipse', { x: d.x, y: d.y, w: 0.35, h: 0.35, fill: { color: BEIGE_LINE } });
+    });
+
+    s.addText(title, {
+      x: 2, y: 2.5, w: 9, h: 2.5, fontSize: 44, fontFace: 'Arial',
+      bold: true, color: TR.dark, valign: 'middle'
+    });
+
+    s.addText('Thomson Reuters', {
+      x: 10.5, y: 6.7, w: 2.5, h: 0.4, align: 'right', fontSize: 10, color: GR['500']
+    });
+  }
+
+  const TY_BG = 'D8EDCC';
+  const TY_LINE = '8BB77A';
+  const TY_DOT = '7AAF68';
+
+  function addThankYouSlide(pptx) {
+    const s = pptx.addSlide();
+    s.background = { color: TY_BG };
+
+    const curves = [
+      { x: -3, y: -1, w: 12, h: 9 }, { x: 2, y: -3, w: 10, h: 12 },
+      { x: 5, y: 0, w: 9, h: 8 },
+    ];
+    curves.forEach(c => {
+      s.addShape('ellipse', {
+        x: c.x, y: c.y, w: c.w, h: c.h,
+        fill: { type: 'none' }, line: { color: TY_LINE, pt: 1.0 }
+      });
+    });
+
+    const lines = [
+      { x: -0.5, y: 0.5, w: 8, h: 0 },
+      { x: 1, y: 6.8, w: 10, h: 0 },
+      { x: 4, y: -0.2, w: 9, h: 0 },
+      { x: 6, y: 3.5, w: 7.5, h: 0 },
+    ];
+    lines.forEach(l => {
+      s.addShape('rect', {
+        x: l.x, y: l.y, w: l.w, h: 0.015,
+        fill: { color: TY_LINE }, line: { type: 'none' },
+        rotate: l.rot || 0
+      });
+    });
+
+    const diags = [
+      { x: -1, y: 2, w: 0.015, h: 8 }, { x: 3, y: -0.5, w: 0.015, h: 9 },
+      { x: 8, y: -1, w: 0.015, h: 10 }, { x: 11, y: 1, w: 0.015, h: 7 },
+    ];
+    diags.forEach(d => {
+      s.addShape('rect', {
+        x: d.x, y: d.y, w: d.w, h: d.h,
+        fill: { color: TY_LINE }, line: { type: 'none' },
+        rotate: 25
+      });
+    });
+
+    const dots = [{ x: 3.8, y: 0.2 }, { x: 0.5, y: 6.2 }, { x: 8.5, y: 4.8 }];
+    dots.forEach(d => {
+      s.addShape('ellipse', { x: d.x, y: d.y, w: 0.35, h: 0.35, fill: { color: TY_DOT } });
+    });
+
+    s.addText('Thank\nyou!', {
+      x: 0.8, y: 2.5, w: 5, h: 3.5, fontSize: 54, fontFace: 'Arial',
+      bold: true, color: TR.dark, valign: 'middle'
+    });
+
+    s.addText('Thomson Reuters', {
+      x: 10.5, y: 0.3, w: 2.5, h: 0.4, align: 'right', fontSize: 10, color: GR['500']
+    });
+  }
+
+  window.gerarPPTX = function() {
+    const data = serializeForm();
+    const meta = data.meta || {};
+    const produto = meta.produto || '[Produto]';
+    const periodo = meta.periodo || '[Periodo]';
+
+    const pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_WIDE';
+
+    // ── Slide: Capa ──
+    addCoverSlide(pptx, produto, periodo, meta.data);
+
+    // ── Slide: Recap & Issues & Action Plan ──
+    const pendencias = goodRows(data['tbl-pendencias']);
+    const riscos = goodRows(data['tbl-riscos']);
+    const hasPend = pendencias.length > 0;
+    const hasRiscos = riscos.length > 0;
+
+    if (hasPend || hasRiscos) {
+      let s = pptx.addSlide();
+      addSlideHeader(s, 'Delivery Follow-up',
+        'Recap & Issues & Action Plan',
+        produto + ' · ' + periodo);
+
+      let yy = 1.45;
+
+      if (hasPend) {
+        s.addText('PENDENCIAS DA ULTIMA REUNIAO', { x: 0.5, y: yy, w: 10, h: 0.3, fontSize: 9, bold: true, color: TR.mid });
+        yy += 0.35;
+        const hdr = ['Pendencia', 'Owner', 'Status', 'Observacao'];
+        const rows = pendencias.map(r => [cv(r, 0), cv(r, 1), emojiLabel(cv(r, 2)), cv(r, 3)]);
+        const t = tblOpts(0.5, yy, 12.3, [4.5, 1.8, 1.5, 4.5], hdr, rows);
+        pendencias.forEach((r, i) => applyStatusCell(t.rows, i + 1, 2, cv(r, 2)));
+        s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+        yy += 0.35 * (rows.length + 1) + 0.35;
+      }
+
+      if (hasRiscos) {
+        const riscosY = hasPend ? yy : 1.55;
+        s.addText('RISCOS E PLANO DE ACAO', { x: 0.5, y: riscosY, w: 10, h: 0.3, fontSize: 9, bold: true, color: SEM.red });
+        const tblY = riscosY + 0.35;
+        const hdr = ['Sev.', 'Risco', 'Area Afetada', 'Plano de Acao', 'Owner', 'Prazo'];
+        const rows = riscos.map(r => [emojiLabel(cv(r, 0)), cv(r, 1), cv(r, 2), cv(r, 3), cv(r, 4), fmtDate(cv(r, 5))]);
+        const t = tblOpts(0.5, tblY, 12.3, [1.3, 3.0, 2.0, 3.0, 1.5, 1.5], hdr, rows);
+        riscos.forEach((r, i) => applyStatusCell(t.rows, i + 1, 0, cv(r, 0)));
+        s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      }
+
+      addSlideFooter(s);
+    }
+
+    // ── Slide: Transicao Roadmap ──
+    addTransitionSlide(pptx, 'Roadmap');
+
+    // ── Slide 2: Dashboard ──
+    let s = pptx.addSlide();
+    addSlideHeader(s, 'Delivery Follow-up', '2. Dashboard Consolidado',
+      produto + ' · ' + periodo);
+
+    const andamentoCount = goodRows(data['tbl-andamento']).length;
+    const kpis = [
+      { key: 'kpi-assumidas', label: 'ENTREGAS ASSUMIDAS', color: BLUE },
+      { key: 'kpi-realizadas', label: 'ENTREGAS REALIZADAS', color: '166534' },
+      { key: '_andamento', label: 'INICIATIVAS EM ANDAMENTO', color: '6D28D9', value: String(andamentoCount) },
+      { key: 'kpi-bloqueadas', label: 'BLOQUEADAS', color: '991B1B' },
+      { key: 'kpi-atrasadas', label: 'ATRASADAS', color: '92400E' },
+    ];
+    const kpiW = 2.3;
+    const kpiGap = (12.3 - 5 * kpiW) / 4;
+    kpis.forEach((k, i) => {
+      const x = 0.5 + i * (kpiW + kpiGap);
+      s.addShape('rect', { x: x, y: 1.55, w: kpiW, h: 1.05, fill: { color: 'FFFFFF' }, line: { color: GR['200'], pt: 1 } });
+      s.addText([
+        { text: (k.value || data[k.key] || '0') + '\n', options: { fontSize: 30, bold: true, color: k.color } },
+        { text: k.label, options: { fontSize: 6.5, color: GR['500'] } }
+      ], { x: x, y: 1.6, w: kpiW, h: 0.95, align: 'center', valign: 'middle' });
+    });
+
+    const progs = [
+      { key: 'prog-conclusao', label: '% Conclusao' },
+      { key: 'prog-velocity', label: 'Velocity' },
+      { key: 'prog-backlog', label: 'Features no Backlog' },
+    ];
+    s.addText('PROGRESSO', { x: 0.7, y: 2.95, w: 10, h: 0.35, fontSize: 9, bold: true, color: TR.dark });
+    progs.forEach((p, i) => {
+      const x = 0.7 + i * 3.8;
+      s.addShape('rect', { x: x, y: 3.35, w: 3.6, h: 0.65, fill: { color: TR.light } });
+      s.addText([
+        { text: (data[p.key] || '\u2014') + '\n', options: { fontSize: 18, bold: true, color: TR.dark } },
+        { text: p.label, options: { fontSize: 8, color: GR['500'] } }
+      ], { x: x + 0.15, y: 3.4, w: 3.3, h: 0.55, valign: 'middle' });
+    });
+
+    // ── Frentes breakdown (bottom half) ──
+    const frentes = goodRows(data['tbl-frentes']);
+    if (frentes.length > 0) {
+      s.addText('VISÃO POR ÁREA — FEATURES', {
+        x: 0.5, y: 4.2, w: 10, h: 0.3, fontSize: 9, bold: true, color: TR.dark
+      });
+
+      const nf = Math.min(frentes.length, 6);
+      const fGap = 0.15;
+      const maxCW = 3.0;
+      let cW = (12.3 - (nf - 1) * fGap) / nf;
+      if (cW > maxCW) cW = maxCW;
+      const usedW = nf * cW + (nf - 1) * fGap;
+      const startX = 0.5 + (12.3 - usedW) / 2;
+      const cH = 2.3;
+      const cY = 4.55;
+
+      frentes.slice(0, 6).forEach((r, fi) => {
+        const nome = cv(r, 0) || 'Frente ' + (fi + 1);
+        const total = parseInt(cv(r, 1)) || 0;
+        const entregues = parseInt(cv(r, 2)) || 0;
+        const emAnd = parseInt(cv(r, 3)) || 0;
+        const atrasadas = parseInt(cv(r, 4)) || 0;
+        const meta = parseInt(cv(r, 5)) || 100;
+        const pct = total > 0 ? Math.round((entregues / total) * 100) : 0;
+        const gapPP = pct - meta;
+        const ringColor = pct >= meta * 0.9 ? '1E6091' : pct >= meta * 0.75 ? 'D97706' : 'DC2626';
+
+        const cx = startX + fi * (cW + fGap);
+
+        s.addShape('rect', {
+          x: cx, y: cY, w: cW, h: cH,
+          fill: { color: 'FFFFFF' }, line: { color: GR['200'], pt: 1 }, rectRadius: 0.04
+        });
+
+        s.addText(nome, {
+          x: cx + 0.12, y: cY + 0.08, w: cW * 0.55, h: 0.22,
+          fontSize: 10, bold: true, color: GR['900']
+        });
+        const badgeT = total + ' features';
+        const badgeW = Math.max(0.72, badgeT.length * 0.06 + 0.22);
+        s.addShape('rect', {
+          x: cx + cW - badgeW - 0.12, y: cY + 0.1, w: badgeW, h: 0.19,
+          fill: { color: ringColor }, rectRadius: 0.095
+        });
+        s.addText(badgeT, {
+          x: cx + cW - badgeW - 0.12, y: cY + 0.1, w: badgeW, h: 0.19,
+          align: 'center', fontSize: 7, bold: true, color: 'FFFFFF'
+        });
+
+        const ringSz = Math.min(0.9, cW * 0.32);
+        const rX = cx + 0.15;
+        const rY = cY + 0.42;
+
+        s.addChart(pptx.charts.DOUGHNUT, [{
+          name: 'Data', labels: ['Entregues', 'Restante'],
+          values: [pct || 0, (100 - pct) || 100]
+        }], {
+          x: rX, y: rY, w: ringSz, h: ringSz,
+          showTitle: false, showLegend: false,
+          showValue: false, showCatName: false, showSerName: false,
+          dataLabelPosition: 'none',
+          chartColors: [ringColor, 'E5E7EB'],
+          dataBorder: { pt: 0, color: 'FFFFFF' },
+          holeSize: 62
+        });
+
+        s.addText(pct + '%', {
+          x: rX, y: rY + ringSz * 0.2, w: ringSz, h: ringSz * 0.4,
+          align: 'center', fontSize: 13, bold: true, color: ringColor
+        });
+        s.addText('REAL', {
+          x: rX, y: rY + ringSz * 0.52, w: ringSz, h: 0.15,
+          align: 'center', fontSize: 5.5, color: GR['500']
+        });
+
+        const stX = cx + ringSz + 0.35;
+        const stW = cW - ringSz - 0.5;
+        const statsData = [
+          ['Entregues', entregues], ['Em andamento', emAnd],
+          ['Atrasadas', atrasadas], ['Total features', total]
+        ];
+        statsData.forEach((st, si) => {
+          const sy = cY + 0.48 + si * 0.27;
+          s.addText(st[0], {
+            x: stX, y: sy, w: stW - 0.35, h: 0.24,
+            fontSize: 7.5, color: GR['500'], valign: 'middle'
+          });
+          s.addText(String(st[1]), {
+            x: stX + stW - 0.45, y: sy, w: 0.45, h: 0.24,
+            fontSize: 8.5, bold: true, color: GR['900'], align: 'right', valign: 'middle'
+          });
+        });
+
+        s.addShape('line', {
+          x: cx + 0.1, y: cY + cH - 0.35, w: cW - 0.2, h: 0,
+          line: { color: GR['200'], pt: 0.5 }
+        });
+        s.addText('Ideal: ' + meta + '%', {
+          x: cx + 0.12, y: cY + cH - 0.3, w: cW * 0.5, h: 0.22,
+          fontSize: 7, color: GR['500']
+        });
+        const gapColor = gapPP >= -5 ? SEM.green : gapPP >= -15 ? SEM.amber : SEM.red;
+        s.addText(gapPP + 'pp', {
+          x: cx + cW * 0.5, y: cY + cH - 0.3, w: cW * 0.4, h: 0.22,
+          align: 'right', fontSize: 9, bold: true, color: gapColor
+        });
+      });
+    }
+
+    addSlideFooter(s);
+
+    // ── Slide 3: Entregas ──
+    s = pptx.addSlide();
+    addSlideHeader(s, 'Delivery Follow-up', '3. Principais Entregas do Periodo');
+    let yy = 1.45;
+
+    const concluidas = goodRows(data['tbl-concluidas']);
+    if (concluidas.length) {
+      s.addText('ENTREGAS CONCLUIDAS', { x: 0.5, y: yy, w: 10, h: 0.3, fontSize: 9, bold: true, color: SEM.green });
+      yy += 0.35;
+      const hdr = ['Frente', 'Entrega', 'Data'];
+      const rows = concluidas.map(r => [cv(r, 0), cv(r, 1), fmtDate(cv(r, 2))]);
+      const t = tblOpts(0.5, yy, 12.3, [2.5, 7.8, 2.0], hdr, rows);
+      s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      yy += 0.35 * (rows.length + 1) + 0.2;
+    }
+
+    const andamento = goodRows(data['tbl-andamento']);
+    if (andamento.length) {
+      s.addText('EM ANDAMENTO', { x: 0.5, y: yy, w: 10, h: 0.3, fontSize: 9, bold: true, color: SEM.amber });
+      yy += 0.35;
+      const hdr = ['Frente', 'Entrega', 'Previsto', 'Realizado', 'Target', 'Status'];
+      const rows = andamento.map(r => [cv(r, 0), cv(r, 1), cv(r, 2), cv(r, 3), fmtDate(cv(r, 4)), emojiLabel(cv(r, 5))]);
+      const t = tblOpts(0.5, yy, 12.3, [2.0, 4.0, 1.2, 1.2, 2.0, 1.9], hdr, rows);
+      andamento.forEach((r, i) => applyStatusCell(t.rows, i + 1, 5, cv(r, 5)));
+      s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      yy += 0.35 * (rows.length + 1) + 0.2;
+    }
+
+    const atencao = goodRows(data['tbl-atencao']);
+    if (atencao.length) {
+      s.addText('ITENS EM ATENCAO', { x: 0.5, y: yy, w: 10, h: 0.3, fontSize: 9, bold: true, color: SEM.red });
+      yy += 0.35;
+      const hdr = ['Frente', 'Item', 'Motivo', 'Dias Atraso'];
+      const rows = atencao.map(r => [cv(r, 0), cv(r, 1), cv(r, 2), cv(r, 3)]);
+      const t = tblOpts(0.5, yy, 12.3, [2.5, 4.3, 3.5, 2.0], hdr, rows);
+      s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+    }
+    addSlideFooter(s);
+
+    // ── Slide 4: Roadmap (split Outcomes / Projeto) ──
+    const milestones = goodRows(data['tbl-milestones']);
+    if (milestones.length) {
+      const outcomes = milestones.filter(r => cv(r, 0) !== 'Projeto');
+      const projetos = milestones.filter(r => cv(r, 0) === 'Projeto');
+
+      s = pptx.addSlide();
+      addSlideHeader(s, 'Delivery Follow-up', '4. Roadmap');
+      let ry = 1.45;
+
+      if (outcomes.length) {
+        s.addText('OUTCOMES', { x: 0.5, y: ry, w: 10, h: 0.3, fontSize: 9, bold: true, color: TR.mid });
+        ry += 0.35;
+        const hdr = ['Iniciativa / Frente', 'Resultado esperado', 'Baseline', 'Valor Atual', 'Previsao', 'Status'];
+        const rows = outcomes.map(r => [cv(r, 1), cv(r, 2), cv(r, 3), cv(r, 4), fmtDate(cv(r, 5)), emojiLabel(cv(r, 6))]);
+        const t = tblOpts(0.5, ry, 12.3, [2.5, 3.0, 1.5, 1.5, 1.8, 2.0], hdr, rows);
+        outcomes.forEach((r, i) => applyStatusCell(t.rows, i + 1, 5, cv(r, 6)));
+        s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+        ry += 0.35 * (rows.length + 1) + 0.4;
+      }
+
+      if (projetos.length) {
+        s.addText('PROJETO', { x: 0.5, y: ry, w: 10, h: 0.3, fontSize: 9, bold: true, color: BLUE });
+        ry += 0.35;
+        const hdr = ['Iniciativa / Frente', 'Resultado esperado', 'Previsto', 'Realizado', 'Previsao', 'Status'];
+        const rows = projetos.map(r => [cv(r, 1), cv(r, 2), cv(r, 3), cv(r, 4), fmtDate(cv(r, 5)), emojiLabel(cv(r, 6))]);
+        const t = tblOpts(0.5, ry, 12.3, [2.5, 3.0, 1.5, 1.5, 1.8, 2.0], hdr, rows);
+        projetos.forEach((r, i) => applyStatusCell(t.rows, i + 1, 5, cv(r, 6)));
+        s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      }
+
+      addSlideFooter(s);
+    }
+
+    // ── Slide 5: Enablers ──
+    const enablers = goodRows(data['tbl-enablers']);
+    if (enablers.length) {
+      s = pptx.addSlide();
+      addSlideHeader(s, 'Delivery Follow-up', '5. Enablers');
+      const hdr = ['Iniciativa', 'Status', 'Progresso', 'Previsao', 'Owner', 'Observacoes'];
+      const rows = enablers.map(r => {
+        const prog = cv(r, 2);
+        return [cv(r, 0), cv(r, 1), prog ? prog + '%' : '\u2014', fmtDate(cv(r, 3)), cv(r, 4), cv(r, 5)];
+      });
+      const t = tblOpts(0.5, 1.55, 12.3, [3.0, 1.5, 1.5, 1.8, 2.0, 2.5], hdr, rows);
+      enablers.forEach((r, i) => {
+        const raw = cv(r, 1);
+        if (EMOJI_MAP[raw]) applyStatusCell(t.rows, i + 1, 1, raw);
+      });
+      s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      addSlideFooter(s);
+    }
+
+    // ── Slide: Decisoes (se houver) ──
+    const decisoes = goodRows(data['tbl-decisoes']);
+    if (decisoes.length) {
+      s = pptx.addSlide();
+      addSlideHeader(s, 'Delivery Follow-up', 'Decisoes Necessarias');
+      s.addText('Itens que requerem decisao da lideranca neste follow-up.', {
+        x: 0.5, y: 1.35, w: 10, h: 0.3, fontSize: 10, color: GR['500']
+      });
+      const hdr = ['#', 'Decisao', 'Contexto', 'Opcoes', 'Recomendacao', 'Prazo'];
+      const rows = decisoes.map((r, i) => [String(i + 1), cv(r, 0), cv(r, 1), cv(r, 2), cv(r, 3), fmtDate(cv(r, 4))]);
+      const t = tblOpts(0.5, 1.75, 12.3, [0.5, 2.8, 2.8, 2.2, 2.5, 1.5], hdr, rows);
+      rows.forEach((_, i) => {
+        const ri = i + 1;
+        if (t.rows[ri] && t.rows[ri][0]) {
+          t.rows[ri][0] = { text: t.rows[ri][0].text, options: { ...t.rows[ri][0].options, fill: { color: SEM.amber }, color: 'FFFFFF', bold: true, align: 'center' } };
+        }
+        if (t.rows[ri] && t.rows[ri][4]) {
+          t.rows[ri][4] = { text: t.rows[ri][4].text, options: { ...t.rows[ri][4].options, bold: true } };
+        }
+      });
+      s.addTable(t.rows, { x: t.x, y: t.y, w: t.w, colW: t.colW, border: t.border, rowH: t.rowH });
+      addSlideFooter(s);
+    }
+
+    // ── Section: Service Level ──
+    addTransitionSlide(pptx, 'Service Level');
+    pptx.addSlide();
+
+    // ── Section: Iniciativas de IA ──
+    addTransitionSlide(pptx, 'Iniciativas\nde IA');
+    pptx.addSlide();
+
+    // ── Section: Financeiro ──
+    addTransitionSlide(pptx, 'Financeiro');
+    pptx.addSlide();
+
+    // ── Thank you! ──
+    addThankYouSlide(pptx);
+
+    const fname = 'delivery-followup_' + slugify(produto) + '_' + slugify(periodo) + '.pptx';
+    pptx.writeFile({ fileName: fname }).then(() => {
+      toast('PPTX gerado: ' + fname, 'success');
+    });
+  };
+
+  // ── Init ──
+  atualizarLabel();
+
+})();
+</script>
+
+</body>
+</html>

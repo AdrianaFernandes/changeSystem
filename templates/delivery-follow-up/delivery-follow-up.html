@@ -77,51 +77,111 @@
 
   #importInput { display: none; }
 
-  /* ── Campos de Seleção ── */
-  #f-periodo {
+  /* ── Iteration Selector ── */
+  .iteration-selector {
+    position: relative;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
     background: var(--white);
-    scrollbar-width: thin;
-    scrollbar-color: var(--gray-300) var(--gray-100);
   }
 
-  #f-periodo:focus {
-    outline: none;
-    border-color: var(--tr-green-mid);
-    box-shadow: 0 0 0 2px rgba(26,92,58,0.12);
-  }
-
-  #f-periodo::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #f-periodo::-webkit-scrollbar-track {
-    background: var(--gray-100);
+  .iteration-header {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    color: var(--gray-700);
     border-radius: 4px;
   }
 
-  #f-periodo::-webkit-scrollbar-thumb {
-    background: var(--gray-300);
-    border-radius: 4px;
+  .iteration-header:hover {
+    background: var(--gray-50);
   }
 
-  #f-periodo::-webkit-scrollbar-thumb:hover {
-    background: var(--gray-400);
+  .dropdown-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
   }
 
-  #f-periodo option {
-    padding: 6px 8px;
-    border-radius: 2px;
-    margin: 1px;
+  .iteration-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
   }
 
-  #f-periodo option:checked {
-    background: var(--tr-green-light) !important;
-    color: var(--tr-green-dark) !important;
+  .iteration-search {
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .iteration-actions {
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    gap: 12px;
+  }
+
+  .iteration-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+
+  .iteration-group-header {
     font-weight: 600;
+    color: var(--tr-green-dark);
+    padding: 8px 12px;
+    background: var(--gray-50);
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--gray-100);
   }
 
-  #periodo-stats {
-    border-left: 3px solid var(--tr-green-mid);
+  .iteration-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .iteration-item.child {
+    padding-left: 32px;
+    color: var(--gray-600);
+  }
+
+  .iteration-item:hover {
+    background: var(--gray-50);
+  }
+
+  .iteration-item input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: var(--tr-green-mid);
+  }
+
+  .iteration-item label {
+    flex: 1;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .iteration-children {
+    display: none;
+  }
+
+  .iteration-item.expanded .iteration-children {
+    display: block;
+  }
+
+  .dropdown-open .dropdown-arrow {
+    transform: rotate(180deg);
   }
 
   /* ── Modal ── */
@@ -253,97 +313,212 @@
         </div>
       </div>
       <div class="field-group">
-        <label>Sprint / Período <small style="color: var(--gray-500);">(Ctrl+Click para múltiplas seleções)</small></label>
-        <select id="f-periodo" multiple onchange="atualizarPeriodos(this)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.88rem; min-height: 120px; max-height: 200px; overflow-y: auto;">
-          <option value="">Selecione um sprint/período...</option>
-          <!-- 2026 Sprints - Q1 -->
-          <option value="Sprint 1 - Q1 2026">Sprint 1 - Q1 2026</option>
-          <option value="Sprint 2 - Q1 2026">Sprint 2 - Q1 2026</option>
-          <option value="Sprint 3 - Q1 2026">Sprint 3 - Q1 2026</option>
-          <option value="Sprint 4 - Q1 2026">Sprint 4 - Q1 2026</option>
-          <option value="Sprint 5 - Q1 2026">Sprint 5 - Q1 2026</option>
-          <option value="Sprint 6 - Q1 2026">Sprint 6 - Q1 2026</option>
-          <!-- 2026 Sprints - Q2 -->
-          <option value="Sprint 7 - Q2 2026">Sprint 7 - Q2 2026</option>
-          <option value="Sprint 8 - Q2 2026">Sprint 8 - Q2 2026</option>
-          <option value="Sprint 9 - Q2 2026">Sprint 9 - Q2 2026</option>
-          <option value="Sprint 10 - Q2 2026">Sprint 10 - Q2 2026</option>
-          <option value="Sprint 11 - Q2 2026">Sprint 11 - Q2 2026</option>
-          <option value="Sprint 12 - Q2 2026">Sprint 12 - Q2 2026</option>
-          <option value="Sprint 13 - Q2 2026">Sprint 13 - Q2 2026</option>
-          <option value="Sprint 14 - Q2 2026">Sprint 14 - Q2 2026</option>
-          <option value="Sprint 15 - Q2 2026">Sprint 15 - Q2 2026</option>
-          <option value="Sprint 16 - Q2 2026">Sprint 16 - Q2 2026</option>
-          <option value="Sprint 17 - Q2 2026">Sprint 17 - Q2 2026</option>
-          <option value="Sprint 18 - Q2 2026">Sprint 18 - Q2 2026</option>
-          <!-- 2026 Sprints - Q3 -->
-          <option value="Sprint 19 - Q3 2026">Sprint 19 - Q3 2026</option>
-          <option value="Sprint 20 - Q3 2026">Sprint 20 - Q3 2026</option>
-          <option value="Sprint 21 - Q3 2026">Sprint 21 - Q3 2026</option>
-          <option value="Sprint 22 - Q3 2026">Sprint 22 - Q3 2026</option>
-          <option value="Sprint 23 - Q3 2026">Sprint 23 - Q3 2026</option>
-          <option value="Sprint 24 - Q3 2026">Sprint 24 - Q3 2026</option>
-          <option value="Sprint 25 - Q3 2026">Sprint 25 - Q3 2026</option>
-          <option value="Sprint 26 - Q3 2026">Sprint 26 - Q3 2026</option>
-          <!-- 2026 Sprints - Q4 -->
-          <option value="Sprint 27 - Q4 2026">Sprint 27 - Q4 2026</option>
-          <option value="Sprint 28 - Q4 2026">Sprint 28 - Q4 2026</option>
-          <option value="Sprint 29 - Q4 2026">Sprint 29 - Q4 2026</option>
-          <option value="Sprint 30 - Q4 2026">Sprint 30 - Q4 2026</option>
-          <option value="Sprint 31 - Q4 2026">Sprint 31 - Q4 2026</option>
-          <option value="Sprint 32 - Q4 2026">Sprint 32 - Q4 2026</option>
-          <option value="Sprint 33 - Q4 2026">Sprint 33 - Q4 2026</option>
-          <option value="Sprint 34 - Q4 2026">Sprint 34 - Q4 2026</option>
-          <!-- 2027 Sprints - Q1 -->
-          <option value="Sprint 1 - Q1 2027">Sprint 1 - Q1 2027</option>
-          <option value="Sprint 2 - Q1 2027">Sprint 2 - Q1 2027</option>
-          <option value="Sprint 3 - Q1 2027">Sprint 3 - Q1 2027</option>
-          <option value="Sprint 4 - Q1 2027">Sprint 4 - Q1 2027</option>
-          <option value="Sprint 5 - Q1 2027">Sprint 5 - Q1 2027</option>
-          <option value="Sprint 6 - Q1 2027">Sprint 6 - Q1 2027</option>
-          <option value="Sprint 7 - Q1 2027">Sprint 7 - Q1 2027</option>
-          <option value="Sprint 8 - Q1 2027">Sprint 8 - Q1 2027</option>
-          <!-- 2027 Sprints - Q2 -->
-          <option value="Sprint 9 - Q2 2027">Sprint 9 - Q2 2027</option>
-          <option value="Sprint 10 - Q2 2027">Sprint 10 - Q2 2027</option>
-          <option value="Sprint 11 - Q2 2027">Sprint 11 - Q2 2027</option>
-          <option value="Sprint 12 - Q2 2027">Sprint 12 - Q2 2027</option>
-          <option value="Sprint 13 - Q2 2027">Sprint 13 - Q2 2027</option>
-          <option value="Sprint 14 - Q2 2027">Sprint 14 - Q2 2027</option>
-          <option value="Sprint 15 - Q2 2027">Sprint 15 - Q2 2027</option>
-          <option value="Sprint 16 - Q2 2027">Sprint 16 - Q2 2027</option>
-          <option value="Sprint 17 - Q2 2027">Sprint 17 - Q2 2027</option>
-          <option value="Sprint 18 - Q2 2027">Sprint 18 - Q2 2027</option>
-          <!-- 2027 Sprints - Q3 -->
-          <option value="Sprint 19 - Q3 2027">Sprint 19 - Q3 2027</option>
-          <option value="Sprint 20 - Q3 2027">Sprint 20 - Q3 2027</option>
-          <option value="Sprint 21 - Q3 2027">Sprint 21 - Q3 2027</option>
-          <option value="Sprint 22 - Q3 2027">Sprint 22 - Q3 2027</option>
-          <option value="Sprint 23 - Q3 2027">Sprint 23 - Q3 2027</option>
-          <option value="Sprint 24 - Q3 2027">Sprint 24 - Q3 2027</option>
-          <option value="Sprint 25 - Q3 2027">Sprint 25 - Q3 2027</option>
-          <option value="Sprint 26 - Q3 2027">Sprint 26 - Q3 2027</option>
-          <!-- 2027 Sprints - Q4 -->
-          <option value="Sprint 27 - Q4 2027">Sprint 27 - Q4 2027</option>
-          <option value="Sprint 28 - Q4 2027">Sprint 28 - Q4 2027</option>
-          <option value="Sprint 29 - Q4 2027">Sprint 29 - Q4 2027</option>
-          <option value="Sprint 30 - Q4 2027">Sprint 30 - Q4 2027</option>
-          <option value="Sprint 31 - Q4 2027">Sprint 31 - Q4 2027</option>
-          <option value="Sprint 32 - Q4 2027">Sprint 32 - Q4 2027</option>
-          <option value="Sprint 33 - Q4 2027">Sprint 33 - Q4 2027</option>
-          <option value="Sprint 34 - Q4 2027">Sprint 34 - Q4 2027</option>
-          <!-- Quarters -->
-          <option value="Q1 2026">Q1 2026</option>
-          <option value="Q2 2026">Q2 2026</option>
-          <option value="Q3 2026">Q3 2026</option>
-          <option value="Q4 2026">Q4 2026</option>
-          <option value="Q1 2027">Q1 2027</option>
-          <option value="Q2 2027">Q2 2027</option>
-          <option value="Q3 2027">Q3 2027</option>
-          <option value="Q4 2027">Q4 2027</option>
-        </select>
-        <div id="periodo-stats" style="display: none; margin-top: 6px; padding: 6px 10px; background: var(--gray-50); border-radius: 4px; font-size: 0.75rem; color: var(--gray-600); border-left: 3px solid var(--tr-green-mid);">
-          📅 <span id="selected-count">0</span> sprint(s) selecionada(s): <span id="selected-periods">Nenhuma selecionada</span>
+        <label>Sprint / Período</label>
+        <div class="iteration-selector">
+          <div class="iteration-header" onclick="toggleIterationDropdown()">
+            <span id="iteration-summary">0 iteration(s) selecionada(s)</span>
+            <span class="dropdown-arrow">▲</span>
+          </div>
+          <div id="iteration-dropdown" class="iteration-dropdown" style="display: none;">
+            <div class="iteration-search">
+              <input type="text" placeholder="Buscar Iteration Path..." onkeyup="filterIterations(this.value)" style="width: 100%; padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 0.85rem;">
+            </div>
+            <div class="iteration-actions">
+              <button type="button" onclick="selectAllIterations()" style="background: none; border: none; color: #0078d4; font-size: 0.85rem; cursor: pointer; padding: 4px 8px;">Selecionar Todas</button>
+              <button type="button" onclick="clearAllIterations()" style="background: none; border: none; color: #0078d4; font-size: 0.85rem; cursor: pointer; padding: 4px 8px;">Limpar Seleção</button>
+            </div>
+            <div class="iteration-list" id="iteration-list">
+              <!-- 2026 -->
+              <div class="iteration-group">
+                <div class="iteration-group-header">2026</div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q1-2026" value="Q1 2026" onchange="updateIterationSelection()">
+                  <label for="q1-2026">Q1 2026</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-1-2026" value="Sprint 1 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-1-2026">Sprint 1 - Q1 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-2-2026" value="Sprint 2 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-2-2026">Sprint 2 - Q1 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-3-2026" value="Sprint 3 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-3-2026">Sprint 3 - Q1 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-4-2026" value="Sprint 4 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-4-2026">Sprint 4 - Q1 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-5-2026" value="Sprint 5 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-5-2026">Sprint 5 - Q1 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-6-2026" value="Sprint 6 - Q1 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-6-2026">Sprint 6 - Q1 2026</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q2-2026" value="Q2 2026" onchange="updateIterationSelection()">
+                  <label for="q2-2026">Q2 2026</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-7-2026" value="Sprint 7 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-7-2026">Sprint 7 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-8-2026" value="Sprint 8 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-8-2026">Sprint 8 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-9-2026" value="Sprint 9 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-9-2026">Sprint 9 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-10-2026" value="Sprint 10 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-10-2026">Sprint 10 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-11-2026" value="Sprint 11 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-11-2026">Sprint 11 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-12-2026" value="Sprint 12 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-12-2026">Sprint 12 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-13-2026" value="Sprint 13 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-13-2026">Sprint 13 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-14-2026" value="Sprint 14 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-14-2026">Sprint 14 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-15-2026" value="Sprint 15 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-15-2026">Sprint 15 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-16-2026" value="Sprint 16 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-16-2026">Sprint 16 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-17-2026" value="Sprint 17 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-17-2026">Sprint 17 - Q2 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-18-2026" value="Sprint 18 - Q2 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-18-2026">Sprint 18 - Q2 2026</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q3-2026" value="Q3 2026" onchange="updateIterationSelection()">
+                  <label for="q3-2026">Q3 2026</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-19-2026" value="Sprint 19 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-19-2026">Sprint 19 - Q3 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-20-2026" value="Sprint 20 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-20-2026">Sprint 20 - Q3 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-21-2026" value="Sprint 21 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-21-2026">Sprint 21 - Q3 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-22-2026" value="Sprint 22 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-22-2026">Sprint 22 - Q3 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-23-2026" value="Sprint 23 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-23-2026">Sprint 23 - Q3 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-24-2026" value="Sprint 24 - Q3 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-24-2026">Sprint 24 - Q3 2026</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q4-2026" value="Q4 2026" onchange="updateIterationSelection()">
+                  <label for="q4-2026">Q4 2026</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-25-2026" value="Sprint 25 - Q4 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-25-2026">Sprint 25 - Q4 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-26-2026" value="Sprint 26 - Q4 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-26-2026">Sprint 26 - Q4 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-27-2026" value="Sprint 27 - Q4 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-27-2026">Sprint 27 - Q4 2026</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-28-2026" value="Sprint 28 - Q4 2026" onchange="updateIterationSelection()">
+                      <label for="sprint-28-2026">Sprint 28 - Q4 2026</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2027 -->
+              <div class="iteration-group">
+                <div class="iteration-group-header">2027</div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q1-2027" value="Q1 2027" onchange="updateIterationSelection()">
+                  <label for="q1-2027">Q1 2027</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-1-2027" value="Sprint 1 - Q1 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-1-2027">Sprint 1 - Q1 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-2-2027" value="Sprint 2 - Q1 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-2-2027">Sprint 2 - Q1 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-3-2027" value="Sprint 3 - Q1 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-3-2027">Sprint 3 - Q1 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-4-2027" value="Sprint 4 - Q1 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-4-2027">Sprint 4 - Q1 2027</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="iteration-item">
+                  <input type="checkbox" id="q2-2027" value="Q2 2027" onchange="updateIterationSelection()">
+                  <label for="q2-2027">Q2 2027</label>
+                  <div class="iteration-children">
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-5-2027" value="Sprint 5 - Q2 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-5-2027">Sprint 5 - Q2 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-6-2027" value="Sprint 6 - Q2 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-6-2027">Sprint 6 - Q2 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-7-2027" value="Sprint 7 - Q2 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-7-2027">Sprint 7 - Q2 2027</label>
+                    </div>
+                    <div class="iteration-item child">
+                      <input type="checkbox" id="sprint-8-2027" value="Sprint 8 - Q2 2027" onchange="updateIterationSelection()">
+                      <label for="sprint-8-2027">Sprint 8 - Q2 2027</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="field-group"><label>Data do Follow-up</label><input type="date" id="f-data"></div>
@@ -571,54 +746,100 @@
   };
 
   // ── Label ──
+  // ── Funções da Interface de Iterações ──
+  window.toggleIterationDropdown = function() {
+    const dropdown = document.getElementById('iteration-dropdown');
+    const header = dropdown.previousElementSibling;
+    const arrow = header.querySelector('.dropdown-arrow');
+
+    if (dropdown.style.display === 'none') {
+      dropdown.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      dropdown.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  };
+
+  window.updateIterationSelection = function() {
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]:checked');
+    const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+    const summary = document.getElementById('iteration-summary');
+
+    summary.textContent = `${selectedValues.length} iteration(s) selecionada(s)`;
+
+    // Atualizar label principal
+    atualizarLabel();
+
+    // Toast notification
+    if (selectedValues.length === 1) {
+      toast(`📅 Iteration selecionada: ${selectedValues[0]}`, 'success');
+    } else if (selectedValues.length > 1) {
+      toast(`📅 ${selectedValues.length} iterations selecionadas`, 'info');
+    }
+  };
+
+  window.selectAllIterations = function() {
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = true);
+    updateIterationSelection();
+  };
+
+  window.clearAllIterations = function() {
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = false);
+    updateIterationSelection();
+  };
+
+  window.filterIterations = function(searchTerm) {
+    const items = document.querySelectorAll('.iteration-item');
+    const term = searchTerm.toLowerCase();
+
+    items.forEach(item => {
+      const label = item.querySelector('label');
+      if (label) {
+        const text = label.textContent.toLowerCase();
+        const shouldShow = text.includes(term) || term === '';
+        item.style.display = shouldShow ? 'flex' : 'none';
+      }
+    });
+  };
+
   window.atualizarLabel = function() {
     const produto = document.getElementById('f-produto').value.trim();
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]:checked');
+    const selectedValues = Array.from(checkboxes).map(cb => cb.value);
 
     let periodoText = '';
-    if (selectedPeriods.length === 1) {
-      periodoText = selectedPeriods[0];
-    } else if (selectedPeriods.length === 2) {
-      periodoText = selectedPeriods.join(' + ');
-    } else if (selectedPeriods.length > 2) {
-      periodoText = `${selectedPeriods.length} sprints selecionadas`;
+    if (selectedValues.length === 1) {
+      periodoText = selectedValues[0];
+    } else if (selectedValues.length === 2) {
+      periodoText = selectedValues.join(' + ');
+    } else if (selectedValues.length > 2) {
+      periodoText = `${selectedValues.length} iterations selecionadas`;
     }
 
     const label = document.getElementById('versionLabel');
     label.textContent = (produto && periodoText) ? produto + ' · ' + periodoText : 'Preencha Produto e Período';
   };
 
-  window.atualizarPeriodos = function(selectElement) {
-    const statsDiv = document.getElementById('periodo-stats');
-    const countSpan = document.getElementById('selected-count');
-    const periodsSpan = document.getElementById('selected-periods');
-
-    const selectedOptions = Array.from(selectElement.selectedOptions);
-    const selectedValues = selectedOptions.map(opt => opt.value);
-
-    countSpan.textContent = selectedOptions.length;
-
-    if (selectedOptions.length === 0) {
-      periodsSpan.textContent = 'Nenhuma sprint selecionada';
-      statsDiv.style.display = 'none';
-    } else if (selectedOptions.length === 1) {
-      periodsSpan.textContent = selectedValues[0];
-      statsDiv.style.display = 'block';
-      toast(`📅 Sprint selecionada: ${selectedValues[0]}`, 'success');
-    } else if (selectedOptions.length <= 3) {
-      periodsSpan.textContent = selectedValues.join(', ');
-      statsDiv.style.display = 'block';
-      toast(`📅 ${selectedOptions.length} sprints selecionadas`, 'info');
-    } else {
-      periodsSpan.textContent = selectedValues.slice(0, 2).join(', ') + ` e mais ${selectedOptions.length - 2}`;
-      statsDiv.style.display = 'block';
-      toast(`📅 ${selectedOptions.length} sprints selecionadas para análise consolidada`, 'info');
-    }
-
-    // Atualizar label
-    atualizarLabel();
+  // Função para compatibilidade (manter por enquanto)
+  window.atualizarPeriodos = function() {
+    updateIterationSelection();
   };
+
+  // Fechar dropdown quando clicar fora
+  document.addEventListener('click', function(event) {
+    const selector = document.querySelector('.iteration-selector');
+    if (selector && !selector.contains(event.target)) {
+      const dropdown = document.getElementById('iteration-dropdown');
+      const arrow = document.querySelector('.dropdown-arrow');
+      if (dropdown && dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+  });
 
   window.atualizarProduto = function(selectElement) {
     const statsDiv = document.getElementById('produto-stats');
@@ -676,12 +897,12 @@
 
   function getStorageKey() {
     const produto = document.getElementById('f-produto').value.trim();
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]:checked');
+    const selectedPeriods = Array.from(checkboxes).map(cb => cb.value);
 
     if (!produto || selectedPeriods.length === 0) return null;
 
-    // Usa a primeira sprint selecionada para a chave de storage
+    // Usa a primeira iteration selecionada para a chave de storage
     const periodoKey = selectedPeriods[0];
     return STORAGE_PREFIX + produto.toLowerCase().replace(/\s+/g, '-') + '_' + periodoKey.toLowerCase().replace(/\s+/g, '-');
   }
@@ -698,15 +919,15 @@
   // ── Serialize / Deserialize ──
   function serializeForm() {
     const data = {};
-    const periodoSelect = document.getElementById('f-periodo');
-    const selectedPeriods = Array.from(periodoSelect.selectedOptions).map(opt => opt.value);
+    const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]:checked');
+    const selectedPeriods = Array.from(checkboxes).map(cb => cb.value);
 
     data.meta = {
       produto: document.getElementById('f-produto').value,
       periodo: selectedPeriods,
       periodoDisplay: selectedPeriods.length === 1 ? selectedPeriods[0] :
                      selectedPeriods.length === 2 ? selectedPeriods.join(' + ') :
-                     `${selectedPeriods.length} sprints selecionadas`,
+                     `${selectedPeriods.length} iterations selecionadas`,
       data: document.getElementById('f-data').value,
       responsavel: document.getElementById('f-responsavel').value
     };
@@ -742,34 +963,33 @@
         atualizarProduto(produtoSelect);
       }
 
-      // Restaurar seleções múltiplas de período
-      const periodoSelect = document.getElementById('f-periodo');
+      // Restaurar seleções múltiplas de iterations
       const savedPeriodos = data.meta.periodo || [];
+      const checkboxes = document.querySelectorAll('#iteration-list input[type="checkbox"]');
 
       // Limpar seleções existentes
-      Array.from(periodoSelect.options).forEach(option => {
-        option.selected = false;
-      });
+      checkboxes.forEach(cb => cb.checked = false);
 
       // Restaurar seleções
       if (Array.isArray(savedPeriodos)) {
         savedPeriodos.forEach(periodo => {
-          const option = Array.from(periodoSelect.options).find(opt => opt.value === periodo);
-          if (option) {
-            option.selected = true;
+          const checkbox = Array.from(checkboxes).find(cb => cb.value === periodo);
+          if (checkbox) {
+            checkbox.checked = true;
           }
         });
       } else if (savedPeriodos) {
         // Compatibilidade com formato antigo (string simples)
-        const option = Array.from(periodoSelect.options).find(opt => opt.value === savedPeriodos);
-        if (option) {
-          option.selected = true;
+        const checkbox = Array.from(checkboxes).find(cb => cb.value === savedPeriodos);
+        if (checkbox) {
+          checkbox.checked = true;
         }
       }
 
       // Disparar atualização
-      if (periodoSelect.selectedOptions.length > 0) {
-        atualizarPeriodos(periodoSelect);
+      const checkedBoxes = document.querySelectorAll('#iteration-list input[type="checkbox"]:checked');
+      if (checkedBoxes.length > 0) {
+        updateIterationSelection();
       }
       document.getElementById('f-data').value = data.meta.data || '';
       document.getElementById('f-responsavel').value = data.meta.responsavel || '';

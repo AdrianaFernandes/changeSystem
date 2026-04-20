@@ -5060,14 +5060,27 @@
       throw new Error('Configurações do Azure DevOps não encontradas. Verifique o token PAT.');
     }
 
-    var url = `${config.baseUrl}/${projeto}/_apis/wit/wiql?api-version=7.0`;
+    // URL CORRETA para WIQL queries com LIMITE via parâmetro $top
+    var url = `${config.baseUrl}/_apis/wit/wiql?$top=1000&api-version=7.0`;
 
     var requestBody = {
       query: wiqlQuery
     };
 
-    console.log('📝 WIQL Query:', wiqlQuery);
+    console.log('📝 WIQL Query enviada (RAW):', wiqlQuery);
+    console.log('📝 WIQL Query (length):', wiqlQuery.length);
+    console.log('📝 WIQL contém FROM?', wiqlQuery.includes('FROM'));
+    console.log('📝 WIQL contém workitems?', wiqlQuery.includes('workitems'));
     console.log('🌐 URL:', url);
+    console.log('📦 Request body:', JSON.stringify(requestBody, null, 2));
+
+    // DEBUG: Verificar se query está completa
+    if (!wiqlQuery || wiqlQuery.trim().length === 0) {
+      throw new Error('Query WIQL está vazia!');
+    }
+    if (!wiqlQuery.includes('FROM workitems')) {
+      throw new Error('Query WIQL não contém FROM workitems!');
+    }
 
     var response = await fetch(url, {
       method: 'POST',
@@ -5079,7 +5092,16 @@
       body: JSON.stringify(requestBody)
     });
 
+    console.log('📡 Response status:', response.status, response.statusText);
+
     if (!response.ok) {
+      // Tentar ler o corpo da resposta para ver detalhes do erro
+      try {
+        var errorBody = await response.text();
+        console.error('❌ Erro detalhado da API:', errorBody);
+      } catch (e) {
+        console.error('❌ Não foi possível ler erro da API');
+      }
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
@@ -5101,74 +5123,125 @@
     console.log('🎯 CONSTRUINDO QUERY DINÂMICA baseada nas suas seleções:');
     console.log('📊 Filtros recebidos:', filtros);
 
-    var whereConditions = [];
+    // 1. PROJETO (sempre obrigatório)
+    var wherePrincipal = `[System.TeamProject] = '${filtros.projeto}'`;
 
-    // 1. PROJETO
-    whereConditions.push(`[System.TeamProject] = '${filtros.projeto}'`);
+    // 2. Condições internas (dentro dos parênteses)
+    var condicoesInternas = [];
 
-    // 2. AREA PATHS - usar as selecionadas pelo usuário
+    // AREA PATHS
     if (filtros.areaPaths && filtros.areaPaths.length > 0) {
-      var areaConditions = filtros.areaPaths.map(path => `[System.AreaPath] = '${path}'`);
-      whereConditions.push(`(${areaConditions.join(' OR ')})`);
-      console.log(`✅ Area Paths: ${filtros.areaPaths.length} selecionadas`);
+      condicoesInternas.push(`[System.AreaPath] = '${filtros.areaPaths[0]}'`);
+      console.log(`✅ Area Path: ${filtros.areaPaths[0]}`);
     }
 
-    // 3. ITERATION PATHS - usar as selecionadas pelo usuário
+    // ITERATION PATH OR TARGET DATE (usando OR como você mostrou)
+    var periodoCondicao = '';
     if (filtros.tipoFiltro === 'iteration-path' && filtros.iterationPaths && filtros.iterationPaths.length > 0) {
-      var iterationConditions = filtros.iterationPaths.map(path => `[System.IterationPath] = '${path}'`);
-      whereConditions.push(`(${iterationConditions.join(' OR ')})`);
-      console.log(`✅ Iteration Paths: ${filtros.iterationPaths.length} selecionadas`);
+      periodoCondicao = `[System.IterationPath] = '${filtros.iterationPaths[0]}'`;
+      console.log(`✅ Iteration Path: ${filtros.iterationPaths[0]}`);
     } else if (filtros.tipoFiltro === 'target-date' && filtros.dataInicial && filtros.dataFinal) {
-      whereConditions.push(`[Microsoft.VSTS.Scheduling.TargetDate] >= '${filtros.dataInicial}'`);
-      whereConditions.push(`[Microsoft.VSTS.Scheduling.TargetDate] <= '${filtros.dataFinal}'`);
+      periodoCondicao = `[System.targetdate] >= '${filtros.dataInicial}' AND [System.targetdate] <= '${filtros.dataFinal}'`;
       console.log(`✅ Target Date: ${filtros.dataInicial} a ${filtros.dataFinal}`);
     }
 
-    // 4. WORK ITEM TYPES - usar os selecionados pelo usuário
-    if (filtros.workItemTypes && filtros.workItemTypes.length > 0) {
-      var workItemConditions = filtros.workItemTypes.map(type => `[System.WorkItemType] = '${type}'`);
-      whereConditions.push(`(${workItemConditions.join(' OR ')})`);
-      console.log(`✅ Work Item Types: ${filtros.workItemTypes.join(', ')}`);
+    if (periodoCondicao) {
+      condicoesInternas.push(periodoCondicao);
     }
 
-    // 5. BUSCAR TODOS OS STATUS (sem filtro de status - deixar o Azure DevOps decidir)
-    // Isso vai trazer New, Active, Closed, Resolved, Done, etc.
+    // WORK ITEM TYPES
+    if (filtros.workItemTypes && filtros.workItemTypes.length > 0) {
+      condicoesInternas.push(`[System.WorkItemType] = '${filtros.workItemTypes[0]}'`);
+      console.log(`✅ Work Item Type: ${filtros.workItemTypes[0]}`);
+    }
 
-    // QUERY FINAL DINÂMICA
-    var wiql = `
-      SELECT [System.Id], [System.WorkItemType], [System.Title], [System.State],
-             [System.AreaPath], [System.IterationPath]
-      FROM workitems
-      WHERE ${whereConditions.join(' AND ')}
-      ORDER BY [System.Id] DESC
-    `;
+    // STATES (dentro de parênteses aninhados)
+    condicoesInternas.push(`([System.State] = 'Active' OR [System.State] = 'New' OR [System.State] = 'Closed')`);
+    console.log('✅ States: Active, New, Closed');
 
-    console.log('📝 WIQL DINÂMICA construída baseada nas suas seleções:');
+    // QUERY FINAL com estrutura EXATA que você mostrou
+    var wiql = `SELECT [System.Id], [System.State], [System.WorkItemType] FROM workitems WHERE ${wherePrincipal} AND (${condicoesInternas.join(' AND ')}) ORDER BY [System.Id] DESC`;
+
+    console.log('📝 WIQL FINAL (estrutura EXATA):');
     console.log(wiql);
-    console.log('🎯 Esta query vai buscar work items baseado no que você selecionou!');
+    console.log('🎯 Esta query usa IterationPath OR TargetDate como você pediu!');
 
-    return wiql.trim();
+    return wiql;
   }
 
   // Obter filtros atuais da interface
   function obterFiltrosAtuais() {
-    var projetoSelecionado = document.querySelector('#projeto-select option:checked')?.textContent || 'Mastersaf Fiscal Solutions';
-    var areaPathsSelecionadas = Array.from(document.querySelectorAll('#area-path-list input[type="checkbox"]:checked')).map(cb => cb.value);
-    var iterationPathsSelecionadas = Array.from(document.querySelectorAll('input[name="iteration-path"]:checked')).map(cb => cb.value);
-    var workItemTypesSelecionados = Array.from(document.querySelectorAll('.work-item-card.selected')).map(card =>
-      card.querySelector('h3').textContent
-    );
-    var tipoFiltro = document.querySelector('.period-selector input:checked')?.value || 'target-date';
+    var projetoSelecionado = document.querySelector('#f-produto')?.value;
 
-    return {
+    // VALIDAÇÃO: Não permitir projeto em branco ou hardcoded
+    if (!projetoSelecionado || projetoSelecionado === '') {
+      console.log('⚠️ NENHUM PROJETO SELECIONADO! Você deve selecionar um projeto real do Azure DevOps.');
+
+      // Retornar objeto vazio ao invés de null para evitar erros
+      return {
+        projeto: null,
+        areaPaths: [],
+        iterationPaths: [],
+        workItemTypes: [],
+        tipoFiltro: 'target-date',
+        dataInicial: null,
+        dataFinal: null
+      };
+    }
+    var areaPathsSelecionadas = Array.from(document.querySelectorAll('#area-path-list input[type="checkbox"]:checked')).map(cb => cb.value);
+    var iterationPathsSelecionadas = Array.from(document.querySelectorAll('#iteration-paths-list input[type="checkbox"]:checked')).map(cb => cb.value);
+    var workItemTypesSelecionados = Array.from(document.querySelectorAll('.work-item-card.selected')).map(card => {
+      var h3 = card.querySelector('h3');
+      if (h3) {
+        return h3.textContent;
+      } else {
+        // Fallback: tentar outros seletores
+        var title = card.querySelector('.work-item-title, [data-type], .title');
+        return title ? title.textContent || title.getAttribute('data-type') : 'Unknown';
+      }
+    }).filter(type => type !== 'Unknown');
+    // Detectar qual card está selecionado (com border azul)
+    var iterationCard = document.querySelector('[data-period-type="iteration-path"]');
+    var targetCard = document.querySelector('[data-period-type="target-date"]');
+
+    var tipoFiltro = 'target-date'; // default
+    if (iterationCard && iterationCard.style.borderColor.includes('212')) {
+      tipoFiltro = 'iteration-path';
+    }
+
+    console.log('🎯 Tipo de filtro detectado:', tipoFiltro);
+
+    // Target Date: usar valores dos campos ou PADRÃO 2025-2026
+    var dataInicial = document.getElementById('data-inicial')?.value;
+    var dataFinal = document.getElementById('data-final')?.value;
+
+    // Se Target Date está selecionado mas não há datas específicas, usar padrão 2025-2026
+    if (tipoFiltro === 'target-date' && (!dataInicial || !dataFinal)) {
+      dataInicial = '2025-01-01';
+      dataFinal = '2026-12-31';
+      console.log('📅 Usando Target Date PADRÃO: 2025-2026');
+    }
+
+    var filtros = {
       projeto: projetoSelecionado,
       areaPaths: areaPathsSelecionadas,
       iterationPaths: iterationPathsSelecionadas,
       workItemTypes: workItemTypesSelecionados,
       tipoFiltro: tipoFiltro,
-      dataInicial: document.getElementById('data-inicial')?.value,
-      dataFinal: document.getElementById('data-final')?.value
+      dataInicial: dataInicial,
+      dataFinal: dataFinal
     };
+
+    console.log('🎯 FILTROS COLETADOS DA INTERFACE:');
+    console.log('📊 Projeto:', filtros.projeto);
+    console.log('📁 Area Paths:', filtros.areaPaths);
+    console.log('📅 Tipo Filtro:', filtros.tipoFiltro);
+    console.log('🔄 Iteration Paths:', filtros.iterationPaths);
+    console.log('📋 Work Item Types:', filtros.workItemTypes);
+    console.log('📆 Data Inicial:', filtros.dataInicial);
+    console.log('📆 Data Final:', filtros.dataFinal);
+
+    return filtros;
   }
 
   // FUNÇÃO DE TESTE COMPLETO - DADOS REAIS DO AZURE DEVOPS
@@ -5229,6 +5302,32 @@
     console.log('📝 Para debug, abra o console e execute: testarQueryAzureDevOps()');
   };
 
+  // FUNÇÃO DEBUG - WORK ITEM CARDS
+  window.debugWorkItemCards = function() {
+    console.log('🔍 === DEBUG WORK ITEM CARDS ===');
+
+    var cards = document.querySelectorAll('.work-item-card');
+    console.log('1. Total de cards encontrados:', cards.length);
+
+    var selectedCards = document.querySelectorAll('.work-item-card.selected');
+    console.log('2. Cards selecionados:', selectedCards.length);
+
+    selectedCards.forEach(function(card, index) {
+      console.log(`Card ${index + 1}:`);
+      console.log('  - Elemento:', card);
+      console.log('  - h3 encontrado:', !!card.querySelector('h3'));
+      console.log('  - textContent do h3:', card.querySelector('h3')?.textContent);
+      console.log('  - Estrutura HTML:', card.innerHTML.substring(0, 200) + '...');
+    });
+
+    try {
+      var filtros = obterFiltrosAtuais();
+      console.log('3. Work Item Types extraídos:', filtros.workItemTypes);
+    } catch (error) {
+      console.error('❌ Erro ao obter filtros:', error);
+    }
+  };
+
   // FUNÇÃO DEBUG - VERIFICAR STATUS DOS DADOS
   window.debugDados = function() {
     console.log('🔍 === DEBUG STATUS DOS DADOS ===');
@@ -5272,6 +5371,25 @@
 
     if (dropdown) {
       console.log('2. Número de opções:', dropdown.children.length);
+
+      // Listar todas as opções para verificar se são REAIS
+      console.log('📋 PROJETOS DISPONÍVEIS:');
+      for (var i = 0; i < dropdown.children.length; i++) {
+        var option = dropdown.children[i];
+        console.log(`  ${i + 1}. "${option.value}" - ${option.textContent}`);
+      }
+
+      // Verificar se dados do Azure DevOps foram carregados
+      if (azureDevOpsData && azureDevOpsData.projetos) {
+        var projetosReais = Object.keys(azureDevOpsData.projetos);
+        console.log('✅ Projetos REAIS do Azure DevOps:', projetosReais);
+
+        if (dropdown.children.length === 1) {
+          console.log('❌ PROBLEMA: Dropdown só tem opção placeholder - projetos reais não foram carregados!');
+        }
+      } else {
+        console.log('❌ PROBLEMA: azureDevOpsData não carregou - por isso dropdown não tem projetos!');
+      }
       console.log('3. Opções disponíveis:');
       for (var i = 0; i < dropdown.children.length; i++) {
         console.log(`   ${i}: "${dropdown.children[i].textContent}" (value: "${dropdown.children[i].value}")`);
@@ -5342,6 +5460,85 @@
     }
   };
 
+  // FUNÇÃO DEBUG - TESTAR PASSO A PASSO
+  window.debugPassoAPasso = async function() {
+    console.log('🔍 === DEBUG PASSO A PASSO ===');
+
+    // 1. Testar configuração
+    console.log('1. Testando configuração...');
+    var config = debugConfiguracaoAzureDevOps();
+
+    // 2. Testar projetos
+    console.log('2. Testando busca de projetos...');
+    try {
+      var projetos = await testarConexaoAzure();
+      console.log('✅ Projetos OK:', projetos?.length || 0);
+    } catch (error) {
+      console.error('❌ Projetos falharam:', error);
+      return;
+    }
+
+    // 3. Testar query muito básica
+    console.log('3. Testando query muito básica...');
+    try {
+      var resultadoBasico = await testarQueryMuitoSimples();
+      console.log('✅ Query básica OK:', resultadoBasico);
+    } catch (error) {
+      console.error('❌ Query básica falhou:', error);
+    }
+  };
+
+  // FUNÇÃO PARA TESTAR QUERY WIQL MUITO BÁSICA
+  window.testarQueryMuitoSimples = async function() {
+    console.log('🧪 TESTANDO QUERY WIQL MUITO BÁSICA...');
+
+    try {
+      // Query extremamente simples (sintaxe WIQL correta)
+      var queryBasica = "SELECT [System.Id] FROM workitems WHERE [System.TeamProject] = 'Mastersaf Fiscal Solutions'";
+
+      console.log('📝 Query básica:', queryBasica);
+
+      var resultado = await executarQueryAoVivoAzureDevOps(queryBasica, 'test');
+      console.log('✅ Query básica funcionou!', resultado);
+      return resultado;
+
+    } catch (error) {
+      console.error('❌ Query básica falhou:', error);
+      return null;
+    }
+  };
+
+  // FUNÇÃO PARA TESTAR QUERY WIQL SIMPLES
+  window.testarQuerySimples = async function() {
+    console.log('🧪 TESTANDO QUERY WIQL SIMPLES...');
+
+    try {
+      // Query muito básica para teste com LIMITE
+      var queryTeste = `
+        SELECT [System.Id], [System.Title], [System.State]
+        FROM workitems
+        WHERE [System.TeamProject] = 'Mastersaf Fiscal Solutions'
+        ORDER BY [System.Id] DESC
+      `;
+
+      console.log('📝 Query de teste:', queryTeste);
+
+      var resultado = await executarQueryAoVivoAzureDevOps(queryTeste, 'test');
+
+      if (resultado.workItems) {
+        console.log('✅ Query simples funcionou!', resultado.workItems.length, 'items');
+        return resultado;
+      } else {
+        console.log('⚠️ Query executou mas não retornou work items');
+        return resultado;
+      }
+
+    } catch (error) {
+      console.error('❌ Query simples falhou:', error);
+      return null;
+    }
+  };
+
   // Debug das configurações Azure DevOps
   function debugConfiguracaoAzureDevOps() {
     var config = obterConfiguracesAzureDevOps();
@@ -5363,7 +5560,10 @@
     var config = obterConfiguracesAzureDevOps();
     var idsString = workItemIds.slice(0, 200).join(','); // Limite de 200 por request
 
-    var url = `${config.baseUrl}/${projeto}/_apis/wit/workitems?ids=${idsString}&fields=System.Id,System.State,System.WorkItemType,System.AreaPath&api-version=7.0`;
+    // URL CORRETA sem projeto na URL (work items são globais na organização)
+    var url = `${config.baseUrl}/_apis/wit/workitems?ids=${idsString}&fields=System.Id,System.State,System.WorkItemType,System.AreaPath&api-version=7.0`;
+
+    console.log('🌐 URL para buscar detalhes:', url);
 
     var response = await fetch(url, {
       method: 'GET',
@@ -5486,12 +5686,21 @@
       console.log('🔥 TENTATIVA 1: API DIRETA...');
       var wiqlQuery = construirWIQLQueryAoVivo(filtros);
       var resultadosAPI = await executarQueryAoVivoAzureDevOps(wiqlQuery, filtros.projeto);
+
+      // DEBUG: Ver o que a API REALMENTE retornou
+      console.log('🔍 RESULTADOS RAW da API principal:', resultadosAPI);
+      console.log('🔍 Tem workItems?', !!resultadosAPI.workItems);
+      console.log('🔍 Quantidade:', resultadosAPI.workItems ? resultadosAPI.workItems.length : 'N/A');
+
       var dadosAPI = await processarResultadosReais(resultadosAPI, filtros.projeto);
+      console.log('🔍 DADOS PROCESSADOS:', dadosAPI);
 
       if (dadosAPI.total > 0) {
         console.log('✅ API DIRETA FUNCIONOU!', dadosAPI);
         dadosAPI.porAreaPath = Math.round(dadosAPI.total / filtros.areaPaths.length);
         return dadosAPI;
+      } else {
+        console.log('❌ API principal retornou 0 items - ISSO É O PROBLEMA!');
       }
     } catch (errorAPI) {
       console.log('❌ API direta falhou:', errorAPI.message);
@@ -5507,7 +5716,7 @@
       console.log('🔄 Tentando query simplificada...');
 
       try {
-        // Fallback: tentar query simplificada sem filtros complexos
+        // Fallback: query simplificada com LIMITE
         var wiqlSimples = `
           SELECT [System.Id], [System.State], [System.WorkItemType]
           FROM workitems
@@ -6803,45 +7012,73 @@ Token:`);
     // Se há work items, buscar os detalhes
     if (queryResult.workItems.length > 0) {
       var ids = queryResult.workItems.map(function(wi) { return wi.id; });
-      var workItemsDetalhes = await buscarDetalhesWorkItems(ids, config);
+      var workItemsDetalhes = await buscarDetalhesWorkItems(ids, projeto);
       return workItemsDetalhes;
     }
 
     return [];
   }
 
-  // Buscar detalhes dos work items
-  async function buscarDetalhesWorkItems(ids, config) {
+  // Buscar detalhes dos work items - versão corrigida
+  async function buscarDetalhesWorkItemsLegacy(ids, configOuProjeto) {
     console.log('📋 Buscando detalhes de', ids.length, 'work items...');
 
-    var idsString = ids.join(',');
-    var url = `https://dev.azure.com/${config.organization}/${config.project}/_apis/wit/workitems?ids=${idsString}&api-version=${config.apiVersion}`;
+    // Obter configuração correta
+    var config = obterConfiguracesAzureDevOps();
+    console.log('🔧 Config obtida:', {
+      organization: config.organization,
+      baseUrl: config.baseUrl,
+      apiVersion: config.apiVersion
+    });
+
+    var idsString = ids.slice(0, 200).join(','); // Limite de 200
+    // URL CORRETA sem projeto
+    var url = `${config.baseUrl}/_apis/wit/workitems?ids=${idsString}&fields=System.Id,System.State,System.WorkItemType,System.AreaPath&api-version=7.0`;
+
+    console.log('🌐 URL corrigida:', url);
 
     var response = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Authorization': 'Basic ' + btoa(':' + config.token)
+        'Authorization': 'Basic ' + btoa(':' + config.token),
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
     });
 
+    console.log('📡 Response status:', response.status, response.statusText);
+
     if (!response.ok) {
+      // Tentar ler erro detalhado
+      try {
+        var errorBody = await response.text();
+        console.error('❌ Erro detalhado da API:', errorBody);
+      } catch (e) {
+        console.error('❌ Não foi possível ler erro da API');
+      }
       throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
     var result = await response.json();
-    console.log('✅ Detalhes obtidos para', result.value.length, 'work items');
+    console.log('✅ Detalhes obtidos para', result.value ? result.value.length : 0, 'work items');
+    console.log('📊 Estrutura da resposta:', result);
 
-    return result.value.map(function(wi) {
-      return {
-        id: wi.id,
-        title: wi.fields['System.Title'],
-        type: wi.fields['System.WorkItemType'],
-        state: wi.fields['System.State'],
-        areaPath: wi.fields['System.AreaPath'],
-        iterationPath: wi.fields['System.IterationPath'],
-        targetDate: wi.fields['Microsoft.VSTS.Scheduling.TargetDate'],
-        assignedTo: wi.fields['System.AssignedTo']?.displayName
-      };
-    });
+    if (result.value && result.value.length > 0) {
+      return result.value.map(function(wi) {
+        console.log('📝 Work item:', wi.id, 'State:', wi.fields['System.State']);
+        return {
+          id: wi.id,
+          fields: {
+            'System.Id': wi.id,
+            'System.State': wi.fields['System.State'],
+            'System.WorkItemType': wi.fields['System.WorkItemType'],
+            'System.AreaPath': wi.fields['System.AreaPath']
+          }
+        };
+      });
+    }
+
+    return [];
   }
 
   // Processar work items reais para distribuição por status

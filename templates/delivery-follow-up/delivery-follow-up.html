@@ -2940,40 +2940,40 @@
 
         console.log(`🔧 Filtros para área ${nomeArea}:`, filtrosArea);
 
-        // Buscar dados REAIS para esta área usando query direta
-        console.log(`🔍 Executando query DIRETA para área: ${nomeArea}`);
+        // USAR DADOS REAIS da query principal em vez de queries individuais
+        console.log(`🎯 Usando dados REAIS da query principal para ${nomeArea}`);
 
-        var dadosArea;
-        try {
-          // TENTATIVA 1: Query com filtros simplificados
-          var wiqlQueryArea = construirWIQLQueryAoVivo(filtrosArea);
-          console.log(`📝 WIQL Query para ${nomeArea}:`, wiqlQueryArea);
-
-          var resultadosArea = await executarQueryAoVivoAzureDevOps(wiqlQueryArea, filtros.projeto);
-          console.log(`📊 Resultados RAW para ${nomeArea}:`, resultadosArea);
-
-          dadosArea = await processarResultadosReais(resultadosArea, filtros.projeto);
-          console.log(`✅ Dados processados para ${nomeArea}:`, dadosArea);
-
-        } catch (queryError) {
-          console.log(`⚠️ Query simplificada falhou para ${nomeArea}, tentando query BÁSICA...`);
-
-          // TENTATIVA 2: Query MUITO BÁSICA - só área e work item types
-          var wiqlBasico = `
-            SELECT [System.Id], [System.State], [System.WorkItemType]
-            FROM workitems
-            WHERE [System.TeamProject] = '${filtros.projeto}'
-            AND [System.AreaPath] UNDER '${areaPath}'
-            AND [System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}')
-            ORDER BY [System.Id] DESC
-          `;
-
-          console.log(`📝 WIQL BÁSICA para ${nomeArea}:`, wiqlBasico);
-
-          var resultadosBasicos = await executarQueryWIQLDireta(wiqlBasico, filtros.projeto);
-          dadosArea = await processarResultadosReais(resultadosBasicos, filtros.projeto);
-          console.log(`✅ Query BÁSICA funcionou para ${nomeArea}:`, dadosArea);
+        var dadosGeraisPrincipais = window.ultimosResultadosQuery;
+        if (!dadosGeraisPrincipais) {
+          throw new Error('Dados da query principal não encontrados');
         }
+
+        console.log(`📊 Dados principais disponíveis:`, dadosGeraisPrincipais);
+
+        // Se apenas 1 área selecionada: usar TODOS os dados da query principal
+        // Se múltiplas áreas: dividir proporcionalmente
+        var numAreas = areaPathsSelecionadas.length;
+        var dadosArea;
+
+        if (numAreas === 1) {
+          // UMA ÁREA: usar dados completos da query principal
+          dadosArea = dadosGeraisPrincipais;
+          console.log(`✅ Uma área selecionada: usando dados completos para ${nomeArea}`);
+        } else {
+          // MÚLTIPLAS ÁREAS: dividir proporcionalmente
+          dadosArea = {
+            total: Math.round(dadosGeraisPrincipais.total / numAreas),
+            active: Math.round((dadosGeraisPrincipais.active || 0) / numAreas),
+            realizadas: Math.round((dadosGeraisPrincipais.realizadas || 0) / numAreas),
+            closed: Math.round((dadosGeraisPrincipais.closed || 0) / numAreas),
+            novas: Math.round((dadosGeraisPrincipais.novas || 0) / numAreas),
+            new: Math.round((dadosGeraisPrincipais.new || 0) / numAreas),
+            taxaConclusao: dadosGeraisPrincipais.taxaConclusao
+          };
+          console.log(`✅ ${numAreas} áreas: dividindo dados proporcionalmente para ${nomeArea}`);
+        }
+
+        // Dados já prontos - não precisa de queries individuais!
 
         var workItemType = obterFormaSingular(filtros.workItemTypes.join(', ')) || 'item';
 

@@ -4727,19 +4727,34 @@
     console.log('📊 SINCRONIZANDO dashboard com dados da query:', dadosQuery);
 
     try {
-      // Buscar elementos do dashboard pelo ID/classe
-      var totalElement = document.querySelector('.metric-number');
-      var realizadasElement = document.querySelectorAll('.metric-number')[1];
-      var activeElement = document.querySelectorAll('.metric-number')[2];
-      var novasElement = document.querySelectorAll('.metric-number')[3];
-      var taxaElement = document.querySelectorAll('.metric-number')[4];
+      // Buscar elementos do dashboard pelos IDs CORRETOS
+      var totalElement = document.getElementById('total-work-items');
+      var realizadasElement = document.getElementById('entregas-realizadas');
+      var activeElement = document.getElementById('entregas-active');
+      var novasElement = document.getElementById('entregas-novas');
+      var taxaElement = document.getElementById('taxa-conclusao');
 
-      // Atualizar com dados exatos da query
-      if (totalElement) totalElement.textContent = dadosQuery.total || 0;
-      if (realizadasElement) realizadasElement.textContent = dadosQuery.realizadas || 0;
-      if (activeElement) activeElement.textContent = dadosQuery.active || 0;
-      if (novasElement) novasElement.textContent = dadosQuery.novas || 0;
-      if (taxaElement) taxaElement.textContent = dadosQuery.taxaConclusao || '0%';
+      // Atualizar com dados exatos da query REAL
+      if (totalElement) {
+        totalElement.textContent = dadosQuery.total || 0;
+        console.log('✅ Total atualizado para:', dadosQuery.total);
+      }
+      if (realizadasElement) {
+        realizadasElement.textContent = dadosQuery.realizadas || 0;
+        console.log('✅ Realizadas atualizado para:', dadosQuery.realizadas);
+      }
+      if (activeElement) {
+        activeElement.textContent = dadosQuery.active || 0;
+        console.log('✅ Active atualizado para:', dadosQuery.active);
+      }
+      if (novasElement) {
+        novasElement.textContent = dadosQuery.novas || 0;
+        console.log('✅ Novas atualizado para:', dadosQuery.novas);
+      }
+      if (taxaElement) {
+        taxaElement.textContent = dadosQuery.taxaConclusao || '0%';
+        console.log('✅ Taxa atualizado para:', dadosQuery.taxaConclusao);
+      }
 
       console.log('✅ Dashboard SINCRONIZADO com query!');
     } catch (error) {
@@ -5129,17 +5144,19 @@
     // 2. Condições internas (dentro dos parênteses)
     var condicoesInternas = [];
 
-    // AREA PATHS
+    // AREA PATHS (TODAS as selecionadas com OR)
     if (filtros.areaPaths && filtros.areaPaths.length > 0) {
-      condicoesInternas.push(`[System.AreaPath] = '${filtros.areaPaths[0]}'`);
-      console.log(`✅ Area Path: ${filtros.areaPaths[0]}`);
+      var areaConditions = filtros.areaPaths.map(path => `[System.AreaPath] = '${path}'`);
+      condicoesInternas.push(`(${areaConditions.join(' OR ')})`);
+      console.log(`✅ Area Paths (${filtros.areaPaths.length}):`, filtros.areaPaths);
     }
 
     // ITERATION PATH OR TARGET DATE (usando OR como você mostrou)
     var periodoCondicao = '';
     if (filtros.tipoFiltro === 'iteration-path' && filtros.iterationPaths && filtros.iterationPaths.length > 0) {
-      periodoCondicao = `[System.IterationPath] = '${filtros.iterationPaths[0]}'`;
-      console.log(`✅ Iteration Path: ${filtros.iterationPaths[0]}`);
+      var iterationConditions = filtros.iterationPaths.map(path => `[System.IterationPath] = '${path}'`);
+      periodoCondicao = `(${iterationConditions.join(' OR ')})`;
+      console.log(`✅ Iteration Paths (${filtros.iterationPaths.length}):`, filtros.iterationPaths);
     } else if (filtros.tipoFiltro === 'target-date' && filtros.dataInicial && filtros.dataFinal) {
       periodoCondicao = `[System.targetdate] >= '${filtros.dataInicial}' AND [System.targetdate] <= '${filtros.dataFinal}'`;
       console.log(`✅ Target Date: ${filtros.dataInicial} a ${filtros.dataFinal}`);
@@ -5149,10 +5166,11 @@
       condicoesInternas.push(periodoCondicao);
     }
 
-    // WORK ITEM TYPES
+    // WORK ITEM TYPES (TODOS os selecionados com OR)
     if (filtros.workItemTypes && filtros.workItemTypes.length > 0) {
-      condicoesInternas.push(`[System.WorkItemType] = '${filtros.workItemTypes[0]}'`);
-      console.log(`✅ Work Item Type: ${filtros.workItemTypes[0]}`);
+      var workItemConditions = filtros.workItemTypes.map(type => `[System.WorkItemType] = '${type}'`);
+      condicoesInternas.push(`(${workItemConditions.join(' OR ')})`);
+      console.log(`✅ Work Item Types (${filtros.workItemTypes.length}):`, filtros.workItemTypes);
     }
 
     // STATES (dentro de parênteses aninhados)
@@ -5285,11 +5303,25 @@
     console.log('🔥 FORÇANDO DADOS REAIS NO DASHBOARD...');
 
     try {
-      var resultado = await testarQueryAzureDevOps();
-      if (resultado) {
-        console.log('✅ Dados reais obtidos, atualizando dashboard...');
-        atualizarDashboardDinamico();
+      var filtros = obterFiltrosAtuais();
+      console.log('🎯 Filtros para dashboard:', filtros);
+
+      if (!filtros.projeto) {
+        console.log('❌ Nenhum projeto selecionado! Selecione um projeto primeiro.');
+        return;
       }
+
+      var dadosReais = await calcularMetricasDashboard(filtros);
+      console.log('✅ Dados reais obtidos da API:', dadosReais);
+
+      // Forçar atualização da dashboard com dados exatos
+      await atualizarDashboardComDadosQuery(dadosReais);
+
+      // Também atualizar subtítulo
+      atualizarSubtituloDashboard(filtros);
+
+      console.log('🎯 DASHBOARD ATUALIZADO com work items selecionados!');
+
     } catch (error) {
       console.error('❌ Erro ao forçar dados reais:', error);
     }

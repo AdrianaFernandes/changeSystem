@@ -2958,37 +2958,49 @@
           dadosArea = dadosGeraisPrincipais;
           console.log(`✅ Uma área selecionada: usando dados completos para ${nomeArea}`);
         } else {
-          // MÚLTIPLAS ÁREAS: fazer query específica REAL para esta área
-          console.log(`🔍 Múltiplas áreas: fazendo query específica REAL para ${nomeArea}`);
+          // MÚLTIPLAS ÁREAS: usar dados agrupados da query principal por área específica
+          console.log(`🔍 Múltiplas áreas: agrupando dados da query principal para ${nomeArea}`);
+          console.log(`📍 Area Path específica: "${areaPath}"`);
 
-          var wiqlEspecifico = `
-            SELECT [System.Id], [System.State], [System.WorkItemType]
-            FROM workitems
-            WHERE [System.TeamProject] = '${filtros.projeto}'
-            AND [System.AreaPath] UNDER '${areaPath}'
-            AND [System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}')
-            AND [System.IterationPath] = '${filtros.iterationPaths[0] || ''}'
-            ORDER BY [System.Id] DESC
-          `;
+          // Buscar work items agrupados por área da query principal
+          var workItemsPorArea = window.ultimosWorkItemsDetalhados || [];
+          console.log(`📋 Work items detalhados disponíveis:`, workItemsPorArea.length);
 
-          console.log(`📝 WIQL específica para ${nomeArea}:`, wiqlEspecifico);
+          // Filtrar work items que pertencem ESPECIFICAMENTE a esta área
+          var workItemsDaArea = workItemsPorArea.filter(function(item) {
+            var itemAreaPath = item.fields ? item.fields['System.AreaPath'] : '';
+            var pertenceArea = itemAreaPath === areaPath || itemAreaPath.startsWith(areaPath + '\\');
+            if (pertenceArea) {
+              console.log(`✅ Work item ${item.id} pertence a ${nomeArea}: ${itemAreaPath}`);
+            }
+            return pertenceArea;
+          });
 
-          try {
-            var resultadosEspecificos = await executarQueryWIQLDireta(wiqlEspecifico, filtros.projeto);
-            dadosArea = await processarResultadosReais(resultadosEspecificos, filtros.projeto);
-            console.log(`✅ Query específica para ${nomeArea}:`, dadosArea);
-          } catch (errorEspecifico) {
-            console.log(`⚠️ Query específica falhou para ${nomeArea}, usando divisão proporcional`);
-            dadosArea = {
-              total: Math.round(dadosGeraisPrincipais.total / numAreas),
-              active: Math.round((dadosGeraisPrincipais.active || 0) / numAreas),
-              realizadas: Math.round((dadosGeraisPrincipais.realizadas || 0) / numAreas),
-              closed: Math.round((dadosGeraisPrincipais.closed || 0) / numAreas),
-              novas: Math.round((dadosGeraisPrincipais.novas || 0) / numAreas),
-              new: Math.round((dadosGeraisPrincipais.new || 0) / numAreas),
-              taxaConclusao: dadosGeraisPrincipais.taxaConclusao
-            };
-          }
+          console.log(`📊 ${workItemsDaArea.length} work items encontrados para ${nomeArea}`);
+
+          // Calcular status específicos desta área
+          var statusCount = { active: 0, closed: 0, new: 0 };
+          workItemsDaArea.forEach(function(item) {
+            var state = item.fields ? item.fields['System.State'] : '';
+            if (state === 'Active') statusCount.active++;
+            else if (state === 'Closed') statusCount.closed++;
+            else if (state === 'New') statusCount.new++;
+          });
+
+          var totalDaArea = workItemsDaArea.length;
+          var taxaDaArea = totalDaArea > 0 ? Math.round((statusCount.closed / totalDaArea) * 100) + '%' : '0%';
+
+          dadosArea = {
+            total: totalDaArea,
+            active: statusCount.active,
+            realizadas: statusCount.closed,
+            closed: statusCount.closed,
+            novas: statusCount.new,
+            new: statusCount.new,
+            taxaConclusao: taxaDaArea
+          };
+
+          console.log(`✅ Dados reais calculados para ${nomeArea}:`, dadosArea);
         }
 
         // Dados já prontos - não precisa de queries individuais!
@@ -5475,7 +5487,7 @@
     console.log('✅ States: Active, New, Closed');
 
     // QUERY FINAL com estrutura EXATA que você mostrou
-    var wiql = `SELECT [System.Id], [System.State], [System.WorkItemType] FROM workitems WHERE ${wherePrincipal} AND (${condicoesInternas.join(' AND ')}) ORDER BY [System.Id] DESC`;
+    var wiql = `SELECT [System.Id], [System.State], [System.WorkItemType], [System.AreaPath] FROM workitems WHERE ${wherePrincipal} AND (${condicoesInternas.join(' AND ')}) ORDER BY [System.Id] DESC`;
 
     console.log('📝 WIQL FINAL (estrutura EXATA):');
     console.log(wiql);
@@ -5941,6 +5953,10 @@
       var detalhes = await buscarDetalhesWorkItems(workItemIds, projeto);
 
       console.log('📋 Detalhes dos work items:', detalhes);
+
+      // SALVAR detalhes para agrupamento por área
+      window.ultimosWorkItemsDetalhados = detalhes;
+      console.log(`💾 Salvou ${detalhes.length} work items detalhados para agrupamento por área`);
 
       // Contar TODOS os status dinamicamente
       var contadores = {};

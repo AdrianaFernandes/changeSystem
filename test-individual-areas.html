@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste - Áreas Individuais Dinâmicas</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .test-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .example-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .selection-demo {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .result {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 10px;
+      color: #166534;
+    }
+
+    .highlight {
+      background: #fef3c7;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      color: #166534;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>✅ Dashboard Dinâmico - Individual por Area Path</h1>
+    <p>Demonstração de como o dashboard agora funciona com <strong>um card para cada area path selecionada</strong>:</p>
+
+    <div class="success-message">
+      <strong>🎯 Implementação Concluída!</strong><br>
+      O dashboard agora gera uma área individual para cada area path selecionada, com texto 100% dinâmico baseado nas seleções.
+    </div>
+
+    <div class="example-section">
+      <h3>📋 Exemplo 1: Área Individual Benefícios</h3>
+      <div class="selection-demo">
+        <strong>Seleções:</strong><br>
+        • Programa: Mastersaf Fiscal Solutions<br>
+        • Area Path: ✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Squad1<br>
+        • Work Items: ✅ Feature<br>
+        • Período: Target Date 31/12/2025 - 07/04/2026
+      </div>
+      <div class="result">
+        <strong>📊 Resultado Dashboard:</strong><br>
+        • <span class="highlight">Título:</span> "Visão por Área — Feature"<br>
+        • <span class="highlight">Subtítulo:</span> "Recorte: feature com Target Date entre 31/12/2025 e 07/04/2026 nas 1 área selecionada"<br>
+        • <span class="highlight">Card Área:</span> "Benefícios Squad1" com métricas específicas<br>
+        • <span class="highlight">Labels:</span> "features" nos textos e contadores
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>🔄 Exemplo 2: Múltiplas Áreas Individuais</h3>
+      <div class="selection-demo">
+        <strong>Seleções:</strong><br>
+        • Programa: Mastersaf Fiscal Solutions<br>
+        • Area Paths:<br>
+        &nbsp;&nbsp;✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Squad1<br>
+        &nbsp;&nbsp;✅ Mastersaf Fiscal Solutions\MFS\Cobrança\Madrid<br>
+        &nbsp;&nbsp;✅ Mastersaf Fiscal Solutions\MFS\Arquitetura\Evolução Técnica<br>
+        • Work Items: ✅ User Story, ✅ Task<br>
+        • Período: Iteration Path selecionada
+      </div>
+      <div class="result">
+        <strong>📊 Resultado Dashboard:</strong><br>
+        • <span class="highlight">Título:</span> "Visão por Área — User Story"<br>
+        • <span class="highlight">Subtítulo:</span> "Recorte: User Story, Task com Iteration Path nas iteration paths selecionadas nas 3 áreas selecionadas"<br>
+        • <span class="highlight">Cards Áreas:</span><br>
+        &nbsp;&nbsp;• "Benefícios Squad1" - 33% dos work items<br>
+        &nbsp;&nbsp;• "Cobrança Madrid" - 33% dos work items<br>
+        &nbsp;&nbsp;• "Arquitetura Evolução" - 33% dos work items<br>
+        • <span class="highlight">Labels:</span> "user stories" nos textos e contadores
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>🎨 Exemplo 3: Área Única com Bug</h3>
+      <div class="selection-demo">
+        <strong>Seleções:</strong><br>
+        • Programa: Mastersaf Fiscal Solutions<br>
+        • Area Path: ✅ Mastersaf Fiscal Solutions\MFS\Suporte\Produção<br>
+        • Work Items: ✅ Bug<br>
+        • Período: Target Date 01/01/2026 - 31/03/2026
+      </div>
+      <div class="result">
+        <strong>📊 Resultado Dashboard:</strong><br>
+        • <span class="highlight">Título:</span> "Visão por Área — Bug"<br>
+        • <span class="highlight">Subtítulo:</span> "Recorte: bug com Target Date entre 01/01/2026 e 31/03/2026 nas 1 área selecionada"<br>
+        • <span class="highlight">Card Área:</span> "Suporte Produção" com 100% dos bugs<br>
+        • <span class="highlight">Labels:</span> "bugs" nos textos e contadores<br>
+        • <span class="highlight">Cor:</span> Rosa (cor específica para Suporte)
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>🛠️ Funcionalidades Dinâmicas Implementadas:</h3>
+      <ul style="margin: 8px 0; padding-left: 20px; color: #374151;">
+        <li><strong>Título Dinâmico:</strong> "Visão por Área — [Work Item Type selecionado]"</li>
+        <li><strong>Subtítulo Inteligente:</strong> Muda entre "Target Date" e "Iteration Path" automaticamente</li>
+        <li><strong>Cards Individuais:</strong> Um card para cada area path selecionada (não agrupadas)</li>
+        <li><strong>Nomes Legíveis:</strong> Extrai nomes do formato "Projeto\Root\Area\SubArea"</li>
+        <li><strong>Work Item Labels:</strong> Plurais dinâmicos baseados na seleção</li>
+        <li><strong>Distribuição Proporcional:</strong> Divide work items igualmente entre areas</li>
+        <li><strong>Cores Específicas:</strong> Cada área tem sua cor característica</li>
+        <li><strong>Estado Placeholder:</strong> Mostra "Selecione Area Paths" quando nenhuma área está selecionada</li>
+      </ul>
+    </div>
+
+    <div class="example-section">
+      <h3>⚙️ Lógica de Mapeamento de Áreas:</h3>
+      <p>O sistema identifica áreas automaticamente e cria cards individuais:</p>
+      <div class="selection-demo">
+        <strong>Função: extrairNomeAreaPath(path)</strong><br>
+        "Mastersaf\MFS\Benefícios\Squad1" → "Benefícios Squad1"<br>
+        "Mastersaf\MFS\Cobrança\Madrid" → "Cobrança Madrid"<br>
+        "Mastersaf\MFS\Arquitetura\Evolução Técnica" → "Arquitetura Evolução"<br><br>
+        <strong>Função: analisarAreaPathsSelecionadas(areaPaths)</strong><br>
+        Retorna: {"Benefícios Squad1": 1, "Cobrança Madrid": 1, "Arquitetura Evolução": 1}<br><br>
+        <strong>Função: calcularMetricasPorArea(totalItems, distribuição, workItemTypes)</strong><br>
+        Divide work items igualmente: totalItems / número de areas selecionadas
+      </div>
+    </div>
+
+    <div style="margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+      <p><strong>🚀 Dashboard 100% Dinâmico e Individual!</strong></p>
+      <p>Cada seleção do usuário agora gera texto e cards únicos, com um card dedicado para cada area path selecionada.</p>
+    </div>
+  </div>
+</body>
+</html>

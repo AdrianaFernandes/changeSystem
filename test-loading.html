@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Carregamento</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Teste de Carregamento - Azure DevOps Data</h1>
+
+  <div id="status-container">
+    <div class="status info">⏳ Iniciando teste...</div>
+  </div>
+
+  <div id="details-container">
+    <h3>Detalhes do Carregamento:</h3>
+    <pre id="log-output"></pre>
+  </div>
+
+  <script>
+    let logOutput = '';
+
+    function log(message) {
+      console.log(message);
+      logOutput += message + '\n';
+      document.getElementById('log-output').textContent = logOutput;
+    }
+
+    function updateStatus(message, type = 'info') {
+      const container = document.getElementById('status-container');
+      container.innerHTML = `<div class="status ${type}">${message}</div>`;
+    }
+
+    function testarCarregamento() {
+      log('=== Iniciando teste de carregamento ===');
+      updateStatus('⏳ Carregando dados do Azure DevOps...', 'info');
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'tr-latam-real-data.json', true);
+
+      xhr.onreadystatechange = function() {
+        log(`XHR State: ${xhr.readyState}, Status: ${xhr.status}`);
+
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              log('✅ JSON parseado com sucesso!');
+
+              if (data.projetos) {
+                const projectNames = Object.keys(data.projetos);
+                log(`📊 Projetos encontrados: ${projectNames.length}`);
+                log(`📋 Lista de projetos: ${projectNames.join(', ')}`);
+
+                // Testar primeiro projeto
+                if (projectNames.length > 0) {
+                  const firstProject = projectNames[0];
+                  const projectData = data.projetos[firstProject];
+                  log(`\n🔍 Testando projeto: ${firstProject}`);
+                  log(`- Area Paths: ${projectData.area_paths ? projectData.area_paths.length : 'NENHUMA'}`);
+                  log(`- Iterations: ${projectData.iterations ? projectData.iterations.length : 'NENHUMA'}`);
+                  log(`- Work Items: ${projectData.work_item_types ? projectData.work_item_types.length : 'NENHUMA'}`);
+
+                  if (projectData.area_paths && projectData.area_paths.length > 0) {
+                    log(`\n📝 Primeiras 3 area paths:`);
+                    projectData.area_paths.slice(0, 3).forEach((area, index) => {
+                      log(`  ${index + 1}. ${area.nome} (${area.path})`);
+                    });
+                  }
+                }
+
+                updateStatus(`✅ Dados carregados com sucesso! ${projectNames.length} projetos encontrados.`, 'success');
+
+              } else {
+                log('❌ Estrutura de dados inválida: projetos não encontrados');
+                updateStatus('❌ Dados inválidos: estrutura de projetos não encontrada', 'error');
+              }
+
+            } catch (error) {
+              log(`❌ Erro ao parsear JSON: ${error.message}`);
+              updateStatus(`❌ Erro ao processar dados: ${error.message}`, 'error');
+            }
+          } else {
+            log(`❌ Erro HTTP: ${xhr.status}`);
+            log(`❌ Response: ${xhr.responseText.substring(0, 200)}...`);
+            updateStatus(`❌ Erro ao carregar dados (HTTP ${xhr.status})`, 'error');
+          }
+        }
+      };
+
+      xhr.onerror = function() {
+        log('❌ Erro de rede');
+        updateStatus('❌ Erro de rede ao carregar dados', 'error');
+      };
+
+      log('📤 Enviando requisição...');
+      xhr.send();
+    }
+
+    // Iniciar teste quando página carregar
+    document.addEventListener('DOMContentLoaded', testarCarregamento);
+  </script>
+</body>
+</html>

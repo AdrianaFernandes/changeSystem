@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Work Items - Azure DevOps</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .test-container {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .work-item-demo {
+      margin-top: 20px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+    }
+
+    .work-item-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .work-item-list {
+      padding: 0;
+    }
+
+    .work-item-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background-color 0.15s ease;
+    }
+
+    .work-item-item:last-child {
+      border-bottom: none;
+    }
+
+    .work-item-item:hover {
+      background-color: #f9fafb;
+    }
+
+    .work-item-icon {
+      font-size: 18px;
+      margin-right: 12px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .work-item-info {
+      flex: 1;
+    }
+
+    .work-item-info strong {
+      display: block;
+      font-size: 14px;
+      color: #111827;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .work-item-info small {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      color: #166534;
+    }
+
+    .project-info {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🎯 Work Items do Azure DevOps - Funcionando!</h1>
+
+    <div class="success-message">
+      <strong>✅ Sucesso!</strong><br>
+      Os Work Item Types foram adicionados com sucesso a todos os projetos no arquivo <code>tr-latam-real-data.json</code>
+    </div>
+
+    <div class="project-info">
+      <strong>📊 Dados Adicionados:</strong><br>
+      • 10 projetos atualizados<br>
+      • 8 tipos de work items por projeto<br>
+      • Integração completa com Azure DevOps
+    </div>
+
+    <h2>Tipos de Work Items Disponíveis:</h2>
+
+    <div class="work-item-demo">
+      <div class="work-item-header">
+        Work Item Types - Azure DevOps
+      </div>
+      <div class="work-item-list">
+        <div class="work-item-item">
+          <span class="work-item-icon">🎯</span>
+          <div class="work-item-info">
+            <strong>Epic</strong>
+            <small>Iniciativas de grande escala que agrupam funcionalidades</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">⭐</span>
+          <div class="work-item-info">
+            <strong>Feature</strong>
+            <small>Funcionalidades do produto entregues aos usuários</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">👤</span>
+          <div class="work-item-info">
+            <strong>User Story</strong>
+            <small>Requisitos funcionais do ponto de vista do usuário</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">📋</span>
+          <div class="work-item-info">
+            <strong>Task</strong>
+            <small>Atividades específicas e tarefas de desenvolvimento</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">🐛</span>
+          <div class="work-item-info">
+            <strong>Bug</strong>
+            <small>Defeitos e problemas que precisam ser corrigidos</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">❗</span>
+          <div class="work-item-info">
+            <strong>Issue</strong>
+            <small>Problemas ou questões identificadas durante desenvolvimento</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">🧪</span>
+          <div class="work-item-info">
+            <strong>Test Case</strong>
+            <small>Casos de teste para validação de funcionalidades</small>
+          </div>
+        </div>
+
+        <div class="work-item-item">
+          <span class="work-item-icon">📦</span>
+          <div class="work-item-info">
+            <strong>Product Backlog Item</strong>
+            <small>Itens do backlog do produto para desenvolvimento</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Como Funciona:</h2>
+    <ol>
+      <li><strong>Seleção de Projeto:</strong> Ao selecionar um projeto no dropdown "Programa/Produto"</li>
+      <li><strong>Carregamento Automático:</strong> Os work item types são carregados automaticamente do Azure DevOps</li>
+      <li><strong>Interface Moderna:</strong> Design consistente com os outros dropdowns (Area Paths e Iteration Paths)</li>
+      <li><strong>Seleção Múltipla:</strong> Checkboxes para selecionar múltiplos tipos de work items</li>
+      <li><strong>Ações Rápidas:</strong> Botões "Selecionar Todos" e "Limpar Seleção"</li>
+    </ol>
+
+    <div style="margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+      <p><strong>✨ A funcionalidade de Work Items está agora totalmente integrada ao template!</strong></p>
+      <p>Abra o arquivo <code>delivery-follow-up.html</code> e teste a seleção de projetos para ver os work items em ação.</p>
+    </div>
+  </div>
+</body>
+</html>

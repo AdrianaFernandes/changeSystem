@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo - Áreas Dinâmicas Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .demo-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .example-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .path-list {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .result {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 10px;
+      color: #166534;
+    }
+
+    .highlight {
+      background: #fef3c7;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <h1>🎯 Distribuição Dinâmica de Áreas</h1>
+    <p>Demonstração de como o dashboard calcula a distribuição baseada nas area paths selecionadas:</p>
+
+    <div class="example-section">
+      <h3>📋 Exemplo 1: Só Benefícios</h3>
+      <div class="path-list">
+        ✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Squad1<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Madrid<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Suporte
+      </div>
+      <div class="result">
+        <strong>📊 Resultado:</strong> 100% dos dados aparecem em <span class="highlight">Benefícios</span><br>
+        Outras áreas ficam com 0 features ou não aparecem.
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>🔄 Exemplo 2: Mix Proporcional</h3>
+      <div class="path-list">
+        ✅ Mastersaf Fiscal Solutions\MFS\Benefícios\Squad1<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Cobrança\Madrid<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Cobrança\Suporte<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Mastersaf DW\Estadual
+      </div>
+      <div class="result">
+        <strong>📊 Resultado:</strong><br>
+        • <span class="highlight">Benefícios</span>: 25% (1 de 4 areas)<br>
+        • <span class="highlight">Cobrança</span>: 50% (2 de 4 areas)<br>
+        • <span class="highlight">Mastersaf DW</span>: 25% (1 de 4 areas)
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>🎨 Exemplo 3: Áreas Específicas</h3>
+      <div class="path-list">
+        ✅ Mastersaf Fiscal Solutions\MFS\Arquitetura\Evolução Técnica<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Federal OS<br>
+        ✅ Mastersaf Fiscal Solutions\MFS\Suporte
+      </div>
+      <div class="result">
+        <strong>📊 Resultado:</strong><br>
+        • <span class="highlight">Arquitetura</span>: 33% (cor índigo)<br>
+        • <span class="highlight">Federal OS</span>: 33% (cor azul)<br>
+        • <span class="highlight">Suporte</span>: 33% (cor rosa)<br>
+        <em>Benefícios e Cobrança não aparecem pois não foram selecionados</em>
+      </div>
+    </div>
+
+    <div class="example-section">
+      <h3>⚙️ Mapeamento Inteligente</h3>
+      <p>O sistema identifica áreas por palavras-chave nos paths:</p>
+      <ul>
+        <li><strong>beneficio/benefit</strong> → Benefícios (roxo)</li>
+        <li><strong>cobranca/billing</strong> → Cobrança (azul)</li>
+        <li><strong>mastersaf + dw</strong> → Mastersaf DW (verde)</li>
+        <li><strong>mastersaf + gf</strong> → Mastersaf GF (laranja)</li>
+        <li><strong>federal</strong> → Federal OS (azul escuro)</li>
+        <li><strong>estadual</strong> → Estadual (vermelho)</li>
+        <li><strong>arquitetura</strong> → Arquitetura (índigo)</li>
+        <li><strong>suporte</strong> → Suporte (rosa)</li>
+      </ul>
+    </div>
+
+    <div style="margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
+      <p><strong>✨ Dashboard 100% Dinâmico!</strong></p>
+      <p>As áreas que aparecem e suas distribuições dependem completamente das area paths que você selecionar.</p>
+    </div>
+  </div>
+</body>
+</html>

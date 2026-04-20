@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Follow-up - Versão Mínima</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .field-group {
+      margin: 20px 0;
+    }
+
+    .field-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .status {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+
+    #debug-info {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .area-paths, .iterations {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    .checkbox-list {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .checkbox-item {
+      margin: 8px 0;
+    }
+
+    .checkbox-item input {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Delivery Follow-up - Teste Básico</h1>
+
+    <div id="loading-status" class="status info">⏳ Carregando dados do Azure DevOps...</div>
+
+    <div class="field-group">
+      <label for="f-produto">Programa / Produto</label>
+      <select id="f-produto" onchange="selecionarProjeto(this.value)">
+        <option value="">Carregando projetos...</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label>Area Paths</label>
+      <div class="area-paths">
+        <div id="area-paths-container">
+          <div style="color: #666; font-style: italic;">Selecione um projeto primeiro</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Iteration Paths</label>
+      <div class="iterations">
+        <div id="iterations-container">
+          <div style="color: #666; font-style: italic;">Selecione um projeto primeiro</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="debug-info">
+      <strong>Debug Log:</strong><br>
+      <div id="debug-log">Inicializando...</div>
+    </div>
+  </div>
+
+  <script>
+    let azureDevOpsData = null;
+    let debugLog = '';
+
+    function log(message) {
+      console.log(message);
+      debugLog += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+      document.getElementById('debug-log').innerHTML = debugLog;
+    }
+
+    function updateStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('loading-status');
+      statusDiv.className = `status ${type}`;
+      statusDiv.innerHTML = message;
+    }
+
+    // Função para carregar dados
+    function carregarDados() {
+      log('Iniciando carregamento dos dados...');
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '../../tr-latam-real-data.json', true);
+
+      xhr.onreadystatechange = function() {
+        log(`XHR State: ${xhr.readyState}, Status: ${xhr.status}`);
+
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              azureDevOpsData = JSON.parse(xhr.responseText);
+              log('✅ JSON parseado com sucesso!');
+
+              if (azureDevOpsData && azureDevOpsData.projetos) {
+                const projectNames = Object.keys(azureDevOpsData.projetos);
+                log(`📊 ${projectNames.length} projetos encontrados: ${projectNames.join(', ')}`);
+
+                carregarProjetos();
+                updateStatus(`✅ ${projectNames.length} projetos carregados com sucesso!`, 'success');
+              } else {
+                log('❌ Estrutura de dados inválida');
+                updateStatus('❌ Dados inválidos: estrutura de projetos não encontrada', 'error');
+              }
+            } catch (error) {
+              log(`❌ Erro ao parsear JSON: ${error.message}`);
+              updateStatus(`❌ Erro ao processar dados: ${error.message}`, 'error');
+            }
+          } else {
+            log(`❌ Erro HTTP: ${xhr.status}`);
+            updateStatus(`❌ Erro ao carregar dados (HTTP ${xhr.status})`, 'error');
+          }
+        }
+      };
+
+      xhr.onerror = function() {
+        log('❌ Erro de rede');
+        updateStatus('❌ Erro de rede ao carregar dados', 'error');
+      };
+
+      xhr.send();
+    }
+
+    // Função para carregar projetos no dropdown
+    function carregarProjetos() {
+      log('Carregando projetos no dropdown...');
+      const select = document.getElementById('f-produto');
+
+      if (!select) {
+        log('❌ Elemento f-produto não encontrado');
+        return;
+      }
+
+      // Limpar opções existentes
+      select.innerHTML = '<option value="">Selecione um projeto...</option>';
+
+      if (azureDevOpsData && azureDevOpsData.projetos) {
+        const projetos = Object.keys(azureDevOpsData.projetos).sort();
+
+        projetos.forEach(projeto => {
+          const option = document.createElement('option');
+          option.value = projeto;
+          option.textContent = projeto;
+          select.appendChild(option);
+        });
+
+        log(`✅ ${projetos.length} projetos adicionados ao dropdown`);
+      }
+    }
+
+    // Função para selecionar projeto
+    function selecionarProjeto(projeto) {
+      log(`Projeto selecionado: ${projeto}`);
+
+      if (!projeto) {
+        limparAreasPaths();
+        limparIterations();
+        return;
+      }
+
+      if (!azureDevOpsData || !azureDevOpsData.projetos[projeto]) {
+        log(`❌ Dados não encontrados para projeto: ${projeto}`);
+        return;
+      }
+
+      const dadosProjeto = azureDevOpsData.projetos[projeto];
+      log(`📋 Dados do projeto: ${JSON.stringify({
+        areaPaths: dadosProjeto.area_paths ? dadosProjeto.area_paths.length : 0,
+        iterations: dadosProjeto.iterations ? dadosProjeto.iterations.length : 0
+      })}`);
+
+      carregarAreaPaths(dadosProjeto);
+      carregarIterations(dadosProjeto);
+    }
+
+    // Função para carregar area paths
+    function carregarAreaPaths(dadosProjeto) {
+      const container = document.getElementById('area-paths-container');
+
+      if (!dadosProjeto.area_paths || dadosProjeto.area_paths.length === 0) {
+        container.innerHTML = '<div style="color: #999;">Nenhuma area path encontrada</div>';
+        log('❌ Nenhuma area path encontrada');
+        return;
+      }
+
+      container.innerHTML = '<div class="checkbox-list"></div>';
+      const checkboxList = container.querySelector('.checkbox-list');
+
+      dadosProjeto.area_paths.forEach((areaPath, index) => {
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `area-${index}`;
+        checkbox.value = areaPath.path;
+
+        const label = document.createElement('label');
+        label.htmlFor = `area-${index}`;
+        label.textContent = areaPath.nome || areaPath.path;
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        checkboxList.appendChild(div);
+      });
+
+      log(`✅ ${dadosProjeto.area_paths.length} area paths carregadas`);
+    }
+
+    // Função para carregar iterations
+    function carregarIterations(dadosProjeto) {
+      const container = document.getElementById('iterations-container');
+
+      if (!dadosProjeto.iterations || dadosProjeto.iterations.length === 0) {
+        container.innerHTML = '<div style="color: #999;">Nenhuma iteration encontrada</div>';
+        log('❌ Nenhuma iteration encontrada');
+        return;
+      }
+
+      container.innerHTML = '<div class="checkbox-list"></div>';
+      const checkboxList = container.querySelector('.checkbox-list');
+
+      dadosProjeto.iterations.forEach((iteration, index) => {
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `iter-${index}`;
+        checkbox.value = iteration.path;
+
+        const label = document.createElement('label');
+        label.htmlFor = `iter-${index}`;
+        label.textContent = iteration.name || iteration.path;
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        checkboxList.appendChild(div);
+      });
+
+      log(`✅ ${dadosProjeto.iterations.length} iterations carregadas`);
+    }
+
+    function limparAreasPaths() {
+      document.getElementById('area-paths-container').innerHTML =
+        '<div style="color: #666; font-style: italic;">Selecione um projeto primeiro</div>';
+    }
+
+    function limparIterations() {
+      document.getElementById('iterations-container').innerHTML =
+        '<div style="color: #666; font-style: italic;">Selecione um projeto primeiro</div>';
+    }
+
+    // Inicializar quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      log('DOM carregado, iniciando aplicação...');
+      carregarDados();
+    });
+  </script>
+</body>
+</html>

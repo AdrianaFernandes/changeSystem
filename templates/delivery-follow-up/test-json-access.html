@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste JSON Access</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+    .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+    pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+    .test-section { margin: 20px 0; padding: 15px; border: 1px solid #dee2e6; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Diagnóstico Completo - Delivery Follow-up</h1>
+
+    <div class="test-section">
+      <h3>📂 Teste 1: Caminho do Arquivo JSON</h3>
+      <div id="path-test">⏳ Testando...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>📡 Teste 2: Carregamento via XMLHttpRequest</h3>
+      <div id="xhr-test">⏳ Testando...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>🌐 Teste 3: Carregamento via Fetch</h3>
+      <div id="fetch-test">⏳ Testando...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>📋 Teste 4: Elementos DOM</h3>
+      <div id="dom-test">⏳ Testando...</div>
+    </div>
+
+    <div class="test-section">
+      <h3>📊 Log Detalhado</h3>
+      <pre id="detailed-log"></pre>
+    </div>
+  </div>
+
+  <script>
+    let detailedLog = '';
+
+    function log(message) {
+      console.log(message);
+      detailedLog += new Date().toISOString() + ': ' + message + '\n';
+      document.getElementById('detailed-log').textContent = detailedLog;
+    }
+
+    function updateTest(testId, message, type = 'info') {
+      const element = document.getElementById(testId);
+      element.innerHTML = `<div class="status ${type}">${message}</div>`;
+    }
+
+    // Teste 1: Verificar caminhos possíveis
+    function testPaths() {
+      log('=== TESTE 1: CAMINHOS ===');
+      const paths = [
+        '../../tr-latam-real-data.json',
+        '../../../tr-latam-real-data.json',
+        'tr-latam-real-data.json',
+        '/tr-latam-real-data.json'
+      ];
+
+      let pathResults = [];
+      let completedTests = 0;
+
+      paths.forEach((path, index) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', path, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            completedTests++;
+            if (xhr.status === 200) {
+              pathResults.push(`✅ ${path} - SUCESSO`);
+              log(`✅ Caminho válido encontrado: ${path}`);
+            } else {
+              pathResults.push(`❌ ${path} - HTTP ${xhr.status}`);
+              log(`❌ Falha no caminho: ${path} (${xhr.status})`);
+            }
+
+            if (completedTests === paths.length) {
+              updateTest('path-test', pathResults.join('<br>'), pathResults.some(r => r.includes('✅')) ? 'success' : 'error');
+            }
+          }
+        };
+        xhr.onerror = function() {
+          completedTests++;
+          pathResults.push(`❌ ${path} - ERRO DE REDE`);
+          log(`❌ Erro de rede no caminho: ${path}`);
+          if (completedTests === paths.length) {
+            updateTest('path-test', pathResults.join('<br>'), 'error');
+          }
+        };
+        xhr.send();
+      });
+    }
+
+    // Teste 2: XMLHttpRequest detalhado
+    function testXHR() {
+      log('=== TESTE 2: XMLHttpRequest ===');
+      const xhr = new XMLHttpRequest();
+      const path = '../../tr-latam-real-data.json';
+
+      xhr.open('GET', path, true);
+      xhr.onreadystatechange = function() {
+        log(`XHR State: ${xhr.readyState}, Status: ${xhr.status}`);
+
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              const projectCount = data.projetos ? Object.keys(data.projetos).length : 0;
+              log(`✅ JSON parseado - ${projectCount} projetos encontrados`);
+              updateTest('xhr-test', `✅ Sucesso! ${projectCount} projetos carregados via XMLHttpRequest`, 'success');
+            } catch (error) {
+              log(`❌ Erro ao parsear JSON: ${error.message}`);
+              updateTest('xhr-test', `❌ Erro ao parsear JSON: ${error.message}`, 'error');
+            }
+          } else {
+            log(`❌ HTTP Error: ${xhr.status}`);
+            updateTest('xhr-test', `❌ Erro HTTP: ${xhr.status}`, 'error');
+          }
+        }
+      };
+      xhr.onerror = function() {
+        log('❌ XHR Network Error');
+        updateTest('xhr-test', '❌ Erro de rede no XMLHttpRequest', 'error');
+      };
+      xhr.send();
+    }
+
+    // Teste 3: Fetch API
+    function testFetch() {
+      log('=== TESTE 3: Fetch API ===');
+      fetch('../../tr-latam-real-data.json')
+        .then(response => {
+          log(`Fetch Response Status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          const projectCount = data.projetos ? Object.keys(data.projetos).length : 0;
+          log(`✅ Fetch sucesso - ${projectCount} projetos`);
+          updateTest('fetch-test', `✅ Sucesso! ${projectCount} projetos carregados via Fetch`, 'success');
+        })
+        .catch(error => {
+          log(`❌ Fetch Error: ${error.message}`);
+          updateTest('fetch-test', `❌ Erro no Fetch: ${error.message}`, 'error');
+        });
+    }
+
+    // Teste 4: Elementos DOM necessários
+    function testDOM() {
+      log('=== TESTE 4: Elementos DOM ===');
+      const requiredElements = [
+        'f-produto',
+        'area-path-list',
+        'iteration-list',
+        'work-item-cards-container'
+      ];
+
+      const results = requiredElements.map(id => {
+        const element = document.getElementById(id);
+        const exists = element !== null;
+        log(`DOM Element ${id}: ${exists ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+        return `${exists ? '✅' : '❌'} #${id}`;
+      });
+
+      const allFound = requiredElements.every(id => document.getElementById(id));
+      updateTest('dom-test', results.join('<br>'), allFound ? 'success' : 'warning');
+    }
+
+    // Executar todos os testes
+    document.addEventListener('DOMContentLoaded', function() {
+      log('=== INICIANDO DIAGNÓSTICO COMPLETO ===');
+      log('URL atual: ' + window.location.href);
+      log('Base URL: ' + window.location.origin);
+
+      testPaths();
+      testXHR();
+      testFetch();
+      testDOM();
+    });
+  </script>
+</body>
+</html>

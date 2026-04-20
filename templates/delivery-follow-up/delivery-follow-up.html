@@ -2923,8 +2923,6 @@
       var nomeArea = extrairNomeAreaPath(areaPath);
 
       console.log(`🔨 Criando card para área: ${nomeArea}`);
-      console.log(`🔍 Area Path EXATO sendo usado: "${areaPath}"`);
-      console.log(`🔍 Nome extraído: "${nomeArea}"`);
 
       try {
         // Criar filtros específicos para esta área - SUPER SIMPLES
@@ -2957,12 +2955,6 @@
           dadosArea = await processarResultadosReais(resultadosArea, filtros.projeto);
           console.log(`✅ Dados processados para ${nomeArea}:`, dadosArea);
 
-          // DEBUG CRÍTICO: Verificar se a query está filtrando corretamente
-          console.log(`🔍 DEBUG ${nomeArea}:`);
-          console.log(`   - workItems retornados: ${resultadosArea.workItems ? resultadosArea.workItems.length : 0}`);
-          console.log(`   - Total calculado: ${dadosArea.total}`);
-          console.log(`   - Active: ${dadosArea.active}, Closed: ${dadosArea.realizadas}, New: ${dadosArea.novas}`);
-
         } catch (queryError) {
           console.log(`⚠️ Query simplificada falhou para ${nomeArea}, tentando query BÁSICA...`);
 
@@ -2981,33 +2973,17 @@
           var resultadosBasicos = await executarQueryWIQLDireta(wiqlBasico, filtros.projeto);
           dadosArea = await processarResultadosReais(resultadosBasicos, filtros.projeto);
           console.log(`✅ Query BÁSICA funcionou para ${nomeArea}:`, dadosArea);
-
-          // DEBUG CRÍTICO: Verificar query básica
-          console.log(`🔍 DEBUG BÁSICO ${nomeArea}:`);
-          console.log(`   - workItems retornados: ${resultadosBasicos.workItems ? resultadosBasicos.workItems.length : 0}`);
-          console.log(`   - Total calculado: ${dadosArea.total}`);
-          console.log(`   - WIQL: ${wiqlBasico}`);
         }
 
         var workItemType = obterFormaSingular(filtros.workItemTypes.join(', ')) || 'item';
 
-        // CORREÇÃO CRÍTICA: Calcular total real somando os status individuais
-        var closedReal = dadosArea.realizadas || dadosArea.closed || 0;
-        var activeReal = dadosArea.active || 0;
-        var newReal = dadosArea.novas || dadosArea.new || 0;
-        var totalReal = closedReal + activeReal + newReal;
-
-        console.log(`🔢 CÁLCULO REAL ${nomeArea}:`);
-        console.log(`   Closed: ${closedReal} + Active: ${activeReal} + New: ${newReal} = Total: ${totalReal}`);
-        console.log(`   dadosArea.total original: ${dadosArea.total}`);
-
         var dadosCard = {
-          features: totalReal, // USAR TOTAL CALCULADO, NÃO dadosArea.total
-          closed: closedReal,
-          active: activeReal,
-          new: newReal,
+          features: dadosArea.total || 0,
+          closed: dadosArea.realizadas || dadosArea.closed || 0,
+          active: dadosArea.active || 0,
+          new: dadosArea.novas || dadosArea.new || 0,
           atrasadas: 0, // Azure DevOps não tem este campo
-          eficiencia: totalReal > 0 ? Math.round(closedReal / totalReal * 100) + '%' : '0%',
+          eficiencia: dadosArea.taxaConclusao || (dadosArea.total > 0 ? Math.round((dadosArea.realizadas || dadosArea.closed || 0) / dadosArea.total * 100) + '%' : '0%'),
           workItemType: workItemType.toLowerCase() + 's',
           workItemTypeSingular: workItemType.toLowerCase(),
           isReal: true

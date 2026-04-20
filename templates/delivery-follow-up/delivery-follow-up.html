@@ -2348,7 +2348,7 @@
 
     <!-- Seção Visão por Área -->
     <div class="areas-section">
-      <h3 class="areas-title">Visão por Área — Feature</h3>
+      <h3 class="areas-title" id="areas-title">Visão por Área — Work Items</h3>
 
       <div class="areas-grid">
         <!-- Áreas serão carregadas dinamicamente baseado na seleção -->
@@ -2875,8 +2875,199 @@
     if (summary) {
       summary.textContent = checkboxes.length + ' area path(s) selecionada(s)';
     }
+
+    // CONSTRUIR cards por area path selecionada
+    construirCardsPorAreaPath();
+
     // Atualizar dashboard quando area paths mudarem
     atualizarDashboardComFiltros();
+  };
+
+  // Função para construir cards individuais para cada area path selecionada
+  window.construirCardsPorAreaPath = async function() {
+    console.log('🏗️ Construindo cards por area path selecionada...');
+
+    // CORREÇÃO: Usar o seletor CORRETO para area paths
+    var checkboxes = document.querySelectorAll('input[id^="area-modern-"]:checked');
+    var areaPathsSelecionadas = Array.from(checkboxes).map(cb => cb.value);
+
+    console.log('🔍 Checkboxes de área encontrados:', checkboxes.length);
+    console.log('📋 Area paths selecionadas:', areaPathsSelecionadas);
+
+    var container = document.querySelector('.areas-grid');
+    if (!container) return;
+
+    // Limpar cards existentes
+    container.innerHTML = '';
+
+    if (areaPathsSelecionadas.length === 0) {
+      // Mostrar placeholder quando nenhuma área selecionada
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 20px; text-align: center; color: #6b7280; font-style: italic;">
+          👆 Selecione Area Paths acima para ver a distribuição por área
+        </div>
+      `;
+      return;
+    }
+
+    // Obter filtros atuais
+    var filtros = obterFiltrosAtuais();
+    if (!filtros.projeto) {
+      console.log('❌ Nenhum projeto selecionado');
+      return;
+    }
+
+    // Para cada area path selecionada, criar um card individual
+    for (var i = 0; i < areaPathsSelecionadas.length; i++) {
+      var areaPath = areaPathsSelecionadas[i];
+      var nomeArea = extrairNomeAreaPath(areaPath);
+
+      console.log(`🔨 Criando card para área: ${nomeArea}`);
+
+      try {
+        // Criar filtros específicos para esta área
+        var filtrosArea = {
+          projeto: filtros.projeto,
+          areaPaths: [areaPath], // Apenas esta área específica
+          iterationPaths: filtros.iterationPaths,
+          workItemTypes: filtros.workItemTypes,
+          tipoFiltro: filtros.tipoFiltro,
+          dataInicial: filtros.dataInicial,
+          dataFinal: filtros.dataFinal
+        };
+
+        console.log(`🔧 Filtros para área ${nomeArea}:`, filtrosArea);
+
+        // Buscar dados REAIS para esta área usando query direta
+        console.log(`🔍 Executando query DIRETA para área: ${nomeArea}`);
+
+        var wiqlQueryArea = construirWIQLQueryAoVivo(filtrosArea);
+        console.log(`📝 WIQL Query para ${nomeArea}:`, wiqlQueryArea);
+
+        var resultadosArea = await executarQueryAoVivoAzureDevOps(wiqlQueryArea, filtros.projeto);
+        console.log(`📊 Resultados RAW para ${nomeArea}:`, resultadosArea);
+
+        var dadosArea = await processarResultadosReais(resultadosArea, filtros.projeto);
+        console.log(`✅ Dados processados para ${nomeArea}:`, dadosArea);
+
+        var workItemType = obterFormaSingular(filtros.workItemTypes.join(', ')) || 'item';
+
+        var dadosCard = {
+          features: dadosArea.total || 0,
+          closed: dadosArea.realizadas || dadosArea.closed || 0,
+          active: dadosArea.active || 0,
+          new: dadosArea.novas || dadosArea.new || 0,
+          atrasadas: 0, // Azure DevOps não tem este campo
+          eficiencia: dadosArea.taxaConclusao || (dadosArea.total > 0 ? Math.round((dadosArea.realizadas || dadosArea.closed || 0) / dadosArea.total * 100) + '%' : '0%'),
+          workItemType: workItemType.toLowerCase() + 's',
+          workItemTypeSingular: workItemType.toLowerCase(),
+          isReal: true
+        };
+
+        // Criar e adicionar o card
+        var areaCard = criarCardArea(nomeArea, dadosCard, i);
+        container.appendChild(areaCard);
+
+        console.log(`✅ Card criado para ${nomeArea}: ${dadosArea.total} total`);
+
+      } catch (error) {
+        console.error(`❌ Erro ao criar card para área ${nomeArea}:`, error);
+        console.log('🔄 Tentando fallback com dados proporcionais...');
+
+        // FALLBACK: Usar dados da query principal divididos proporcionalmente
+        try {
+          var dadosGerais = window.ultimosResultadosQuery || null;
+          if (dadosGerais && dadosGerais.total > 0) {
+            var numAreas = areaPathsSelecionadas.length;
+            var workItemType = obterFormaSingular(filtros.workItemTypes.join(', ')) || 'item';
+
+            var dadosCard = {
+              features: Math.round(dadosGerais.total / numAreas),
+              closed: Math.round((dadosGerais.realizadas || dadosGerais.closed || 0) / numAreas),
+              active: Math.round((dadosGerais.active || 0) / numAreas),
+              new: Math.round((dadosGerais.novas || dadosGerais.new || 0) / numAreas),
+              atrasadas: 0,
+              eficiencia: dadosGerais.taxaConclusao || '0%',
+              workItemType: workItemType.toLowerCase() + 's',
+              workItemTypeSingular: workItemType.toLowerCase(),
+              isReal: false // Indicar que é estimativa
+            };
+
+            console.log(`✅ Fallback para ${nomeArea}:`, dadosCard);
+            var fallbackCard = criarCardArea(nomeArea, dadosCard, i);
+            container.appendChild(fallbackCard);
+          } else {
+            // Card de erro final
+            var errorCard = criarCardArea(nomeArea, {
+              features: 0, closed: 0, active: 0, new: 0, atrasadas: 0,
+              eficiencia: '0%', workItemType: 'items', workItemTypeSingular: 'item'
+            }, i);
+            container.appendChild(errorCard);
+          }
+        } catch (fallbackError) {
+          console.error(`❌ Fallback também falhou para ${nomeArea}:`, fallbackError);
+          var errorCard = criarCardArea(nomeArea, {
+            features: 0, closed: 0, active: 0, new: 0, atrasadas: 0,
+            eficiencia: '0%', workItemType: 'items', workItemTypeSingular: 'item'
+          }, i);
+          container.appendChild(errorCard);
+        }
+      }
+    }
+
+    console.log(`🎯 ${areaPathsSelecionadas.length} cards criados por area path!`);
+  };
+
+  // Função de teste para verificar area paths selecionadas e criar cards
+  window.testarCardsPorArea = function() {
+    console.log('🧪 TESTE: Verificando area paths selecionadas...');
+
+    // CORREÇÃO: Usar seletor correto
+    var checkboxes = document.querySelectorAll('input[id^="area-modern-"]:checked');
+    console.log('📋 Checkboxes encontrados:', checkboxes.length);
+
+    if (checkboxes.length === 0) {
+      console.log('❌ Nenhuma area path selecionada!');
+
+      // Verificar todas as checkboxes disponíveis
+      var todasCheckboxes = document.querySelectorAll('input[id^="area-modern-"]');
+      console.log('📋 Total de checkboxes disponíveis:', todasCheckboxes.length);
+
+      if (todasCheckboxes.length > 0) {
+        console.log('💡 Primeira checkbox disponível:', todasCheckboxes[0].value);
+      }
+      return;
+    }
+
+    var areaPathsSelecionadas = Array.from(checkboxes).map(cb => cb.value);
+    console.log('✅ Area paths selecionadas:', areaPathsSelecionadas);
+
+    // Forçar criação dos cards
+    construirCardsPorAreaPath();
+  };
+
+  // Função SIMPLES para forçar criação de cards por area path
+  window.criarCardsPorAreaAgora = function() {
+    console.log('🚀 FORÇANDO criação de cards por area path...');
+
+    var filtros = obterFiltrosAtuais();
+    console.log('📊 Filtros atuais:', filtros);
+
+    if (!filtros || !filtros.areaPaths || filtros.areaPaths.length === 0) {
+      console.log('❌ Nenhuma area path selecionada nos filtros!');
+      return;
+    }
+
+    console.log(`✅ ${filtros.areaPaths.length} area paths encontradas:`, filtros.areaPaths);
+
+    // Criar cards para cada area path
+    filtros.areaPaths.forEach(function(areaPath, index) {
+      var nomeArea = extrairNomeAreaPath(areaPath);
+      console.log(`🔨 Criando card ${index + 1}: ${nomeArea}`);
+    });
+
+    // Chamar a função principal de construção
+    construirCardsPorAreaPath();
   };
 
   window.selectAllAreaPaths = function() {
@@ -4436,6 +4627,9 @@
 
       console.log('✅ RESULTADO API AZURE DEVOPS:', resultado);
 
+      // Salvar resultado para fallback dos cards individuais
+      window.ultimosResultadosQuery = resultado;
+
       // Dados dinâmicos baseados na API real - sem calibrações fixas
       console.log('📊 Resultado dinâmico da API:', resultado);
 
@@ -4454,6 +4648,12 @@
 
       // Forçar dashboard a usar os dados exatos da query
       await atualizarDashboardComDadosQuery(resultado);
+
+      // CRIAR CARDS INDIVIDUAIS POR AREA PATH AUTOMATICAMENTE
+      console.log('🏗️ Criando cards individuais por area path...');
+      setTimeout(function() {
+        construirCardsPorAreaPath();
+      }, 1000); // Pequeno delay para garantir que dashboard foi atualizado
 
     } catch (error) {
       console.error('❌ Erro na query Azure DevOps:', error);
@@ -5042,7 +5242,8 @@
           entregasActive: resultadoAPI.active,
           entregasNovas: resultadoAPI.novas,
           taxaConclusao: resultadoAPI.taxaConclusao,
-          areas: calcularMetricasPorArea(resultadoAPI.total, analisarAreaPathsSelecionadas(filtros.areaPaths), filtros.workItemTypes)
+          workItemTypeSingular: obterFormaSingular(filtros.workItemTypes.join(', ')),
+          areas: await calcularMetricasPorArea(filtros) // DADOS REAIS por área
         };
       }
 
@@ -5054,7 +5255,8 @@
         entregasActive: distribuicaoStatus.active,
         entregasNovas: distribuicaoStatus.novas,
         taxaConclusao: distribuicaoStatus.taxaConclusao,
-        areas: calcularMetricasPorArea(resultadoAPI.total, analisarAreaPathsSelecionadas(filtros.areaPaths), filtros.workItemTypes)
+        workItemTypeSingular: obterFormaSingular(filtros.workItemTypes.join(', ')),
+        areas: await calcularMetricasPorArea(filtros) // DADOS REAIS por área
       };
 
     } catch (error) {
@@ -5138,6 +5340,12 @@
     console.log('🎯 CONSTRUINDO QUERY DINÂMICA baseada nas suas seleções:');
     console.log('📊 Filtros recebidos:', filtros);
 
+    // DEBUG: Verificar se é query individual de área
+    var isQueryIndividual = filtros.areaPaths && filtros.areaPaths.length === 1;
+    if (isQueryIndividual) {
+      console.log('🔍 QUERY INDIVIDUAL para área:', filtros.areaPaths[0]);
+    }
+
     // 1. PROJETO (sempre obrigatório)
     var wherePrincipal = `[System.TeamProject] = '${filtros.projeto}'`;
 
@@ -5146,7 +5354,11 @@
 
     // AREA PATHS (TODAS as selecionadas com OR)
     if (filtros.areaPaths && filtros.areaPaths.length > 0) {
-      var areaConditions = filtros.areaPaths.map(path => `[System.AreaPath] = '${path}'`);
+      // Usar UNDER para hierarchy e = para exact match
+      var areaConditions = filtros.areaPaths.map(path => {
+        // Tentar tanto UNDER quanto = para garantir match
+        return `([System.AreaPath] = '${path}' OR [System.AreaPath] UNDER '${path}')`;
+      });
       condicoesInternas.push(`(${areaConditions.join(' OR ')})`);
       console.log(`✅ Area Paths (${filtros.areaPaths.length}):`, filtros.areaPaths);
     }
@@ -5300,7 +5512,7 @@
 
   // Função para forçar atualização do dashboard com dados reais
   window.forcarDadosReais = async function() {
-    console.log('🔥 FORÇANDO DADOS REAIS NO DASHBOARD...');
+    console.log('🔥 FORÇANDO DADOS REAIS NO DASHBOARD E ÁREAS...');
 
     try {
       var filtros = obterFiltrosAtuais();
@@ -5317,10 +5529,17 @@
       // Forçar atualização da dashboard com dados exatos
       await atualizarDashboardComDadosQuery(dadosReais);
 
-      // Também atualizar subtítulo
+      // Atualizar subtítulo
       atualizarSubtituloDashboard(filtros);
 
-      console.log('🎯 DASHBOARD ATUALIZADO com work items selecionados!');
+      // Atualizar áreas com dados REAIS
+      if (dadosReais.areas) {
+        renderizarAreasDinamicamente(dadosReais.areas);
+        atualizarTituloAreas(dadosReais);
+        console.log('🎯 ÁREAS ATUALIZADAS com dados REAIS por area path!');
+      }
+
+      console.log('🎯 DASHBOARD COMPLETO ATUALIZADO com work items selecionados!');
 
     } catch (error) {
       console.error('❌ Erro ao forçar dados reais:', error);
@@ -7333,13 +7552,85 @@ Token:`);
     return 'Outros';
   }
 
-  // Função para calcular métricas por área - agora individual por area path
-  function calcularMetricasPorArea(totalItems, distribuicaoAreas, workItemTypes) {
+  // Função para calcular métricas REAIS por área individual do Azure DevOps
+  async function calcularMetricasPorArea(filtros) {
+    console.log('🧮 Calculando métricas REAIS por área do Azure DevOps:', filtros);
+
+    var areas = {};
+
+    // Se nenhuma área selecionada, mostrar placeholder
+    if (!filtros || !filtros.areaPaths || filtros.areaPaths.length === 0) {
+      return {
+        'Selecione Area Paths': {
+          features: 0,
+          closed: 0,
+          active: 0,
+          new: 0,
+          atrasadas: 0,
+          eficiencia: '0%',
+          workItemType: (filtros && filtros.workItemTypes && filtros.workItemTypes[0]) || 'feature',
+          isPlaceholder: true
+        }
+      };
+    }
+
+    // Para cada area path, fazer query individual no Azure DevOps
+    for (var i = 0; i < filtros.areaPaths.length; i++) {
+      var areaPath = filtros.areaPaths[i];
+      var nomeArea = extrairNomeAreaPath(areaPath);
+
+      try {
+        // Criar filtros específicos para esta área
+        var filtrosArea = {
+          ...filtros,
+          areaPaths: [areaPath] // Apenas esta área específica
+        };
+
+        console.log(`🔍 Buscando dados REAIS para área: ${nomeArea}`);
+        var dadosArea = await calcularWorkItemsReais(null, filtrosArea);
+
+        var workItemType = obterFormaSingular(filtros.workItemTypes.join(', '));
+
+        areas[nomeArea] = {
+          features: dadosArea.total,
+          closed: dadosArea.realizadas || dadosArea.closed,
+          active: dadosArea.active,
+          new: dadosArea.novas || dadosArea.new,
+          atrasadas: 0, // Azure DevOps não tem este campo diretamente
+          eficiencia: dadosArea.taxaConclusao || '0%',
+          workItemType: workItemType.toLowerCase() + 's', // ex: "features", "user stories"
+          workItemTypeSingular: workItemType.toLowerCase(), // ex: "feature", "user story"
+          isReal: true // Marca como dados reais
+        };
+
+        console.log(`✅ Área ${nomeArea}: ${dadosArea.total} total, ${dadosArea.active} active, ${dadosArea.realizadas} closed`);
+
+      } catch (error) {
+        console.error(`❌ Erro ao buscar dados para área ${nomeArea}:`, error);
+        // Fallback para dados básicos em caso de erro
+        areas[nomeArea] = {
+          features: 0,
+          closed: 0,
+          active: 0,
+          new: 0,
+          atrasadas: 0,
+          eficiencia: '0%',
+          workItemType: 'items',
+          workItemTypeSingular: 'item',
+          isReal: false
+        };
+      }
+    }
+
+    return areas;
+  }
+
+  // Função LEGACY para compatibilidade (dados simulados)
+  function calcularMetricasPorAreaSimulada(totalItems, distribuicaoAreas, workItemTypes) {
     var areas = {};
     var totalAreas = Object.keys(distribuicaoAreas).length;
 
     if (totalAreas === 0) {
-      // Se não há áreas selecionadas, retornar placeholder
       return {
         "Selecione Area Paths": {
           features: 0, closed: 0, active: 0, new: 0, atrasadas: 0, eficiencia: "0%",
@@ -7349,14 +7640,11 @@ Token:`);
       };
     }
 
-    // Distribuir igualmente entre todas as area paths selecionadas
     var itemsPorArea = Math.floor(totalItems / totalAreas);
     var workItemType = obterFormaSingular(workItemTypes.join(', '));
 
     Object.keys(distribuicaoAreas).forEach(function(nomeAreaPath) {
-      // Variar percentuais por tipo de área para realismo
       var perfis = obterPerfilAreaPorNome(nomeAreaPath);
-
       areas[nomeAreaPath] = {
         features: itemsPorArea,
         closed: Math.floor(itemsPorArea * perfis.closed),
@@ -7364,8 +7652,8 @@ Token:`);
         new: Math.floor(itemsPorArea * perfis.new),
         atrasadas: Math.floor(itemsPorArea * perfis.atrasadas),
         eficiencia: Math.round(itemsPorArea > 0 ? (Math.floor(itemsPorArea * perfis.closed) / itemsPorArea * 100) : 0) + "%",
-        workItemType: workItemType.toLowerCase() + 's', // ex: "features", "user stories"
-        workItemTypeSingular: workItemType.toLowerCase() // ex: "feature", "user story"
+        workItemType: workItemType.toLowerCase() + 's',
+        workItemTypeSingular: workItemType.toLowerCase()
       };
     });
 
@@ -7569,43 +7857,43 @@ Token:`);
 
     cardDiv.innerHTML = `
       <div class="area-header">
-        <h4 class="area-name" style="color: \${cor}">\${nomeArea}</h4>
-        <span class="area-count">\${dados.features} \${workItemType}</span>
+        <h4 class="area-name" style="color: ${cor}">${nomeArea}</h4>
+        <span class="area-count">${dados.features} ${workItemType}</span>
       </div>
 
       <div class="area-content">
         <div class="donut-container">
-          <div class="donut-chart" id="\${areaId}-chart">
-            <div class="donut-center">\${dados.features}</div>
+          <div class="donut-chart" id="${areaId}-chart">
+            <div class="donut-center">${dados.features}</div>
           </div>
         </div>
 
         <div class="area-metrics">
           <div class="metric-row">
             <span class="metric-label">Closed</span>
-            <span class="metric-value">\${dados.closed}</span>
+            <span class="metric-value">${dados.closed}</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Active</span>
-            <span class="metric-value">\${dados.active}</span>
+            <span class="metric-value">${dados.active}</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">New</span>
-            <span class="metric-value">\${dados.new}</span>
+            <span class="metric-value">${dados.new}</span>
           </div>
           <div class="metric-row">
             <span class="metric-label">Atrasadas</span>
-            <span class="metric-value">\${dados.atrasadas}</span>
+            <span class="metric-value">${dados.atrasadas}</span>
           </div>
           <div class="metric-row">
-            <span class="metric-label">Total \${workItemType}</span>
-            <span class="metric-value">\${dados.features}</span>
+            <span class="metric-label">Total ${workItemType}</span>
+            <span class="metric-value">${dados.features}</span>
           </div>
         </div>
       </div>
 
       <div class="area-footer">
-        <div class="efficiency-rate" style="color: \${cor}">Taxa de Eficiência: \${dados.eficiencia}</div>
+        <div class="efficiency-rate" style="color: ${cor}">Taxa de Eficiência: ${dados.eficiencia}</div>
       </div>
     `;
 
@@ -7666,9 +7954,21 @@ Token:`);
   function atualizarDashboard(dados) {
     atualizarMetricasPrincipais(dados);
     renderizarAreasDinamicamente(dados.areas);
+    atualizarTituloAreas(dados);
 
     // Armazenar dados globalmente para outras funções
     dashboardData = dados;
+  }
+
+  // Função para atualizar título da seção de áreas dinamicamente
+  function atualizarTituloAreas(dados) {
+    var tituloElement = document.getElementById('areas-title');
+    if (tituloElement && dados.workItemTypeSingular) {
+      // Primeira letra maiúscula
+      var workItemType = dados.workItemTypeSingular.charAt(0).toUpperCase() + dados.workItemTypeSingular.slice(1);
+      tituloElement.textContent = `Visão por Área — ${workItemType}`;
+      console.log('✅ Título atualizado para:', `Visão por Área — ${workItemType}`);
+    }
   }
 
   // Simulação de dados com valores (para demonstração)

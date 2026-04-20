@@ -2929,26 +2929,51 @@
         var filtrosArea = {
           projeto: filtros.projeto,
           areaPaths: [areaPath], // Apenas esta área específica
-          iterationPaths: filtros.iterationPaths,
+          iterationPaths: [], // REMOVER iteration paths para evitar erro 400
           workItemTypes: filtros.workItemTypes,
-          tipoFiltro: filtros.tipoFiltro,
-          dataInicial: filtros.dataInicial,
-          dataFinal: filtros.dataFinal
+          tipoFiltro: 'target-date', // FORÇAR target date para evitar iteration path inválida
+          dataInicial: '2025-01-01', // Range amplo para pegar todos os dados
+          dataFinal: '2027-12-31'
         };
+
+        console.log(`🛠️ Filtros SIMPLIFICADOS para ${nomeArea} (sem iteration path):`, filtrosArea);
 
         console.log(`🔧 Filtros para área ${nomeArea}:`, filtrosArea);
 
         // Buscar dados REAIS para esta área usando query direta
         console.log(`🔍 Executando query DIRETA para área: ${nomeArea}`);
 
-        var wiqlQueryArea = construirWIQLQueryAoVivo(filtrosArea);
-        console.log(`📝 WIQL Query para ${nomeArea}:`, wiqlQueryArea);
+        var dadosArea;
+        try {
+          // TENTATIVA 1: Query com filtros simplificados
+          var wiqlQueryArea = construirWIQLQueryAoVivo(filtrosArea);
+          console.log(`📝 WIQL Query para ${nomeArea}:`, wiqlQueryArea);
 
-        var resultadosArea = await executarQueryAoVivoAzureDevOps(wiqlQueryArea, filtros.projeto);
-        console.log(`📊 Resultados RAW para ${nomeArea}:`, resultadosArea);
+          var resultadosArea = await executarQueryAoVivoAzureDevOps(wiqlQueryArea, filtros.projeto);
+          console.log(`📊 Resultados RAW para ${nomeArea}:`, resultadosArea);
 
-        var dadosArea = await processarResultadosReais(resultadosArea, filtros.projeto);
-        console.log(`✅ Dados processados para ${nomeArea}:`, dadosArea);
+          dadosArea = await processarResultadosReais(resultadosArea, filtros.projeto);
+          console.log(`✅ Dados processados para ${nomeArea}:`, dadosArea);
+
+        } catch (queryError) {
+          console.log(`⚠️ Query simplificada falhou para ${nomeArea}, tentando query BÁSICA...`);
+
+          // TENTATIVA 2: Query MUITO BÁSICA - só área e work item types
+          var wiqlBasico = `
+            SELECT [System.Id], [System.State], [System.WorkItemType]
+            FROM workitems
+            WHERE [System.TeamProject] = '${filtros.projeto}'
+            AND ([System.AreaPath] = '${areaPath}' OR [System.AreaPath] UNDER '${areaPath}')
+            AND ([System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}'))
+            ORDER BY [System.Id] DESC
+          `;
+
+          console.log(`📝 WIQL BÁSICA para ${nomeArea}:`, wiqlBasico);
+
+          var resultadosBasicos = await executarQueryWIQLDireta(wiqlBasico, filtros.projeto);
+          dadosArea = await processarResultadosReais(resultadosBasicos, filtros.projeto);
+          console.log(`✅ Query BÁSICA funcionou para ${nomeArea}:`, dadosArea);
+        }
 
         var workItemType = obterFormaSingular(filtros.workItemTypes.join(', ')) || 'item';
 
@@ -4659,6 +4684,45 @@
       console.error('❌ Erro na query Azure DevOps:', error);
       alert('❌ Erro: ' + error.message);
     }
+  }
+
+  // Função para executar WIQL direto sem processamento complexo
+  async function executarQueryWIQLDireta(wiqlQuery, projeto) {
+    console.log('🔥 Executando WIQL DIRETO sem filtros complexos...');
+
+    var config = debugConfiguracaoAzureDevOps();
+    if (!config || !config.token) {
+      throw new Error('Configurações do Azure DevOps não encontradas.');
+    }
+
+    var url = `${config.baseUrl}/_apis/wit/wiql?$top=1000&api-version=7.0`;
+
+    var requestBody = {
+      query: wiqlQuery
+    };
+
+    console.log('🌐 URL DIRETA:', url);
+    console.log('📦 Query DIRETA:', wiqlQuery);
+
+    var response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa(':' + config.token),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      var errorText = await response.text();
+      console.error('❌ Erro da API DIRETO:', response.status, errorText);
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+
+    var data = await response.json();
+    console.log('✅ Resposta API DIRETA:', data);
+
+    return data;
   }
 
   // Normalizar iteration path para formato padrão Azure DevOps

@@ -2950,8 +2950,6 @@
 
         console.log(`📊 Dados principais disponíveis:`, dadosGeraisPrincipais);
 
-        // Se apenas 1 área selecionada: usar TODOS os dados da query principal
-        // Se múltiplas áreas: dividir proporcionalmente
         var numAreas = areaPathsSelecionadas.length;
         var dadosArea;
 
@@ -2960,17 +2958,37 @@
           dadosArea = dadosGeraisPrincipais;
           console.log(`✅ Uma área selecionada: usando dados completos para ${nomeArea}`);
         } else {
-          // MÚLTIPLAS ÁREAS: dividir proporcionalmente
-          dadosArea = {
-            total: Math.round(dadosGeraisPrincipais.total / numAreas),
-            active: Math.round((dadosGeraisPrincipais.active || 0) / numAreas),
-            realizadas: Math.round((dadosGeraisPrincipais.realizadas || 0) / numAreas),
-            closed: Math.round((dadosGeraisPrincipais.closed || 0) / numAreas),
-            novas: Math.round((dadosGeraisPrincipais.novas || 0) / numAreas),
-            new: Math.round((dadosGeraisPrincipais.new || 0) / numAreas),
-            taxaConclusao: dadosGeraisPrincipais.taxaConclusao
-          };
-          console.log(`✅ ${numAreas} áreas: dividindo dados proporcionalmente para ${nomeArea}`);
+          // MÚLTIPLAS ÁREAS: fazer query específica REAL para esta área
+          console.log(`🔍 Múltiplas áreas: fazendo query específica REAL para ${nomeArea}`);
+
+          var wiqlEspecifico = `
+            SELECT [System.Id], [System.State], [System.WorkItemType]
+            FROM workitems
+            WHERE [System.TeamProject] = '${filtros.projeto}'
+            AND [System.AreaPath] UNDER '${areaPath}'
+            AND [System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}')
+            AND [System.IterationPath] = '${filtros.iterationPaths[0] || ''}'
+            ORDER BY [System.Id] DESC
+          `;
+
+          console.log(`📝 WIQL específica para ${nomeArea}:`, wiqlEspecifico);
+
+          try {
+            var resultadosEspecificos = await executarQueryWIQLDireta(wiqlEspecifico, filtros.projeto);
+            dadosArea = await processarResultadosReais(resultadosEspecificos, filtros.projeto);
+            console.log(`✅ Query específica para ${nomeArea}:`, dadosArea);
+          } catch (errorEspecifico) {
+            console.log(`⚠️ Query específica falhou para ${nomeArea}, usando divisão proporcional`);
+            dadosArea = {
+              total: Math.round(dadosGeraisPrincipais.total / numAreas),
+              active: Math.round((dadosGeraisPrincipais.active || 0) / numAreas),
+              realizadas: Math.round((dadosGeraisPrincipais.realizadas || 0) / numAreas),
+              closed: Math.round((dadosGeraisPrincipais.closed || 0) / numAreas),
+              novas: Math.round((dadosGeraisPrincipais.novas || 0) / numAreas),
+              new: Math.round((dadosGeraisPrincipais.new || 0) / numAreas),
+              taxaConclusao: dadosGeraisPrincipais.taxaConclusao
+            };
+          }
         }
 
         // Dados já prontos - não precisa de queries individuais!

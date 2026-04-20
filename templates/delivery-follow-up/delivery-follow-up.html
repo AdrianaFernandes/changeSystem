@@ -2925,15 +2925,15 @@
       console.log(`🔨 Criando card para área: ${nomeArea}`);
 
       try {
-        // Criar filtros específicos para esta área
+        // Criar filtros específicos para esta área - SUPER SIMPLES
         var filtrosArea = {
           projeto: filtros.projeto,
           areaPaths: [areaPath], // Apenas esta área específica
-          iterationPaths: [], // REMOVER iteration paths para evitar erro 400
+          iterationPaths: [], // SEM iteration paths
           workItemTypes: filtros.workItemTypes,
-          tipoFiltro: 'target-date', // FORÇAR target date para evitar iteration path inválida
-          dataInicial: '2025-01-01', // Range amplo para pegar todos os dados
-          dataFinal: '2027-12-31'
+          tipoFiltro: 'none', // SEM filtros de data
+          dataInicial: null, // SEM datas
+          dataFinal: null
         };
 
         console.log(`🛠️ Filtros SIMPLIFICADOS para ${nomeArea} (sem iteration path):`, filtrosArea);
@@ -2963,8 +2963,8 @@
             SELECT [System.Id], [System.State], [System.WorkItemType]
             FROM workitems
             WHERE [System.TeamProject] = '${filtros.projeto}'
-            AND ([System.AreaPath] = '${areaPath}' OR [System.AreaPath] UNDER '${areaPath}')
-            AND ([System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}'))
+            AND [System.AreaPath] UNDER '${areaPath}'
+            AND [System.WorkItemType] IN ('${filtros.workItemTypes.join("', '")}')
             ORDER BY [System.Id] DESC
           `;
 
@@ -5434,8 +5434,11 @@
       periodoCondicao = `(${iterationConditions.join(' OR ')})`;
       console.log(`✅ Iteration Paths (${filtros.iterationPaths.length}):`, filtros.iterationPaths);
     } else if (filtros.tipoFiltro === 'target-date' && filtros.dataInicial && filtros.dataFinal) {
-      periodoCondicao = `[System.targetdate] >= '${filtros.dataInicial}' AND [System.targetdate] <= '${filtros.dataFinal}'`;
+      // CORREÇÃO: Campo correto é Microsoft.VSTS.Scheduling.TargetDate
+      periodoCondicao = `[Microsoft.VSTS.Scheduling.TargetDate] >= '${filtros.dataInicial}' AND [Microsoft.VSTS.Scheduling.TargetDate] <= '${filtros.dataFinal}'`;
       console.log(`✅ Target Date: ${filtros.dataInicial} a ${filtros.dataFinal}`);
+    } else if (filtros.tipoFiltro === 'none') {
+      console.log(`✅ SEM FILTROS de período - query mais simples possível`);
     }
 
     if (periodoCondicao) {

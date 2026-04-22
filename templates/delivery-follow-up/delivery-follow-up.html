@@ -7930,8 +7930,7 @@ Token:`);
         periodoText = 'entre ' + filtros.dataInicial + ' e ' + filtros.dataFinal;
       }
 
-      subtitle.innerHTML = 'Recorte: <a href="#" onclick="filterByFeatures()">' + workItemsText + '</a> com ' + tipoFiltroText + ' ' + periodoText + ' nas ' + areasText +
-        '. Taxa de conclusão: <strong>' + (dashboardData.taxaConclusao || '0%') + '</strong> (realizadas ÷ total).';
+      subtitle.innerHTML = 'Recorte: <a href="#" onclick="filterByFeatures()">' + workItemsText + '</a> com ' + tipoFiltroText + ' ' + periodoText + '.';
 
       console.log('✅ Subtítulo atualizado:', subtitle.innerHTML);
     }

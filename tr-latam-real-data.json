@@ -13807,6 +13807,129 @@
                                                                            }
                                                                        ]
                                                     },
+                     "Mastersaf DF-e":  {
+                                            "area_paths":  [
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe",
+                                                                   "nome":  "DFe",
+                                                                   "hasChildren":  true
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\NFe",
+                                                                   "nome":  "NFe",
+                                                                   "hasChildren":  true
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\NFe\\NFe Core",
+                                                                   "nome":  "NFe Core",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\NFe\\Validação",
+                                                                   "nome":  "Validação",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\NFe\\Transmissão",
+                                                                   "nome":  "Transmissão",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\CTe",
+                                                                   "nome":  "CTe",
+                                                                   "hasChildren":  true
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\CTe\\CTe Core",
+                                                                   "nome":  "CTe Core",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\CTe\\Manifesto",
+                                                                   "nome":  "Manifesto",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\MDFe",
+                                                                   "nome":  "MDFe",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\SAT",
+                                                                   "nome":  "SAT",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\NFCe",
+                                                                   "nome":  "NFCe",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\Arquitetura",
+                                                                   "nome":  "Arquitetura",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\Suporte",
+                                                                   "nome":  "Suporte",
+                                                                   "hasChildren":  false
+                                                               },
+                                                               {
+                                                                   "path":  "Mastersaf DF-e\\DFe\\Evolução Técnica",
+                                                                   "nome":  "Evolução Técnica",
+                                                                   "hasChildren":  false
+                                                               }
+                                                           ],
+                                            "iterations":  [
+                                                               {
+                                                                   "hasChildren":  false,
+                                                                   "path":  "\\Mastersaf DF-e\\Iteration\\DFe",
+                                                                   "nome":  "DFe",
+                                                                   "parent":  ""
+                                                               },
+                                                               {
+                                                                   "hasChildren":  false,
+                                                                   "path":  "\\Mastersaf DF-e\\Iteration\\DFe\\Sprint 1",
+                                                                   "nome":  "DFe\\Sprint 1",
+                                                                   "parent":  "DFe"
+                                                               },
+                                                               {
+                                                                   "hasChildren":  false,
+                                                                   "path":  "\\Mastersaf DF-e\\Iteration\\DFe\\Sprint 2",
+                                                                   "nome":  "DFe\\Sprint 2",
+                                                                   "parent":  "DFe"
+                                                               },
+                                                               {
+                                                                   "hasChildren":  false,
+                                                                   "path":  "\\Mastersaf DF-e\\Iteration\\DFe\\Sprint 3",
+                                                                   "nome":  "DFe\\Sprint 3",
+                                                                   "parent":  "DFe"
+                                                               },
+                                                               {
+                                                                   "hasChildren":  false,
+                                                                   "path":  "\\Mastersaf DF-e\\Iteration\\DFe\\Sprint 4",
+                                                                   "nome":  "DFe\\Sprint 4",
+                                                                   "parent":  "DFe"
+                                                               }
+                                                           ],
+                                            "work_item_types":  [
+                                                                    {
+                                                                        "nome":  "Feature"
+                                                                    },
+                                                                    {
+                                                                        "nome":  "User Story"
+                                                                    },
+                                                                    {
+                                                                        "nome":  "Task"
+                                                                    },
+                                                                    {
+                                                                        "nome":  "Bug"
+                                                                    },
+                                                                    {
+                                                                        "nome":  "Epic"
+                                                                    }
+                                                                ]
+                                        },
                      "ONVIO BR":  {
                                       "area_paths":  [
                                                          {

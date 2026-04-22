@@ -5308,10 +5308,18 @@
   // Função para obter area paths selecionadas
   function getSelectedAreaPaths() {
     var areaSelecionadas = [];
-    var checkboxes = document.querySelectorAll('.area-path-item input[type="checkbox"]:checked, .area-paths-list input[type="checkbox"]:checked');
-    checkboxes.forEach(function(checkbox) {
+    // Usar o seletor correto que é usado em todo o resto do código
+    var checkboxes = document.querySelectorAll('#area-path-list input[type="checkbox"]:checked');
+
+    console.log('🔍 DEBUG - Capturando Area Paths selecionadas...');
+    console.log('📋 Checkboxes de área encontrados:', checkboxes.length);
+
+    checkboxes.forEach(function(checkbox, index) {
+      console.log(`  📌 Área ${index + 1}:`, checkbox.value);
       areaSelecionadas.push(checkbox.value);
     });
+
+    console.log('✅ Area Paths capturadas:', areaSelecionadas);
     return areaSelecionadas;
   }
 

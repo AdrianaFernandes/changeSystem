@@ -3792,17 +3792,18 @@
 
   // Função para carregar area paths reais estilo Azure DevOps
   function carregarAreaPathsReais(produto) {
-    // CORRIGIDO: ID correto é area-path-list (sem 's')
-    var areaPathsList = document.getElementById('area-path-list');
+    // CORRIGIDO: ID correto é area-paths-list (COM 's')
+    var areaPathsList = document.getElementById('area-paths-list');
     if (!areaPathsList) {
-      console.error('❌ Lista de area paths não encontrada - ID: area-path-list');
+      console.error('❌ Lista de area paths não encontrada - ID: area-paths-list');
       console.log('🔍 Tentando encontrar container alternativo...');
       // Tentar container alternativo se existir
-      areaPathsList = document.getElementById('area-paths-list');
+      areaPathsList = document.getElementById('area-path-list');
       if (!areaPathsList) {
         console.error('❌ Nenhum container de area paths encontrado');
         return;
       }
+      console.log('✅ Container alternativo encontrado: area-path-list');
     }
 
     console.log('🔄 Carregando area paths reais para:', produto);
@@ -5338,11 +5339,17 @@
   // Função para obter area paths selecionadas
   function getSelectedAreaPaths() {
     var areaSelecionadas = [];
-    // Usar o seletor correto que é usado em todo o resto do código
-    var checkboxes = document.querySelectorAll('#area-path-list input[type="checkbox"]:checked');
+    // CORRIGIDO: usar o ID correto area-paths-list (COM 's')
+    var checkboxes = document.querySelectorAll('#area-paths-list input[type="checkbox"]:checked');
 
     console.log('🔍 DEBUG - Capturando Area Paths selecionadas...');
-    console.log('📋 Checkboxes de área encontrados:', checkboxes.length);
+    console.log('📋 Checkboxes de área encontrados (#area-paths-list):', checkboxes.length);
+
+    // Se não encontrar, tentar ID alternativo
+    if (checkboxes.length === 0) {
+      checkboxes = document.querySelectorAll('#area-path-list input[type="checkbox"]:checked');
+      console.log('📋 Checkboxes de área encontrados (#area-path-list):', checkboxes.length);
+    }
 
     checkboxes.forEach(function(checkbox, index) {
       console.log(`  📌 Área ${index + 1}:`, checkbox.value);

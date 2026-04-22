@@ -3700,28 +3700,38 @@
   window.getSelectedWorkItems = function() {
     console.log('🔍 DEBUG: Capturando work item types selecionados...');
 
-    var selectedCards = document.querySelectorAll('.work-item-card.selected');
+    // Buscar ambos os tipos de cards: .work-item-card e .work-item-card-modern
+    var selectedCards = document.querySelectorAll('.work-item-card.selected, .work-item-card-modern.selected');
     console.log('📋 Cards selecionados encontrados:', selectedCards.length);
 
     var selectedTypes = [];
     for (var i = 0; i < selectedCards.length; i++) {
       var card = selectedCards[i];
       var workItemType = card.dataset.workItemType;
-      console.log('  📌 Card', i + 1, ':', workItemType);
-      selectedTypes.push(workItemType);
+      console.log('  📌 Card', i + 1, ':', workItemType, '- Classe:', card.className);
+      if (workItemType) {
+        selectedTypes.push(workItemType);
+      }
     }
 
     console.log('✅ Work Item Types capturados:', selectedTypes);
 
-    // Se nenhum selecionado, verificar se há cards disponíveis
+    // Se nenhum selecionado, verificar se há cards disponíveis e debuggar
     if (selectedTypes.length === 0) {
       var todosCards = document.querySelectorAll('.work-item-card, .work-item-card-modern');
       console.log('⚠️ Nenhum work item selecionado. Cards disponíveis:', todosCards.length);
 
-      for (var j = 0; j < Math.min(3, todosCards.length); j++) {
+      for (var j = 0; j < Math.min(5, todosCards.length); j++) {
         var card = todosCards[j];
-        console.log('  📝 Card disponível', j + 1, ':', card.dataset.workItemType, '- selected:', card.classList.contains('selected'));
+        console.log(`  📝 Card disponível ${j + 1}:`, {
+          workItemType: card.dataset.workItemType,
+          selected: card.classList.contains('selected'),
+          classes: card.className,
+          element: card
+        });
       }
+
+      console.log('🔍 DIAGNÓSTICO: Se você vê cards acima mas nenhum está "selected: true", o problema é que os cards não estão sendo marcados como selecionados corretamente.');
     }
 
     return selectedTypes;

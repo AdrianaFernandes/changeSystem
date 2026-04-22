@@ -4659,8 +4659,8 @@
         iterationPaths: iterationPathsSelecionadas,
         targetDateInfo: targetDateInfo,
         tipoFiltro: tipoFiltro,
-        dataInicial: '2025-01-01', // Data padrão segura
-        dataFinal: '2026-12-31' // Data padrão segura
+        dataInicial: dataInicialElement?.value || '2026-04-08', // Usar valor do campo ou padrão do período atual
+        dataFinal: dataFinalElement?.value || '2026-06-30'      // Usar valor do campo ou padrão do período atual
       };
 
       console.log('⚙️ Filtros construídos:', filtros);
@@ -5274,8 +5274,12 @@
       areaPaths: getSelectedAreaPaths(),
       iterationPaths: getSelectedIterationPaths(),
       workItemTypes: workItemTypesSelecionados,
-      dataInicial: document.getElementById('f-data-inicial')?.value || '2025-12-31',
-      dataFinal: document.getElementById('f-data-final')?.value || '2026-04-07',
+      dataInicial: document.getElementById('f-data-inicial')?.value ||
+                  document.getElementById('data-inicial')?.value ||
+                  document.querySelector('input[type="date"]')?.value || '2026-04-08',
+      dataFinal: document.getElementById('f-data-final')?.value ||
+                document.getElementById('data-final')?.value ||
+                document.querySelectorAll('input[type="date"]')[1]?.value || '2026-06-30',
       tipoFiltro: tipoFiltro
     };
   }
@@ -5466,7 +5470,8 @@
     } else if (filtros.tipoFiltro === 'target-date' && filtros.dataInicial && filtros.dataFinal) {
       // CORREÇÃO: Campo correto é Microsoft.VSTS.Scheduling.TargetDate
       periodoCondicao = `[Microsoft.VSTS.Scheduling.TargetDate] >= '${filtros.dataInicial}' AND [Microsoft.VSTS.Scheduling.TargetDate] <= '${filtros.dataFinal}'`;
-      console.log(`✅ Target Date: ${filtros.dataInicial} a ${filtros.dataFinal}`);
+      console.log(`✅ Target Date APLICADO: ${filtros.dataInicial} a ${filtros.dataFinal}`);
+      console.log(`📝 Condição Target Date: ${periodoCondicao}`);
     } else if (filtros.tipoFiltro === 'none') {
       console.log(`✅ SEM FILTROS de período - query mais simples possível`);
     }
@@ -5538,15 +5543,29 @@
 
     console.log('🎯 Tipo de filtro detectado:', tipoFiltro);
 
-    // Target Date: usar valores dos campos ou PADRÃO 2025-2026
-    var dataInicial = document.getElementById('data-inicial')?.value;
-    var dataFinal = document.getElementById('data-final')?.value;
+    // Target Date: tentar capturar de diferentes IDs possíveis
+    var dataInicial = document.getElementById('data-inicial')?.value ||
+                     document.getElementById('f-data-inicial')?.value ||
+                     document.querySelector('input[type="date"]')?.value;
+    var dataFinal = document.getElementById('data-final')?.value ||
+                   document.getElementById('f-data-final')?.value ||
+                   document.querySelectorAll('input[type="date"]')[1]?.value;
 
-    // Se Target Date está selecionado mas não há datas específicas, usar padrão 2025-2026
+    // DEBUG: mostrar valores capturados
+    console.log('📅 DEBUG - Datas capturadas:', {
+      dataInicial: dataInicial,
+      dataFinal: dataFinal,
+      tipoFiltro: tipoFiltro
+    });
+
+    // IMPORTANTE: Só usar valores padrão se realmente não houver seleção do usuário
     if (tipoFiltro === 'target-date' && (!dataInicial || !dataFinal)) {
-      dataInicial = '2025-01-01';
-      dataFinal = '2026-12-31';
-      console.log('📅 Usando Target Date PADRÃO: 2025-2026');
+      console.log('⚠️ ATENÇÃO: Usando datas padrão porque usuário não selecionou datas específicas');
+      dataInicial = '2026-04-08'; // Data atual do período selecionado pelo usuário
+      dataFinal = '2026-06-30';   // Data final do período selecionado pelo usuário
+      console.log('📅 Datas padrão aplicadas:', dataInicial, 'a', dataFinal);
+    } else if (tipoFiltro === 'target-date') {
+      console.log('✅ Usando datas SELECIONADAS pelo usuário:', dataInicial, 'a', dataFinal);
     }
 
     var filtros = {

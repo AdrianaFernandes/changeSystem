@@ -3792,26 +3792,56 @@
 
   // Função para carregar area paths reais estilo Azure DevOps
   function carregarAreaPathsReais(produto) {
-    var areaPathsList = document.getElementById('area-paths-list');
+    // CORRIGIDO: ID correto é area-path-list (sem 's')
+    var areaPathsList = document.getElementById('area-path-list');
     if (!areaPathsList) {
-      console.error('❌ Lista de area paths não encontrada');
-      return;
+      console.error('❌ Lista de area paths não encontrada - ID: area-path-list');
+      console.log('🔍 Tentando encontrar container alternativo...');
+      // Tentar container alternativo se existir
+      areaPathsList = document.getElementById('area-paths-list');
+      if (!areaPathsList) {
+        console.error('❌ Nenhum container de area paths encontrado');
+        return;
+      }
     }
 
     console.log('🔄 Carregando area paths reais para:', produto);
 
+    // DEBUG: Verificar estrutura dos dados
+    console.log('🔍 DEBUG - azureDevOpsData existe:', !!azureDevOpsData);
+    if (azureDevOpsData && azureDevOpsData.projetos) {
+      console.log('📊 Projetos disponíveis:', Object.keys(azureDevOpsData.projetos));
+      console.log('🎯 Produto procurado:', '"' + produto + '"');
+      console.log('✅ Produto encontrado nos dados:', produto in azureDevOpsData.projetos);
+    }
+
     // Limpar lista existente
     areaPathsList.innerHTML = '';
 
-    if (!produto || !azureDevOpsData || !azureDevOpsData.projetos[produto]) {
-      areaPathsList.innerHTML = '<div style="color: #6b7280; font-style: italic; text-align: center; padding: 20px;">⚠️ Nenhuma Area Path encontrada para este produto</div>';
+    if (!produto) {
+      areaPathsList.innerHTML = '<div style="color: #6b7280; font-style: italic; text-align: center; padding: 20px;">👆 Selecione um produto acima</div>';
+      return;
+    }
+
+    if (!azureDevOpsData || !azureDevOpsData.projetos) {
+      areaPathsList.innerHTML = '<div style="color: #ef4444; font-weight: 500; text-align: center; padding: 20px;">❌ Dados do Azure DevOps não carregados</div>';
+      console.error('❌ azureDevOpsData não disponível');
+      return;
+    }
+
+    if (!azureDevOpsData.projetos[produto]) {
+      areaPathsList.innerHTML = '<div style="color: #f59e0b; text-align: center; padding: 20px;">⚠️ Produto "' + produto + '" não encontrado nos dados</div>';
+      console.warn('⚠️ Produto não encontrado:', produto);
+      console.log('📋 Produtos disponíveis:', Object.keys(azureDevOpsData.projetos));
       return;
     }
 
     var dadosProjeto = azureDevOpsData.projetos[produto];
+    console.log('📊 Dados do projeto encontrados:', !!dadosProjeto);
+    console.log('📁 Area paths encontradas:', dadosProjeto.area_paths ? dadosProjeto.area_paths.length : 0);
 
     if (!dadosProjeto.area_paths || dadosProjeto.area_paths.length === 0) {
-      areaPathsList.innerHTML = '<div style="color: #6b7280; font-style: italic; text-align: center; padding: 20px;">📁 Nenhuma Area Path configurada</div>';
+      areaPathsList.innerHTML = '<div style="color: #6b7280; font-style: italic; text-align: center; padding: 20px;">📁 Nenhuma Area Path configurada para este produto</div>';
       return;
     }
 

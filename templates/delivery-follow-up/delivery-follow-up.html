@@ -5218,8 +5218,14 @@
         console.log('🏗️ Creating area path tables with', workItemsDetalhados.length, 'work items');
         createAreaPathTables(workItemsDetalhados);
     } catch (error) {
-        console.error('Error creating area path tables:', error);
-        // Don't break main functionality if area path tables fail
+        console.error('Area Path Tables Error:', error);
+        console.error('Continuing with main results table only');
+
+        // Ensure container is hidden on error
+        const container = document.getElementById('work-items-by-area-container');
+        if (container) {
+            container.style.display = 'none';
+        }
     }
   }
 
@@ -10994,6 +11000,25 @@ Token:`);
       console.error('Area path selector não encontrado');
     }
   }
+
+  // =============================================================================
+  // AREA PATH TABLES FUNCTIONALITY
+  // =============================================================================
+  // The following functions implement dynamic table generation for work items
+  // grouped by selected Area Paths. Tables appear between query results and
+  // "Pendências da Última Reunião" section.
+  //
+  // Key functions:
+  // - groupWorkItemsByAreaPath(): Groups work items by area path
+  // - formatWorkItemField(): Formats field values for display
+  // - generateAreaPathTable(): Creates HTML for individual area table
+  // - createAreaPathTables(): Main function to create all tables
+  // - clearAreaPathTables(): Cleanup function
+  //
+  // Integration points:
+  // - exibirResultadosReais(): Calls createAreaPathTables()
+  // - limparFiltros(): Calls clearAreaPathTables()
+  // =============================================================================
 
   /**
    * Groups work items by their Area Path

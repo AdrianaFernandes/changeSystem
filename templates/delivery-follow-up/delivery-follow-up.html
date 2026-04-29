@@ -10929,6 +10929,31 @@ Token:`);
     }
   }
 
+  /**
+   * Groups work items by their Area Path
+   * @param {Array} workItems - Array of work item objects
+   * @param {Array} selectedAreaPaths - Array of selected area path strings
+   * @returns {Object} Grouped work items by area path
+   */
+  function groupWorkItemsByAreaPath(workItems, selectedAreaPaths) {
+    const groupedByArea = {};
+
+    // Initialize groups for selected area paths
+    selectedAreaPaths.forEach(areaPath => {
+      groupedByArea[areaPath] = [];
+    });
+
+    // Group work items by area path
+    workItems.forEach(item => {
+      const areaPath = item.fields['System.AreaPath'];
+      if (areaPath && groupedByArea.hasOwnProperty(areaPath)) {
+        groupedByArea[areaPath].push(item);
+      }
+    });
+
+    return groupedByArea;
+  }
+
 })();
 </script>
 

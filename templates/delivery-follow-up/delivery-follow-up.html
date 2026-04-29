@@ -11061,16 +11061,23 @@ Token:`);
       const workItemId = workItem.id;
       const stateClass = getStateClass(fields['System.State']);
 
+      // Defensive programming: handle missing Azure DevOps configuration
+      const config = obterConfiguracesAzureDevOps();
+      const azureLink = config && config.organization ?
+          `https://dev.azure.com/${config.organization}/${fields['System.TeamProject']}/_workitems/edit/${workItemId}` :
+          '#';
+      const linkTarget = config && config.organization ? 'target="_blank"' : '';
+
       tableRows += `
       <tr>
-        <td><a href="https://dev.azure.com/${config.organization}/${fields['System.TeamProject']}/_workitems/edit/${workItemId}" target="_blank">${workItemId}</a></td>
-        <td><span class="work-item-type-badge">${formatWorkItemField(fields, 'System.WorkItemType')}</span></td>
-        <td><span class="status-badge ${stateClass}">${formatWorkItemField(fields, 'System.State')}</span></td>
-        <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.TargetDate')}</td>
-        <td>${formatWorkItemField(fields, 'System.Title')}</td>
-        <td>${formatWorkItemField(fields, 'System.Tags')}</td>
-        <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.StartDate')}</td>
-        <td>${formatWorkItemField(fields, 'Custom.CommittedDate')}</td>
+          <td><a href="${azureLink}" ${linkTarget}>${workItemId}</a></td>
+          <td><span class="work-item-type-badge">${formatWorkItemField(fields, 'System.WorkItemType')}</span></td>
+          <td><span class="status-badge ${stateClass}">${formatWorkItemField(fields, 'System.State')}</span></td>
+          <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.TargetDate')}</td>
+          <td>${formatWorkItemField(fields, 'System.Title')}</td>
+          <td>${formatWorkItemField(fields, 'System.Tags')}</td>
+          <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.StartDate')}</td>
+          <td>${formatWorkItemField(fields, 'Custom.CommittedDate')}</td>
       </tr>`;
     });
 
@@ -11115,6 +11122,13 @@ Token:`);
       const container = document.getElementById('work-items-by-area-container');
       if (!container) {
           console.warn('Area path tables container not found');
+          return;
+      }
+
+      // Add defensive check for required function availability
+      if (typeof getSelectedAreaPaths !== 'function') {
+          console.warn('getSelectedAreaPaths function not available');
+          container.style.display = 'none';
           return;
       }
 

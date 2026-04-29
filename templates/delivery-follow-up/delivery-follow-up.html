@@ -88,54 +88,6 @@
   .ed-table textarea { min-height: 36px; resize: vertical; }
   .ed-table select { width: auto; min-width: 90px; }
 
-  /* Status badges for work items */
-  .status-badge {
-    padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;
-    display: inline-block; text-align: center;
-  }
-  .status-badge.state-active { background: #dbeafe; color: #1e40af; }
-  .status-badge.state-new { background: #f3f4f6; color: #374151; }
-  .status-badge.state-resolved { background: #dcfce7; color: #166534; }
-  .status-badge.state-closed { background: #e5e7eb; color: #6b7280; }
-  .status-badge.state-default { background: #fef3c7; color: #92400e; }
-
-  .work-item-type-badge {
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: var(--gray-100);
-    color: var(--gray-600);
-  }
-
-  .work-item-type-badge[data-type="Epic"] {
-    background: #8B5A2B;
-    color: white;
-  }
-
-  .work-item-type-badge[data-type="Feature"] {
-    background: #0078D4;
-    color: white;
-  }
-
-  .work-item-type-badge[data-type="User Story"] {
-    background: #107C10;
-    color: white;
-  }
-
-  .work-item-type-badge[data-type="Task"] {
-    background: #5C2E91;
-    color: white;
-  }
-
-  .work-item-type-badge[data-type="Bug"] {
-    background: #D13438;
-    color: white;
-  }
-
   .btn-row { display: flex; gap: 8px; margin-top: 8px; }
   .btn-add {
     background: var(--tr-green-light); color: var(--tr-green-dark); border: 1px solid var(--tr-green-mid);
@@ -2060,6 +2012,71 @@
     .page { margin-top: 0; box-shadow: none; }
     @page { size: landscape; margin: 10mm; }
   }
+
+  /* ── Work Item Status Badges ── */
+  .status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-badge.state-new {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+  }
+
+  .status-badge.state-active {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+  }
+
+  .status-badge.state-resolved {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #34d399;
+  }
+
+  .status-badge.state-closed {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: 1px solid #9ca3af;
+  }
+
+  .status-badge.state-default {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+  }
+
+  /* ── Work Item Details Grid ── */
+  .work-item-details .data-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .work-item-details .data-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── Cores semânticas para erros ── */
+  .sem-red-light { background-color: #fef2f2; }
+  .sem-red-dark { color: #991b1b; }
+  .sem-red-mid { border-color: #fca5a5; }
+
+  /* ── Loading animation ── */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 </style>
 </head>
 <body>
@@ -2407,9 +2424,66 @@
     </div>
   </div>
 
-  <!-- Work Items by Area Path Tables -->
-  <div id="work-items-by-area-container" style="display: none;">
-      <!-- Dynamic content will be inserted here -->
+  <!-- EXECUTAR QUERY AZURE DEVOPS -->
+  <div class="section-card" style="border-left: 4px solid var(--tr-green-dark);">
+    <h2>📊 Query Azure DevOps</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:16px;">
+      Use os filtros selecionados acima (Produto, Area Paths, Iteration Paths, Work Item Types) para buscar work items do Azure DevOps.
+    </p>
+
+    <div style="text-align:center; margin-bottom:16px;">
+      <button class="btn-add" onclick="executarQuery()" style="padding:12px 24px; font-size:0.9rem; font-weight:600;">
+        🔍 Executar Query
+      </button>
+    </div>
+
+    <!-- Área de loading -->
+    <div id="query-loading" style="margin-top:16px; display:none; text-align:center; padding:20px;">
+      <div style="display:inline-block;">
+        <div style="width:32px; height:32px; border:3px solid var(--gray-200); border-top:3px solid var(--tr-green-mid); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:12px;"></div>
+        <div style="color:var(--gray-600); font-size:0.85rem;">Executando query no Azure DevOps...</div>
+      </div>
+    </div>
+
+    <!-- Área de erro -->
+    <div id="query-error" style="margin-top:16px; display:none;">
+      <div style="background:var(--sem-red-light,#fef2f2); color:var(--sem-red-dark,#991b1b); padding:12px; border-radius:6px; border:1px solid var(--sem-red-mid,#fca5a5);">
+        <strong>⚠️ Erro:</strong> <span id="query-error-message">-</span>
+      </div>
+    </div>
+
+    <!-- Tabela de resultados -->
+    <div id="query-results" style="margin-top:16px; display:none;">
+      <h3 style="color:var(--tr-green-dark); margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+        <span>Work Items Encontrados</span>
+        <span id="query-count" style="background:var(--tr-green-light); color:var(--tr-green-dark); padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:600;">-</span>
+      </h3>
+
+      <table class="ed-table" id="tbl-query-results" style="font-size:0.85rem;">
+        <thead>
+          <tr>
+            <th style="width:80px;">ID</th>
+            <th style="width:120px;">Projeto</th>
+            <th style="width:100px;">Work Item</th>
+            <th style="width:90px;">Status</th>
+            <th style="width:100px;">Target Date</th>
+            <th>Title</th>
+            <th style="width:120px;">Tags</th>
+            <th style="width:100px;">Start Date</th>
+            <th style="width:100px;">Committed</th>
+            <th style="width:40px;">Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Resultados serão preenchidos dinamicamente -->
+        </tbody>
+      </table>
+
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn-add" onclick="exportarResultados()">📄 Exportar CSV</button>
+        <button class="btn-add" onclick="limparResultados()">🗑️ Limpar</button>
+      </div>
+    </div>
   </div>
 
   <!-- PENDÊNCIAS DA ÚLTIMA REUNIÃO -->
@@ -5211,22 +5285,6 @@
 
     // Scroll para os resultados
     resultsDiv.scrollIntoView({ behavior: 'smooth' });
-
-    // Create area path tables after populating main results
-    try {
-        const workItemsDetalhados = window.ultimosWorkItemsDetalhados || [];
-        console.log('🏗️ Creating area path tables with', workItemsDetalhados.length, 'work items');
-        createAreaPathTables(workItemsDetalhados);
-    } catch (error) {
-        console.error('Area Path Tables Error:', error);
-        console.error('Continuing with main results table only');
-
-        // Ensure container is hidden on error
-        const container = document.getElementById('work-items-by-area-container');
-        if (container) {
-            container.style.display = 'none';
-        }
-    }
   }
 
   // Exibir resultados simplificados (mantido para compatibilidade)
@@ -5263,14 +5321,6 @@
     var resultsDiv = document.getElementById('query-results');
     if (resultsDiv) {
       resultsDiv.style.display = 'none';
-    }
-
-    // Clear area path tables
-    try {
-        clearAreaPathTables();
-        console.log('🗑️ Area path tables cleared');
-    } catch (error) {
-        console.error('Error clearing area path tables:', error);
     }
 
     console.log('🧹 Todos os filtros foram limpos');
@@ -6050,19 +6100,98 @@
     return config;
   }
 
-  // Buscar detalhes dos work items para status reais
+  // Buscar detalhes dos work items para status reais (todos os projetos)
   async function buscarDetalhesWorkItems(workItemIds, projeto) {
     if (!workItemIds || workItemIds.length === 0) return [];
 
-    console.log(`🔍 Buscando detalhes de ${workItemIds.length} work items...`);
+    console.log(`🔍 Buscando detalhes de ${workItemIds.length} work items (todos os projetos)...`);
 
     var config = obterConfiguracesAzureDevOps();
-    var idsString = workItemIds.slice(0, 200).join(','); // Limite de 200 por request
 
-    // URL CORRETA sem projeto na URL (work items são globais na organização)
-    var url = `${config.baseUrl}/_apis/wit/workitems?ids=${idsString}&fields=System.Id,System.State,System.WorkItemType,System.AreaPath&api-version=7.0`;
+    // Processar em lotes de 200 (limite da API)
+    const results = [];
+    const batchSize = 200;
 
-    console.log('🌐 URL para buscar detalhes:', url);
+    for (let i = 0; i < workItemIds.length; i += batchSize) {
+      const batch = workItemIds.slice(i, i + batchSize);
+      const idsString = batch.join(',');
+
+      // Campos completos para a tabela
+      const fields = [
+        'System.Id',
+        'System.Title',
+        'System.WorkItemType',
+        'System.State',
+        'System.AreaPath',
+        'System.IterationPath',
+        'System.TeamProject',
+        'System.Tags',
+        'Microsoft.VSTS.Scheduling.TargetDate',
+        'Microsoft.VSTS.Scheduling.StartDate',
+        'Custom.CommittedDate'
+      ].join(',');
+
+      // URL sem projeto específico - busca work items de toda a organização
+      var url = `${config.baseUrl}/_apis/wit/workitems?ids=${idsString}&fields=${fields}&api-version=7.0`;
+
+      console.log(`🌐 Buscando lote ${Math.floor(i/batchSize) + 1}/${Math.ceil(workItemIds.length/batchSize)}:`, url);
+
+      var response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + btoa(':' + config.token),
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+      }
+
+      var resultado = await response.json();
+      results.push(...(resultado.value || []));
+    }
+
+    console.log(`✅ Detalhes obtidos para ${results.length} work items`);
+    return results;
+  }
+
+  // Buscar detalhes de um work item específico por ID (todos os projetos)
+  async function buscarWorkItemPorId(workItemId) {
+    if (!workItemId || isNaN(workItemId)) {
+      throw new Error('ID do work item deve ser um número válido');
+    }
+
+    console.log(`🔍 Buscando detalhes do work item ${workItemId}...`);
+
+    var config = obterConfiguracesAzureDevOps();
+
+    // Campos detalhados para work item individual
+    var fields = [
+      'System.Id',
+      'System.Title',
+      'System.WorkItemType',
+      'System.State',
+      'System.AreaPath',
+      'System.IterationPath',
+      'System.AssignedTo',
+      'System.CreatedDate',
+      'System.ChangedDate',
+      'System.Tags',
+      'Microsoft.VSTS.Common.Priority',
+      'Microsoft.VSTS.Scheduling.TargetDate',
+      'Microsoft.VSTS.Scheduling.StartDate',
+      'Microsoft.VSTS.Scheduling.CompletedWork',
+      'Microsoft.VSTS.Scheduling.RemainingWork',
+      'Microsoft.VSTS.Scheduling.OriginalEstimate',
+      'System.Description',
+      'Custom.CommittedDate'
+    ].join(',');
+
+    // URL SEM projeto - busca em toda a organização
+    var url = `${config.baseUrl}/_apis/wit/workitems/${workItemId}?fields=${fields}&api-version=7.0`;
+
+    console.log('🌐 URL para buscar work item (todos os projetos):', url);
 
     var response = await fetch(url, {
       method: 'GET',
@@ -6073,11 +6202,14 @@
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      if (response.status === 404) {
+        throw new Error(`Work item ${workItemId} não encontrado em nenhum projeto`);
+      }
+      throw new Error(`API Error: ${response.status} - ${response.statusText}`);
     }
 
-    var resultado = await response.json();
-    return resultado.value || [];
+    var workItem = await response.json();
+    return workItem;
   }
 
   // Processar resultados reais da API
@@ -10372,6 +10504,295 @@ Token:`);
 
   document.getElementById('tbl-andamento').addEventListener('input', updateAndamentoCount);
 
+  // ── Executar Query Azure DevOps ──
+  window.executarQuery = async function() {
+    const loadingDiv = document.getElementById('query-loading');
+    const errorDiv = document.getElementById('query-error');
+    const resultsDiv = document.getElementById('query-results');
+
+    // Limpar estados anteriores
+    loadingDiv.style.display = 'none';
+    errorDiv.style.display = 'none';
+    resultsDiv.style.display = 'none';
+
+    // Validar seleções
+    const validation = validarSelecoes();
+    if (!validation.valid) {
+      mostrarErroQuery(validation.message);
+      return;
+    }
+
+    try {
+      // Mostrar loading
+      loadingDiv.style.display = 'block';
+
+      // Executar query WIQL
+      const workItems = await executarQueryWIQL();
+
+      if (workItems.length === 0) {
+        mostrarErroQuery('Nenhum work item encontrado com os filtros selecionados');
+        return;
+      }
+
+      // Buscar detalhes dos work items
+      const workItemsDetalhados = await buscarDetalhesWorkItems(workItems.map(wi => wi.id));
+
+      // Preencher tabela
+      preencherTabelaResultados(workItemsDetalhados);
+
+      // Mostrar resultados
+      loadingDiv.style.display = 'none';
+      resultsDiv.style.display = 'block';
+
+    } catch (error) {
+      console.error('Erro ao executar query:', error);
+      loadingDiv.style.display = 'none';
+      mostrarErroQuery(error.message);
+    }
+  };
+
+  function validarSelecoes() {
+    // Verificar Produto
+    const produto = document.getElementById('f-produto').value;
+    if (!produto) {
+      return { valid: false, message: 'Selecione um Produto' };
+    }
+
+    // Verificar Area Paths
+    const areaPathsSelecionadas = obterAreaPathsSelecionadas();
+    if (areaPathsSelecionadas.length === 0) {
+      return { valid: false, message: 'Selecione pelo menos uma Area Path' };
+    }
+
+    // Verificar Work Item Types
+    const workItemTypesSelecionados = obterWorkItemTypesSelecionados();
+    if (workItemTypesSelecionados.length === 0) {
+      return { valid: false, message: 'Selecione pelo menos um tipo de Work Item' };
+    }
+
+    return { valid: true };
+  }
+
+  async function executarQueryWIQL() {
+    const config = obterConfiguracesAzureDevOps();
+    const areaPathsSelecionadas = obterAreaPathsSelecionadas();
+    const workItemTypesSelecionados = obterWorkItemTypesSelecionados();
+    const periodFilter = construirFiltroPeriodo();
+
+    // Construir query WIQL para TODOS OS PROJETOS
+    const workItemTypesStr = workItemTypesSelecionados.map(type => `'${type}'`).join(', ');
+    const areaPathConditions = areaPathsSelecionadas.map(path =>
+      `[System.AreaPath] UNDER '${path.replace(/'/g, "''")}'`
+    ).join(' OR ');
+
+    let wiqlQuery = `
+      SELECT [System.Id], [System.WorkItemType], [System.Title], [System.State],
+             [System.AreaPath], [System.IterationPath], [System.TeamProject],
+             [Microsoft.VSTS.Scheduling.TargetDate], [Microsoft.VSTS.Scheduling.StartDate],
+             [System.Tags], [Custom.CommittedDate]
+      FROM WorkItems
+      WHERE [System.WorkItemType] IN (${workItemTypesStr})
+        AND (${areaPathConditions})
+        AND [System.State] <> 'Removed'
+        ${periodFilter}
+      ORDER BY [System.TeamProject], [System.Id] DESC
+    `;
+
+    console.log('🔍 Executando WIQL Query (todos os projetos):', wiqlQuery);
+
+    // URL SEM projeto específico - busca em toda a organização tr-ggo
+    const url = `${config.baseUrl}/_apis/wit/wiql?api-version=7.0`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa(':' + config.token),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query: wiqlQuery })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('WIQL Error Response:', errorText);
+      throw new Error(`WIQL Query Error: ${response.status} - ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log(`✅ Query retornou ${result.workItems?.length || 0} work items de todos os projetos`);
+
+    return result.workItems || [];
+  }
+
+  function obterAreaPathsSelecionadas() {
+    const checkboxes = document.querySelectorAll('#area-paths-list input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+  }
+
+  function obterWorkItemTypesSelecionados() {
+    const selectedCards = document.querySelectorAll('.work-item-card-modern.selected');
+    return Array.from(selectedCards).map(card => card.getAttribute('data-work-item-type'));
+  }
+
+  function construirFiltroPeriodo() {
+    const periodType = document.querySelector('[data-period-type].selected')?.getAttribute('data-period-type') || 'iteration-path';
+
+    if (periodType === 'target-date') {
+      const startDate = document.getElementById('start-date')?.value;
+      const endDate = document.getElementById('end-date')?.value;
+
+      if (startDate && endDate) {
+        return `AND [Microsoft.VSTS.Scheduling.TargetDate] >= '${startDate}' AND [Microsoft.VSTS.Scheduling.TargetDate] <= '${endDate}'`;
+      }
+    } else {
+      const iterationPathsSelecionadas = obterIterationPathsSelecionadas();
+      if (iterationPathsSelecionadas.length > 0) {
+        const iterationConditions = iterationPathsSelecionadas.map(path =>
+          `[System.IterationPath] UNDER '${path.replace(/'/g, "''")}'`
+        ).join(' OR ');
+        return `AND (${iterationConditions})`;
+      }
+    }
+
+    return '';
+  }
+
+  function obterIterationPathsSelecionadas() {
+    const checkboxes = document.querySelectorAll('#iteration-paths-list input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+  }
+
+  function preencherTabelaResultados(workItems) {
+    const tbody = document.querySelector('#tbl-query-results tbody');
+    const countEl = document.getElementById('query-count');
+
+    // Limpar tabela
+    tbody.innerHTML = '';
+
+    // Atualizar contador
+    countEl.textContent = `${workItems.length} items`;
+
+    // Adicionar linhas
+    workItems.forEach(workItem => {
+      const row = tbody.insertRow();
+      const fields = workItem.fields;
+
+      // ID
+      row.insertCell(0).textContent = workItem.id;
+
+      // Projeto
+      const projeto = fields['System.TeamProject'] || '-';
+      const projetoCell = row.insertCell(1);
+      projetoCell.textContent = projeto;
+      projetoCell.style.fontSize = '0.8rem';
+      projetoCell.style.color = 'var(--gray-600)';
+
+      // Work Item Type
+      row.insertCell(2).textContent = fields['System.WorkItemType'] || '-';
+
+      // Status com badge
+      const statusCell = row.insertCell(3);
+      const state = fields['System.State'] || '-';
+      statusCell.innerHTML = `<span class="status-badge ${getStateClass(state)}">${state}</span>`;
+
+      // Target Date
+      row.insertCell(4).textContent = formatDate(fields['Microsoft.VSTS.Scheduling.TargetDate']);
+
+      // Title (truncar se muito longo)
+      const titleCell = row.insertCell(5);
+      const title = fields['System.Title'] || '-';
+      titleCell.textContent = title;
+      titleCell.title = title; // Tooltip com título completo
+      titleCell.style.maxWidth = '300px';
+      titleCell.style.overflow = 'hidden';
+      titleCell.style.textOverflow = 'ellipsis';
+      titleCell.style.whiteSpace = 'nowrap';
+
+      // Tags
+      row.insertCell(6).textContent = fields['System.Tags'] || '-';
+
+      // Start Date
+      row.insertCell(7).textContent = formatDate(fields['Microsoft.VSTS.Scheduling.StartDate']);
+
+      // Committed Date
+      row.insertCell(8).textContent = formatDate(fields['Custom.CommittedDate']);
+
+      // Link
+      const linkCell = row.insertCell(9);
+      const config = obterConfiguracesAzureDevOps();
+      const azureLink = `${config.baseUrl}/_workitems/edit/${workItem.id}`;
+      linkCell.innerHTML = `<a href="${azureLink}" target="_blank" title="Abrir no Azure DevOps" style="color:var(--tr-green-mid); text-decoration:none; font-size:1.1rem;">🔗</a>`;
+    });
+  }
+
+  function mostrarErroQuery(mensagem) {
+    const errorDiv = document.getElementById('query-error');
+    const errorMsg = document.getElementById('query-error-message');
+
+    errorMsg.textContent = mensagem;
+    errorDiv.style.display = 'block';
+  }
+
+  window.exportarResultados = function() {
+    const table = document.getElementById('tbl-query-results');
+    const rows = table.querySelectorAll('tr');
+    let csv = [];
+
+    // Headers (excluir a coluna Link)
+    const headers = Array.from(rows[0].querySelectorAll('th')).slice(0, -1).map(th => th.textContent);
+    csv.push(headers.join(','));
+
+    // Data rows
+    for (let i = 1; i < rows.length; i++) {
+      const cells = Array.from(rows[i].querySelectorAll('td')).slice(0, -1);
+      const row = cells.map(cell => `"${cell.textContent.replace(/"/g, '""')}"`);
+      csv.push(row.join(','));
+    }
+
+    // Download CSV
+    const csvContent = '\ufeff' + csv.join('\n'); // BOM para UTF-8
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    const date = new Date().toISOString().split('T')[0];
+    const produto = document.getElementById('f-produto').value || 'todos-projetos';
+    link.download = `azure-devops-query-${produto}-${date}.csv`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+
+    // Feedback visual
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = '✅ Exportado!';
+    setTimeout(() => {
+      btn.textContent = originalText;
+    }, 2000);
+  };
+
+  window.limparResultados = function() {
+    document.getElementById('query-results').style.display = 'none';
+  };
+
+  function getStateClass(state) {
+    switch (state?.toLowerCase()) {
+      case 'new': return 'state-new';
+      case 'active': return 'state-active';
+      case 'resolved': return 'state-resolved';
+      case 'closed':
+      case 'done': return 'state-closed';
+      default: return 'state-default';
+    }
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR');
+    } catch {
+      return dateString;
+    }
+  }
+
   // ── Roadmap Tipo toggle ──
   window.onRoadmapTipoChange = function(sel) {
     const tr = sel.closest('tr');
@@ -11001,235 +11422,6 @@ Token:`);
     }
   }
 
-  // =============================================================================
-  // AREA PATH TABLES FUNCTIONALITY
-  // =============================================================================
-  // The following functions implement dynamic table generation for work items
-  // grouped by selected Area Paths. Tables appear between query results and
-  // "Pendências da Última Reunião" section.
-  //
-  // Key functions:
-  // - groupWorkItemsByAreaPath(): Groups work items by area path
-  // - formatWorkItemField(): Formats field values for display
-  // - generateAreaPathTable(): Creates HTML for individual area table
-  // - createAreaPathTables(): Main function to create all tables
-  // - clearAreaPathTables(): Cleanup function
-  //
-  // Integration points:
-  // - exibirResultadosReais(): Calls createAreaPathTables()
-  // - limparFiltros(): Calls clearAreaPathTables()
-  // =============================================================================
-
-  /**
-   * Groups work items by their Area Path
-   * @param {Array} workItems - Array of work item objects
-   * @param {Array} selectedAreaPaths - Array of selected area path strings
-   * @returns {Object} Grouped work items by area path
-   */
-  function groupWorkItemsByAreaPath(workItems, selectedAreaPaths) {
-    const groupedByArea = {};
-
-    // Initialize groups for selected area paths
-    selectedAreaPaths.forEach(areaPath => {
-      groupedByArea[areaPath] = [];
-    });
-
-    // Group work items by area path
-    workItems.forEach(item => {
-      const areaPath = item.fields['System.AreaPath'];
-      if (areaPath && groupedByArea.hasOwnProperty(areaPath)) {
-        groupedByArea[areaPath].push(item);
-      }
-    });
-
-    return groupedByArea;
-  }
-
-  /**
-   * Formats work item field values for display
-   * @param {Object} fields - Work item fields object
-   * @param {string} fieldName - Field name to format
-   * @returns {string} Formatted field value
-   */
-  function formatWorkItemField(fields, fieldName) {
-    const value = fields[fieldName];
-
-    switch (fieldName) {
-      case 'System.Id':
-        return value || '-';
-      case 'System.WorkItemType':
-        return value || 'Unknown';
-      case 'System.State':
-        return value || 'New';
-      case 'Microsoft.VSTS.Scheduling.TargetDate':
-      case 'Microsoft.VSTS.Scheduling.StartDate':
-      case 'Custom.CommittedDate':
-        return value ? formatDate(value) : '-';
-      case 'System.Title':
-        return value || 'Untitled';
-      case 'System.Tags':
-        return value || '';
-      default:
-        return value || '-';
-    }
-  }
-
-  /**
-   * Returns CSS class for work item state styling
-   * @param {string} state - Work item state
-   * @returns {string} CSS class name for the state
-   */
-  function getStateClass(state) {
-    switch (state) {
-      case 'Active':
-      case 'In Progress':
-      case 'Committed':
-        return 'state-active';
-      case 'New':
-      case 'To Do':
-      case 'Proposed':
-        return 'state-new';
-      case 'Resolved':
-      case 'Done':
-      case 'Completed':
-        return 'state-resolved';
-      case 'Closed':
-      case 'Removed':
-        return 'state-closed';
-      default:
-        return 'state-default';
-    }
-  }
-
-  /**
-   * Generates HTML table for a specific area path
-   * @param {string} areaPath - Area path name
-   * @param {Array} workItems - Work items for this area
-   * @param {number} tableIndex - Index for unique table ID
-   * @returns {string} HTML string for the table section
-   */
-  function generateAreaPathTable(areaPath, workItems, tableIndex) {
-    const tableId = `tbl-area-path-${tableIndex}`;
-    const itemCount = workItems.length;
-
-    let tableRows = '';
-
-    workItems.forEach(workItem => {
-      const fields = workItem.fields;
-      const workItemId = workItem.id;
-      const stateClass = getStateClass(fields['System.State']);
-
-      // Defensive programming: handle missing Azure DevOps configuration
-      const config = obterConfiguracesAzureDevOps();
-      const azureLink = config && config.organization ?
-          `https://dev.azure.com/${config.organization}/${fields['System.TeamProject']}/_workitems/edit/${workItemId}` :
-          '#';
-      const linkTarget = config && config.organization ? 'target="_blank"' : '';
-
-      const workItemType = formatWorkItemField(fields, 'System.WorkItemType');
-      tableRows += `
-      <tr>
-          <td><a href="${azureLink}" ${linkTarget}>${workItemId}</a></td>
-          <td><span class="work-item-type-badge" data-type="${workItemType}">${workItemType}</span></td>
-          <td><span class="status-badge ${stateClass}">${formatWorkItemField(fields, 'System.State')}</span></td>
-          <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.TargetDate')}</td>
-          <td>${formatWorkItemField(fields, 'System.Title')}</td>
-          <td>${formatWorkItemField(fields, 'System.Tags')}</td>
-          <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.StartDate')}</td>
-          <td>${formatWorkItemField(fields, 'Custom.CommittedDate')}</td>
-      </tr>`;
-    });
-
-    if (itemCount === 0) {
-      tableRows = `
-      <tr>
-        <td colspan="8" style="text-align: center; color: var(--gray-400); font-style: italic;">
-          Nenhum work item encontrado para esta área
-        </td>
-      </tr>`;
-    }
-
-    return `
-    <div class="section-card" style="border-left: 4px solid var(--tr-green-mid);">
-      <h2>🎯 ${areaPath} (${itemCount} work items)</h2>
-      <p style="color:var(--gray-500); font-size:0.82rem;">Work items específicos desta área organizacional</p>
-      <table class="ed-table" id="${tableId}">
-        <thead>
-          <tr>
-            <th style="width:80px;">ID</th>
-            <th style="width:100px;">Work Item</th>
-            <th style="width:90px;">Status</th>
-            <th style="width:100px;">Target Date</th>
-            <th>Title</th>
-            <th style="width:120px;">Tags</th>
-            <th style="width:100px;">Start Date</th>
-            <th style="width:100px;">Committed</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${tableRows}
-        </tbody>
-      </table>
-    </div>`;
-  }
-
-  /**
-   * Creates and displays all area path tables
-   * @param {Array} workItems - All work items from query
-   */
-  function createAreaPathTables(workItems) {
-      const container = document.getElementById('work-items-by-area-container');
-      if (!container) {
-          console.warn('Area path tables container not found');
-          return;
-      }
-
-      // Add defensive check for required function availability
-      if (typeof getSelectedAreaPaths !== 'function') {
-          console.warn('getSelectedAreaPaths function not available');
-          container.style.display = 'none';
-          return;
-      }
-
-      // Get selected area paths
-      const selectedAreaPaths = getSelectedAreaPaths();
-
-      if (!selectedAreaPaths || selectedAreaPaths.length === 0) {
-          // Hide container if no area paths selected
-          container.style.display = 'none';
-          return;
-      }
-
-      // Group work items by area path
-      const groupedWorkItems = groupWorkItemsByAreaPath(workItems, selectedAreaPaths);
-
-      // Generate HTML for all tables
-      let tablesHtml = '';
-      selectedAreaPaths.forEach((areaPath, index) => {
-          const workItemsForArea = groupedWorkItems[areaPath] || [];
-          tablesHtml += generateAreaPathTable(areaPath, workItemsForArea, index);
-      });
-
-      // Update container content and show
-      container.innerHTML = tablesHtml;
-      container.style.display = 'block';
-  }
-
-  /**
-   * Clears area path tables display
-   */
-  function clearAreaPathTables() {
-      const container = document.getElementById('work-items-by-area-container');
-      if (container) {
-          container.innerHTML = '';
-          container.style.display = 'none';
-      }
-  }
-
-  // Expose functions globally for testing and integration
-  window.createAreaPathTables = createAreaPathTables;
-  window.clearAreaPathTables = clearAreaPathTables;
-
 })();
 </script>
 
@@ -11247,36 +11439,6 @@ window.addEventListener('load', function() {
 
     if (window.forcarAtualizacaoComDadosReais) {
       forcarAtualizacaoComDadosReais();
-    }
-
-    // Test Area Path table generation functions
-    if (typeof formatWorkItemField === 'function' && typeof generateAreaPathTable === 'function') {
-      console.log('🧪 Testing Area Path table generation functions...');
-
-      const sampleItems = [{
-        id: 123,
-        fields: {
-          'System.TeamProject': 'TestProject',
-          'System.WorkItemType': 'Feature',
-          'System.State': 'Active',
-          'System.Title': 'Test Feature',
-          'System.Tags': 'frontend',
-          'Microsoft.VSTS.Scheduling.TargetDate': '2026-05-15',
-          'Microsoft.VSTS.Scheduling.StartDate': '2026-04-01',
-          'Custom.CommittedDate': '2026-04-30'
-        }
-      }];
-
-      // Test formatWorkItemField
-      console.log('✓ formatWorkItemField test:', formatWorkItemField(sampleItems[0].fields, 'System.WorkItemType'));
-
-      // Test generateAreaPathTable
-      const htmlResult = generateAreaPathTable('Frontend/Test', sampleItems, 0);
-      if (htmlResult.includes('Frontend/Test') && htmlResult.includes('tbl-area-path-0')) {
-        console.log('✓ generateAreaPathTable test: PASSED');
-      } else {
-        console.error('✗ generateAreaPathTable test: FAILED');
-      }
     }
   }, 2000); // Aguardar carregamento completo
 });

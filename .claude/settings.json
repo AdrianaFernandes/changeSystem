@@ -11,5 +11,8 @@
       "Bash(python setup.py --demo)",
       "Bash(ls -la templates/*/*.html)"
     ]
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-dev": true
   }
 }

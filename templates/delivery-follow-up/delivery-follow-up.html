@@ -5178,6 +5178,16 @@
 
     // Scroll para os resultados
     resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+    // Create area path tables after populating main results
+    try {
+        const workItemsDetalhados = window.ultimosWorkItemsDetalhados || [];
+        console.log('🏗️ Creating area path tables with', workItemsDetalhados.length, 'work items');
+        createAreaPathTables(workItemsDetalhados);
+    } catch (error) {
+        console.error('Error creating area path tables:', error);
+        // Don't break main functionality if area path tables fail
+    }
   }
 
   // Exibir resultados simplificados (mantido para compatibilidade)
@@ -5214,6 +5224,14 @@
     var resultsDiv = document.getElementById('query-results');
     if (resultsDiv) {
       resultsDiv.style.display = 'none';
+    }
+
+    // Clear area path tables
+    try {
+        clearAreaPathTables();
+        console.log('🗑️ Area path tables cleared');
+    } catch (error) {
+        console.error('Error clearing area path tables:', error);
     }
 
     console.log('🧹 Todos os filtros foram limpos');

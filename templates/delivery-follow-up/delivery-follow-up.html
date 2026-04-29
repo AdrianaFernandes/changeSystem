@@ -88,6 +88,21 @@
   .ed-table textarea { min-height: 36px; resize: vertical; }
   .ed-table select { width: auto; min-width: 90px; }
 
+  /* Status badges for work items */
+  .status-badge, .work-item-type-badge {
+    padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+    display: inline-block; text-align: center;
+  }
+  .status-badge.state-active { background: #dbeafe; color: #1e40af; }
+  .status-badge.state-new { background: #f3f4f6; color: #374151; }
+  .status-badge.state-resolved { background: #dcfce7; color: #166534; }
+  .status-badge.state-closed { background: #e5e7eb; color: #6b7280; }
+  .status-badge.state-default { background: #fef3c7; color: #92400e; }
+  .work-item-type-badge {
+    background: var(--tr-green-light); color: var(--tr-green-dark);
+    border: 1px solid var(--tr-green-mid);
+  }
+
   .btn-row { display: flex; gap: 8px; margin-top: 8px; }
   .btn-add {
     background: var(--tr-green-light); color: var(--tr-green-dark); border: 1px solid var(--tr-green-mid);
@@ -10954,6 +10969,126 @@ Token:`);
     return groupedByArea;
   }
 
+  /**
+   * Formats work item field values for display
+   * @param {Object} fields - Work item fields object
+   * @param {string} fieldName - Field name to format
+   * @returns {string} Formatted field value
+   */
+  function formatWorkItemField(fields, fieldName) {
+    const value = fields[fieldName];
+
+    switch (fieldName) {
+      case 'System.Id':
+        return value || '-';
+      case 'System.WorkItemType':
+        return value || 'Unknown';
+      case 'System.State':
+        return value || 'New';
+      case 'Microsoft.VSTS.Scheduling.TargetDate':
+      case 'Microsoft.VSTS.Scheduling.StartDate':
+      case 'Custom.CommittedDate':
+        return value ? formatDate(value) : '-';
+      case 'System.Title':
+        return value || 'Untitled';
+      case 'System.Tags':
+        return value || '';
+      default:
+        return value || '-';
+    }
+  }
+
+  /**
+   * Returns CSS class for work item state styling
+   * @param {string} state - Work item state
+   * @returns {string} CSS class name for the state
+   */
+  function getStateClass(state) {
+    switch (state) {
+      case 'Active':
+      case 'In Progress':
+      case 'Committed':
+        return 'state-active';
+      case 'New':
+      case 'To Do':
+      case 'Proposed':
+        return 'state-new';
+      case 'Resolved':
+      case 'Done':
+      case 'Completed':
+        return 'state-resolved';
+      case 'Closed':
+      case 'Removed':
+        return 'state-closed';
+      default:
+        return 'state-default';
+    }
+  }
+
+  /**
+   * Generates HTML table for a specific area path
+   * @param {string} areaPath - Area path name
+   * @param {Array} workItems - Work items for this area
+   * @param {number} tableIndex - Index for unique table ID
+   * @returns {string} HTML string for the table section
+   */
+  function generateAreaPathTable(areaPath, workItems, tableIndex) {
+    const tableId = `tbl-area-path-${tableIndex}`;
+    const itemCount = workItems.length;
+
+    let tableRows = '';
+
+    workItems.forEach(workItem => {
+      const fields = workItem.fields;
+      const workItemId = workItem.id;
+      const stateClass = getStateClass(fields['System.State']);
+
+      tableRows += `
+      <tr>
+        <td><a href="https://dev.azure.com/${config.organization}/${fields['System.TeamProject']}/_workitems/edit/${workItemId}" target="_blank">${workItemId}</a></td>
+        <td><span class="work-item-type-badge">${formatWorkItemField(fields, 'System.WorkItemType')}</span></td>
+        <td><span class="status-badge ${stateClass}">${formatWorkItemField(fields, 'System.State')}</span></td>
+        <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.TargetDate')}</td>
+        <td>${formatWorkItemField(fields, 'System.Title')}</td>
+        <td>${formatWorkItemField(fields, 'System.Tags')}</td>
+        <td>${formatWorkItemField(fields, 'Microsoft.VSTS.Scheduling.StartDate')}</td>
+        <td>${formatWorkItemField(fields, 'Custom.CommittedDate')}</td>
+      </tr>`;
+    });
+
+    if (itemCount === 0) {
+      tableRows = `
+      <tr>
+        <td colspan="8" style="text-align: center; color: var(--gray-400); font-style: italic;">
+          Nenhum work item encontrado para esta área
+        </td>
+      </tr>`;
+    }
+
+    return `
+    <div class="section-card" style="border-left: 4px solid var(--tr-green-mid);">
+      <h2>🎯 ${areaPath} (${itemCount} work items)</h2>
+      <p style="color:var(--gray-500); font-size:0.82rem;">Work items específicos desta área organizacional</p>
+      <table class="ed-table" id="${tableId}">
+        <thead>
+          <tr>
+            <th style="width:80px;">ID</th>
+            <th style="width:100px;">Work Item</th>
+            <th style="width:90px;">Status</th>
+            <th style="width:100px;">Target Date</th>
+            <th>Title</th>
+            <th style="width:120px;">Tags</th>
+            <th style="width:100px;">Start Date</th>
+            <th style="width:100px;">Committed</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
 })();
 </script>
 
@@ -10971,6 +11106,36 @@ window.addEventListener('load', function() {
 
     if (window.forcarAtualizacaoComDadosReais) {
       forcarAtualizacaoComDadosReais();
+    }
+
+    // Test Area Path table generation functions
+    if (typeof formatWorkItemField === 'function' && typeof generateAreaPathTable === 'function') {
+      console.log('🧪 Testing Area Path table generation functions...');
+
+      const sampleItems = [{
+        id: 123,
+        fields: {
+          'System.TeamProject': 'TestProject',
+          'System.WorkItemType': 'Feature',
+          'System.State': 'Active',
+          'System.Title': 'Test Feature',
+          'System.Tags': 'frontend',
+          'Microsoft.VSTS.Scheduling.TargetDate': '2026-05-15',
+          'Microsoft.VSTS.Scheduling.StartDate': '2026-04-01',
+          'Custom.CommittedDate': '2026-04-30'
+        }
+      }];
+
+      // Test formatWorkItemField
+      console.log('✓ formatWorkItemField test:', formatWorkItemField(sampleItems[0].fields, 'System.WorkItemType'));
+
+      // Test generateAreaPathTable
+      const htmlResult = generateAreaPathTable('Frontend/Test', sampleItems, 0);
+      if (htmlResult.includes('Frontend/Test') && htmlResult.includes('tbl-area-path-0')) {
+        console.log('✓ generateAreaPathTable test: PASSED');
+      } else {
+        console.error('✗ generateAreaPathTable test: FAILED');
+      }
     }
   }, 2000); // Aguardar carregamento completo
 });

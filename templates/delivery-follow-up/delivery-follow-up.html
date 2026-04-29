@@ -11089,6 +11089,56 @@ Token:`);
     </div>`;
   }
 
+  /**
+   * Creates and displays all area path tables
+   * @param {Array} workItems - All work items from query
+   */
+  function createAreaPathTables(workItems) {
+      const container = document.getElementById('work-items-by-area-container');
+      if (!container) {
+          console.warn('Area path tables container not found');
+          return;
+      }
+
+      // Get selected area paths
+      const selectedAreaPaths = getSelectedAreaPaths();
+
+      if (!selectedAreaPaths || selectedAreaPaths.length === 0) {
+          // Hide container if no area paths selected
+          container.style.display = 'none';
+          return;
+      }
+
+      // Group work items by area path
+      const groupedWorkItems = groupWorkItemsByAreaPath(workItems, selectedAreaPaths);
+
+      // Generate HTML for all tables
+      let tablesHtml = '';
+      selectedAreaPaths.forEach((areaPath, index) => {
+          const workItemsForArea = groupedWorkItems[areaPath] || [];
+          tablesHtml += generateAreaPathTable(areaPath, workItemsForArea, index);
+      });
+
+      // Update container content and show
+      container.innerHTML = tablesHtml;
+      container.style.display = 'block';
+  }
+
+  /**
+   * Clears area path tables display
+   */
+  function clearAreaPathTables() {
+      const container = document.getElementById('work-items-by-area-container');
+      if (container) {
+          container.innerHTML = '';
+          container.style.display = 'none';
+      }
+  }
+
+  // Expose functions globally for testing and integration
+  window.createAreaPathTables = createAreaPathTables;
+  window.clearAreaPathTables = clearAreaPathTables;
+
 })();
 </script>
 

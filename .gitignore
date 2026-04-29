@@ -21,3 +21,6 @@ venv/
 
 # Generated output
 *.pptx
+
+# Git worktrees
+.worktrees/

@@ -10772,6 +10772,9 @@ Token:`);
     document.getElementById('query-results').style.display = 'none';
   };
 
+  // Expose executarQueryWIQL function globally
+  window.executarQueryWIQL = executarQueryWIQL;
+
   function getStateClass(state) {
     switch (state?.toLowerCase()) {
       case 'new': return 'state-new';

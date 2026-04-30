@@ -10504,7 +10504,12 @@ Token:`);
     if (el) el.textContent = count;
   }
 
-  document.getElementById('tbl-andamento').addEventListener('input', updateAndamentoCount);
+  const tblAndamento = document.getElementById('tbl-andamento');
+  if (tblAndamento) {
+    tblAndamento.addEventListener('input', updateAndamentoCount);
+  } else {
+    console.warn('Element tbl-andamento not found during IIFE execution');
+  }
 
   // ── Executar Query Azure DevOps ── (implementação completa)
   window._executarQueryReal = async function() {

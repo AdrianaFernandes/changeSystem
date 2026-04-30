@@ -2707,7 +2707,21 @@
 
   // ── Executar Query Azure DevOps ── (definição inicial)
   window.executarQuery = function() {
+    // Verificar se a implementação completa já foi carregada
+    if (typeof window._executarQueryReal === 'function') {
+      return window._executarQueryReal();
+    }
+
     console.log('Query solicitada, aguardando inicialização...');
+
+    // Tentar novamente após um pequeno delay
+    setTimeout(() => {
+      if (typeof window._executarQueryReal === 'function') {
+        window._executarQueryReal();
+      } else {
+        console.error('Implementação completa da query não foi carregada');
+      }
+    }, 100);
   };
 
   // ── Label ──
@@ -10510,7 +10524,7 @@ Token:`);
   document.getElementById('tbl-andamento').addEventListener('input', updateAndamentoCount);
 
   // ── Executar Query Azure DevOps ── (implementação completa)
-  window.executarQuery = async function() {
+  window._executarQueryReal = async function() {
     const loadingDiv = document.getElementById('query-loading');
     const errorDiv = document.getElementById('query-error');
     const resultsDiv = document.getElementById('query-results');

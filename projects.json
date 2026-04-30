@@ -1,0 +1,608 @@
+﻿{
+    "count":  65,
+    "value":  [
+                  {
+                      "id":  "1c62d376-00fc-4e5d-9fdf-7e00e24152a0",
+                      "name":  "JdF Migration",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/1c62d376-00fc-4e5d-9fdf-7e00e24152a0",
+                      "state":  "wellFormed",
+                      "revision":  1636,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2019-06-26T13:38:24.983Z"
+                  },
+                  {
+                      "id":  "204e1d57-1d7f-4e93-9f5e-f4662edf9bd3",
+                      "name":  "DevOps",
+                      "description":  "DevOps is a set of practices that combines software development and information-technology operations which aims to shorten the systems development life cycle and provide continuous delivery with high software quality.",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/204e1d57-1d7f-4e93-9f5e-f4662edf9bd3",
+                      "state":  "wellFormed",
+                      "revision":  2722,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-11-07T04:33:52.363Z"
+                  },
+                  {
+                      "id":  "4dcfe65c-9b6c-47c0-838d-7c165b68ea61",
+                      "name":  "Architecture - Software Engineer",
+                      "description":  "Architecture and Software Engineering",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/4dcfe65c-9b6c-47c0-838d-7c165b68ea61",
+                      "state":  "wellFormed",
+                      "revision":  2266,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.067Z"
+                  },
+                  {
+                      "id":  "472736d4-7c16-41d7-aa34-2c8aa395879b",
+                      "name":  "Project Management Office (test)",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/472736d4-7c16-41d7-aa34-2c8aa395879b",
+                      "state":  "wellFormed",
+                      "revision":  2682,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-10-13T14:25:08.607Z"
+                  },
+                  {
+                      "id":  "9653c58b-c7fc-457b-834d-78e2963d226b",
+                      "name":  "Design",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/9653c58b-c7fc-457b-834d-78e2963d226b",
+                      "state":  "wellFormed",
+                      "revision":  2063,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-10-29T04:33:43.633Z"
+                  },
+                  {
+                      "id":  "42436d72-25ea-4c1a-a5c8-c2982f5f446b",
+                      "name":  "Incidentes",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/42436d72-25ea-4c1a-a5c8-c2982f5f446b",
+                      "state":  "wellFormed",
+                      "revision":  2307,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-10-26T19:08:43.73Z"
+                  },
+                  {
+                      "id":  "b813f5ea-de48-4a9c-a9a7-9f30b4348c56",
+                      "name":  "QA Automation Core",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/b813f5ea-de48-4a9c-a9a7-9f30b4348c56",
+                      "state":  "wellFormed",
+                      "revision":  2071,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-10-29T04:40:08.7Z"
+                  },
+                  {
+                      "id":  "fc381fdb-8397-4c77-a5a4-3607d40f1a59",
+                      "name":  "Professional Services",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/fc381fdb-8397-4c77-a5a4-3607d40f1a59",
+                      "state":  "wellFormed",
+                      "revision":  2267,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.19Z"
+                  },
+                  {
+                      "id":  "9ae7b54e-4336-40a9-b71b-b383bf8fd71b",
+                      "name":  "Mastersaf Fiscal Solutions (Archive)",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/9ae7b54e-4336-40a9-b71b-b383bf8fd71b",
+                      "state":  "wellFormed",
+                      "revision":  2180,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-12-28T20:59:29.887Z"
+                  },
+                  {
+                      "id":  "b90b58d9-204e-40a8-8ac5-ba54308abc4f",
+                      "name":  "LegalOne.InstabilityIndicator",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/b90b58d9-204e-40a8-8ac5-ba54308abc4f",
+                      "state":  "wellFormed",
+                      "revision":  2268,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.263Z"
+                  },
+                  {
+                      "id":  "e0046a50-70bb-4731-8d44-d0ac89132c87",
+                      "name":  "Crowdtesting LegalOne",
+                      "description":  "This project objective to create the crowd testing culture at Thomson Reuters.",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/e0046a50-70bb-4731-8d44-d0ac89132c87",
+                      "state":  "wellFormed",
+                      "revision":  2512,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-01-06T19:21:59.81Z"
+                  },
+                  {
+                      "id":  "f62abf13-f184-4d06-8597-819c8f1aad0c",
+                      "name":  "Legal Content",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/f62abf13-f184-4d06-8597-819c8f1aad0c",
+                      "state":  "wellFormed",
+                      "revision":  2721,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-11-06T13:45:12.717Z"
+                  },
+                  {
+                      "id":  "97f7162c-423e-469b-bc6a-9d82f6a54492",
+                      "name":  "Mastersaf A3",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/97f7162c-423e-469b-bc6a-9d82f6a54492",
+                      "state":  "wellFormed",
+                      "revision":  2457,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-07-22T12:27:10.787Z"
+                  },
+                  {
+                      "id":  "33c90315-ae4c-40f8-87e2-75f430d27515",
+                      "name":  "Infolex Lab",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/33c90315-ae4c-40f8-87e2-75f430d27515",
+                      "state":  "wellFormed",
+                      "revision":  1843,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2020-05-26T09:29:58.04Z"
+                  },
+                  {
+                      "id":  "d10ad5f5-4294-457e-96f4-9471618d7247",
+                      "name":  "OBI",
+                      "description":  "OneSource Brazil Integration - módulo integrador com regras de/para convertendo arquivos (txt, DFE, XML, etc.) para o formato esperado das aplicações TR (SAFXnnn para o Taxone, XML para o DFE, etc.)",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/d10ad5f5-4294-457e-96f4-9471618d7247",
+                      "state":  "wellFormed",
+                      "revision":  2749,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-12-18T12:47:52.603Z"
+                  },
+                  {
+                      "id":  "2de51952-51ec-408d-a9d3-ee3734506892",
+                      "name":  "QA Automation Core (test)",
+                      "description":  "Migration of Jira project",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/2de51952-51ec-408d-a9d3-ee3734506892",
+                      "state":  "wellFormed",
+                      "revision":  2033,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-09-30T02:35:43.337Z"
+                  },
+                  {
+                      "id":  "b8e01da0-1652-48de-8e7e-be790f2d5c13",
+                      "name":  "TR Fintech",
+                      "description":  "Projeto para acomodar as atividades da TR Fintech",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/b8e01da0-1652-48de-8e7e-be790f2d5c13",
+                      "state":  "wellFormed",
+                      "revision":  2807,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-04-01T18:46:43.75Z"
+                  },
+                  {
+                      "id":  "a4a120e2-12f1-4a07-93c5-1008768dd1f8",
+                      "name":  "DataCloudGraphite",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/a4a120e2-12f1-4a07-93c5-1008768dd1f8",
+                      "state":  "wellFormed",
+                      "revision":  1893,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2020-09-25T23:49:18.86Z"
+                  },
+                  {
+                      "id":  "fdd47952-eced-46bc-a5fb-e9bbd943c5a8",
+                      "name":  "LegalOneMobile",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/fdd47952-eced-46bc-a5fb-e9bbd943c5a8",
+                      "state":  "wellFormed",
+                      "revision":  2269,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.353Z"
+                  },
+                  {
+                      "id":  "7ec14f64-53f0-49b8-9416-6e683af12f51",
+                      "name":  "CodeReviewTests",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/7ec14f64-53f0-49b8-9416-6e683af12f51",
+                      "state":  "wellFormed",
+                      "revision":  2504,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-12-18T03:01:56.29Z"
+                  },
+                  {
+                      "id":  "e901596d-53e7-4241-9f7e-5ff299ad5659",
+                      "name":  "Incident Management",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/e901596d-53e7-4241-9f7e-5ff299ad5659",
+                      "state":  "wellFormed",
+                      "revision":  2440,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-05-13T20:55:03.613Z"
+                  },
+                  {
+                      "id":  "1d523d8a-9747-452e-9bbb-32404f8731a6",
+                      "name":  "LegalAnalytics",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/1d523d8a-9747-452e-9bbb-32404f8731a6",
+                      "state":  "wellFormed",
+                      "revision":  1956,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2021-09-01T14:22:55.01Z"
+                  },
+                  {
+                      "id":  "9464d7d1-c63b-4af4-9399-dc57bf983384",
+                      "name":  "Mastersaf Interfaces",
+                      "description":  "Mastersaf Interfaces solutions for Brazil, multiple products",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/9464d7d1-c63b-4af4-9399-dc57bf983384",
+                      "state":  "wellFormed",
+                      "revision":  2756,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-01-14T18:10:36.797Z"
+                  },
+                  {
+                      "id":  "dc6d6d35-80ca-4a59-8aed-28562b41dfb4",
+                      "name":  "ONVIO BR",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/dc6d6d35-80ca-4a59-8aed-28562b41dfb4",
+                      "state":  "wellFormed",
+                      "revision":  2810,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-04-08T17:20:55.467Z"
+                  },
+                  {
+                      "id":  "32bbe0a5-4989-46a3-9379-624ca595c9e1",
+                      "name":  "Pmo e BusOps para Testes",
+                      "description":  "Projeto para testes",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/32bbe0a5-4989-46a3-9379-624ca595c9e1",
+                      "state":  "wellFormed",
+                      "revision":  2742,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-11-12T16:05:07.41Z"
+                  },
+                  {
+                      "id":  "e872de52-f871-40e9-8ef5-3ab1e1aef352",
+                      "name":  "MigrationTool",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/e872de52-f871-40e9-8ef5-3ab1e1aef352",
+                      "state":  "wellFormed",
+                      "revision":  1613,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2019-05-16T19:05:00.723Z"
+                  },
+                  {
+                      "id":  "53f9185b-1061-4c72-8bd7-98f3f4f607d5",
+                      "name":  "Mastersaf DF-e",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/53f9185b-1061-4c72-8bd7-98f3f4f607d5",
+                      "state":  "wellFormed",
+                      "revision":  2755,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-01-14T18:07:53.79Z"
+                  },
+                  {
+                      "id":  "1e68acc2-71f4-438e-8fb5-e18ffea804c4",
+                      "name":  "SwFIssues",
+                      "description":  "This project contains information regarding the RCA flow and the main goal is: to assure the continuous improvement flow on Legal One\u0027s Tech process.",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/1e68acc2-71f4-438e-8fb5-e18ffea804c4",
+                      "state":  "wellFormed",
+                      "revision":  1982,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-03-17T15:02:09.157Z"
+                  },
+                  {
+                      "id":  "7926d6e3-0193-4a41-aa75-1d57b9873535",
+                      "name":  "LatAm AI Program",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/7926d6e3-0193-4a41-aa75-1d57b9873535",
+                      "state":  "wellFormed",
+                      "revision":  2443,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-05-21T18:14:06.297Z"
+                  },
+                  {
+                      "id":  "1e45e335-c0f8-4ba3-a0f7-615e03016edb",
+                      "name":  "Tax Declaration Framework",
+                      "description":  "Tax One for SAP Solutions",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/1e45e335-c0f8-4ba3-a0f7-615e03016edb",
+                      "state":  "wellFormed",
+                      "revision":  2754,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-01-14T18:04:15.07Z"
+                  },
+                  {
+                      "id":  "e1c0f538-e116-48af-8bc4-04d801a9097c",
+                      "name":  "LegalOne",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/e1c0f538-e116-48af-8bc4-04d801a9097c",
+                      "state":  "wellFormed",
+                      "revision":  2780,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-03-04T14:37:25.877Z"
+                  },
+                  {
+                      "id":  "1c92cb5a-8676-4840-a7ea-6e980285dcee",
+                      "name":  "Design (test)",
+                      "description":  "Migrated from Jira",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/1c92cb5a-8676-4840-a7ea-6e980285dcee",
+                      "state":  "wellFormed",
+                      "revision":  2025,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-09-29T18:17:33.007Z"
+                  },
+                  {
+                      "id":  "c3dadc4a-631f-49df-aafe-5833f92d80bb",
+                      "name":  "PMO e BOps",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/c3dadc4a-631f-49df-aafe-5833f92d80bb",
+                      "state":  "wellFormed",
+                      "revision":  2574,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-04-07T13:01:44.423Z"
+                  },
+                  {
+                      "id":  "dc663082-ba54-44bf-a76b-bb89ec4349a2",
+                      "name":  "South Latam",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/dc663082-ba54-44bf-a76b-bb89ec4349a2",
+                      "state":  "wellFormed",
+                      "revision":  2779,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-02-27T18:31:28.593Z"
+                  },
+                  {
+                      "id":  "d72eb687-5ae4-47ad-bb36-0b991abe273b",
+                      "name":  "Mastersaf Fiscal Solutions",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/d72eb687-5ae4-47ad-bb36-0b991abe273b",
+                      "state":  "wellFormed",
+                      "revision":  2771,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-01-28T17:45:55.567Z"
+                  },
+                  {
+                      "id":  "897f0d95-b869-4f93-8a47-6b70f5be80de",
+                      "name":  "CP-Pro",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/897f0d95-b869-4f93-8a47-6b70f5be80de",
+                      "state":  "wellFormed",
+                      "revision":  1621,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2019-05-28T13:33:18.27Z"
+                  },
+                  {
+                      "id":  "adeab79f-c680-43e1-a197-284eebd9a722",
+                      "name":  "Produtividade e Insights - Brazil",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/adeab79f-c680-43e1-a197-284eebd9a722",
+                      "state":  "wellFormed",
+                      "revision":  2216,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-02-14T17:04:22.64Z"
+                  },
+                  {
+                      "id":  "f4f620bf-8894-4386-acd5-7f4db911d5f1",
+                      "name":  "LegalOne.Bot",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/f4f620bf-8894-4386-acd5-7f4db911d5f1",
+                      "state":  "wellFormed",
+                      "revision":  2271,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.52Z"
+                  },
+                  {
+                      "id":  "7649c18c-00d3-4dbb-86ec-96a3e6bd9011",
+                      "name":  "TAP Chile",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/7649c18c-00d3-4dbb-86ec-96a3e6bd9011",
+                      "state":  "wellFormed",
+                      "revision":  2681,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-10-08T22:45:10.357Z"
+                  },
+                  {
+                      "id":  "d7e85a07-a635-4831-9e2c-14f8d17e2bc0",
+                      "name":  "JdFLegacySoftware",
+                      "description":  "A legacy project of Novaprolink company before TR acquisition. Some of the projects are internal and discontinued.",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/d7e85a07-a635-4831-9e2c-14f8d17e2bc0",
+                      "state":  "wellFormed",
+                      "revision":  2272,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.62Z"
+                  },
+                  {
+                      "id":  "c6e1ce7e-5c0f-4eb5-ab44-0611dd0189cd",
+                      "name":  "Datacloud",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/c6e1ce7e-5c0f-4eb5-ab44-0611dd0189cd",
+                      "state":  "wellFormed",
+                      "revision":  2777,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-02-24T01:00:42.017Z"
+                  },
+                  {
+                      "id":  "ed712d5d-07c9-49d5-837b-01f3f8ea717c",
+                      "name":  "Mastersaf DevOps",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/ed712d5d-07c9-49d5-837b-01f3f8ea717c",
+                      "state":  "wellFormed",
+                      "revision":  2337,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-02-02T22:33:44.157Z"
+                  },
+                  {
+                      "id":  "ada03eb3-e441-4dea-8170-7905d1be903e",
+                      "name":  "LegalOneTests",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/ada03eb3-e441-4dea-8170-7905d1be903e",
+                      "state":  "wellFormed",
+                      "revision":  2001,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-06-28T13:37:01.183Z"
+                  },
+                  {
+                      "id":  "bb8bb82f-5fad-4929-b859-518e9f7f4a82",
+                      "name":  "Project Management Office",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/bb8bb82f-5fad-4929-b859-518e9f7f4a82",
+                      "state":  "wellFormed",
+                      "revision":  2013,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2022-08-25T20:41:23.737Z"
+                  },
+                  {
+                      "id":  "d967c9af-1b7a-4e38-a068-69d9eabe178a",
+                      "name":  "OneSource BR",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/d967c9af-1b7a-4e38-a068-69d9eabe178a",
+                      "state":  "wellFormed",
+                      "revision":  2477,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2024-10-22T16:06:17.59Z"
+                  },
+                  {
+                      "id":  "9d98a79c-b9ca-4847-810b-f40b27c37fc5",
+                      "name":  "Entitlement",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/9d98a79c-b9ca-4847-810b-f40b27c37fc5",
+                      "state":  "wellFormed",
+                      "revision":  2593,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-06-03T18:03:25.897Z"
+                  },
+                  {
+                      "id":  "84aa848f-b434-4cbb-9b57-c46ae0cf749a",
+                      "name":  "Cloud",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/84aa848f-b434-4cbb-9b57-c46ae0cf749a",
+                      "state":  "wellFormed",
+                      "revision":  1643,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2019-07-11T11:51:03.723Z"
+                  },
+                  {
+                      "id":  "a56adbfc-ec08-4d65-bacf-3a898758dfaf",
+                      "name":  "Domínio",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/a56adbfc-ec08-4d65-bacf-3a898758dfaf",
+                      "state":  "wellFormed",
+                      "revision":  2804,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-04-01T14:30:37.26Z"
+                  },
+                  {
+                      "id":  "c9792e2e-3783-4ee5-9fbc-332a12995f6a",
+                      "name":  "Segurança Latam",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/c9792e2e-3783-4ee5-9fbc-332a12995f6a",
+                      "state":  "wellFormed",
+                      "revision":  2620,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-07-23T12:09:22.987Z"
+                  },
+                  {
+                      "id":  "7b59944f-0135-4fe5-85d2-d60077b73b00",
+                      "name":  "Amazonia",
+                      "description":  "asdxx",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/7b59944f-0135-4fe5-85d2-d60077b73b00",
+                      "state":  "wellFormed",
+                      "revision":  2283,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-13T18:47:12.75Z"
+                  },
+                  {
+                      "id":  "482f5d72-ba65-439a-8796-7d07fa467955",
+                      "name":  "Mastersaf Documentation",
+                      "description":  "Originally migrated from Jira (MDOC)",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/482f5d72-ba65-439a-8796-7d07fa467955",
+                      "state":  "wellFormed",
+                      "revision":  2217,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-02-22T12:46:44.86Z"
+                  },
+                  {
+                      "id":  "79cca256-0079-4100-8b3e-da54330f5814",
+                      "name":  "Teste BO PMO",
+                      "description":  "Teste teste teste",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/79cca256-0079-4100-8b3e-da54330f5814",
+                      "state":  "wellFormed",
+                      "revision":  2554,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-04-04T14:23:05.85Z"
+                  },
+                  {
+                      "id":  "2981c543-9b24-4a6e-8131-ad1bf0334abc",
+                      "name":  "Business Operations - Change Management",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/2981c543-9b24-4a6e-8131-ad1bf0334abc",
+                      "state":  "wellFormed",
+                      "revision":  2782,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-03-09T14:34:35.877Z"
+                  },
+                  {
+                      "id":  "069f8b40-0f5a-42ac-a3c0-b73b540df133",
+                      "name":  "LatAm DevOps Portal",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/069f8b40-0f5a-42ac-a3c0-b73b540df133",
+                      "state":  "wellFormed",
+                      "revision":  2660,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-08-18T16:33:10.08Z"
+                  },
+                  {
+                      "id":  "325d7e3a-cec4-4a3e-a6fd-15e089c98e14",
+                      "name":  "Poc-Automated Tests",
+                      "description":  "Projeto POC DevTest Labs",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/325d7e3a-cec4-4a3e-a6fd-15e089c98e14",
+                      "state":  "wellFormed",
+                      "revision":  2776,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2026-02-24T00:40:00.99Z"
+                  },
+                  {
+                      "id":  "92ac15ba-7100-41b6-ae89-3f2cfd0c2dcc",
+                      "name":  "Business Operations (test)",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/92ac15ba-7100-41b6-ae89-3f2cfd0c2dcc",
+                      "state":  "wellFormed",
+                      "revision":  2274,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:44.943Z"
+                  },
+                  {
+                      "id":  "16c7b151-2d44-42f7-8807-a5a758849db9",
+                      "name":  "GithubProject",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/16c7b151-2d44-42f7-8807-a5a758849db9",
+                      "state":  "wellFormed",
+                      "revision":  2275,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.057Z"
+                  },
+                  {
+                      "id":  "a549a83a-75d7-4590-82eb-b5e127d86b47",
+                      "name":  "GitHubIntegration",
+                      "description":  "Project created with the purpose of testing the integration with GitHub so it won\u0027t affect the other projects and keep it isolated during the proof of concepts.",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/a549a83a-75d7-4590-82eb-b5e127d86b47",
+                      "state":  "wellFormed",
+                      "revision":  2276,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.137Z"
+                  },
+                  {
+                      "id":  "8f421f01-9f0e-4549-ab73-9f18c58feaeb",
+                      "name":  "LegalOne UAT",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/8f421f01-9f0e-4549-ab73-9f18c58feaeb",
+                      "state":  "wellFormed",
+                      "revision":  1928,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2020-12-30T15:25:08.833Z"
+                  },
+                  {
+                      "id":  "5239f1eb-527c-4e47-a737-5e8c1ec0aba8",
+                      "name":  "LegalOne.AzureResourceManager",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/5239f1eb-527c-4e47-a737-5e8c1ec0aba8",
+                      "state":  "wellFormed",
+                      "revision":  2277,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.217Z"
+                  },
+                  {
+                      "id":  "93830841-8b3a-4e49-bbcb-96c40c7e95b5",
+                      "name":  "Infolex Support Lab",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/93830841-8b3a-4e49-bbcb-96c40c7e95b5",
+                      "state":  "wellFormed",
+                      "revision":  1852,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2020-05-26T09:32:33.627Z"
+                  },
+                  {
+                      "id":  "3800d66d-1cab-4490-ac72-c53001c05daf",
+                      "name":  "MSFT Workshop",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/3800d66d-1cab-4490-ac72-c53001c05daf",
+                      "state":  "wellFormed",
+                      "revision":  2278,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.29Z"
+                  },
+                  {
+                      "id":  "858720df-42ba-42be-bfb9-a706faded336",
+                      "name":  "LegalOne.MaintenanceTools",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/858720df-42ba-42be-bfb9-a706faded336",
+                      "state":  "wellFormed",
+                      "revision":  2280,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.43Z"
+                  },
+                  {
+                      "id":  "e5dbd2c2-38d4-4aba-b8ae-efbf34415edd",
+                      "name":  "Swf.System.Statistics",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/e5dbd2c2-38d4-4aba-b8ae-efbf34415edd",
+                      "state":  "wellFormed",
+                      "revision":  2279,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2023-09-05T18:51:45.36Z"
+                  },
+                  {
+                      "id":  "034b2602-e586-40ae-8ff4-087e9ae5755e",
+                      "name":  "Operations",
+                      "description":  "Operações de Suporte LatAm",
+                      "url":  "https://dev.azure.com/tr-ggo/_apis/projects/034b2602-e586-40ae-8ff4-087e9ae5755e",
+                      "state":  "wellFormed",
+                      "revision":  2535,
+                      "visibility":  "private",
+                      "lastUpdateTime":  "2025-02-26T20:52:46.07Z"
+                  }
+              ]
+}

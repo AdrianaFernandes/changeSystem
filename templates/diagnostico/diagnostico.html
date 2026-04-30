@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico — TR Change System</title>
+<link rel="stylesheet" href="../../assets/css/change-system.css">
+<style>
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .sem-select { width: 60px; padding: 4px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.8rem; text-align: center; }
+  .summary-row { display: grid; grid-template-columns: 200px 1fr 60px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+  .summary-row:last-child { border-bottom: none; }
+  .block-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+  .block-nav a { display: block; padding: 12px 16px; border: 1px solid var(--gray-200); border-radius: var(--radius-md); text-decoration: none; color: var(--gray-700); font-size: 0.85rem; font-weight: 500; transition: all 0.15s; }
+  .block-nav a:hover { border-color: var(--tr-green-dark); background: var(--tr-green-light); color: var(--tr-green-dark); }
+  .block-nav a strong { display: block; font-size: 0.78rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  textarea.resp { width: 100%; min-height: 48px; padding: 8px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; resize: vertical; }
+  textarea.resp:focus { outline: none; border-color: var(--tr-green-mid); box-shadow: 0 0 0 2px rgba(26,92,58,0.12); }
+  .q-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .q-table td { padding: 10px 8px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .q-table td:first-child { width: 36px; font-weight: 600; color: var(--gray-400); font-size: 0.8rem; }
+  .q-table td:nth-child(2) { font-size: 0.88rem; font-weight: 500; color: var(--gray-700); padding-right: 12px; }
+  .q-table td:nth-child(3) { min-width: 240px; }
+  .q-table td:last-child { width: 64px; text-align: center; }
+  @media print { .no-print { display: none; } textarea.resp { border: 1px solid var(--gray-300); min-height: 32px; } }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header-bar" style="margin: -32px -40px 24px; border-radius: 0;">
+    <div class="label">TR Change System</div>
+    <h1>Diagnóstico de Vertical</h1>
+    <div class="subtitle">Avaliação estruturada para início de atuação do Change Agent</div>
+  </div>
+
+  <div class="callout callout-info no-print" style="margin-bottom:16px; font-size:0.85rem; line-height:1.7; border-left:4px solid var(--sem-amber); background:#FEF9E7; padding:14px 18px; border-radius:6px;">
+    <strong>v0 — Guia preliminar.</strong> Este diagnóstico está em consolidação (<a href="https://github.com/mmbTR/TR-Change-System/issues/1" target="_blank">Issue #1</a>). Use como referência de partida, não como modelo final. Estrutura e perguntas serão revisadas com o time.
+  </div>
+
+  <!-- Dados gerais -->
+  <div class="section-card">
+    <h2>Dados Gerais</h2>
+    <div class="diag-grid">
+      <div class="field-group">
+        <label>Vertical / Produto</label>
+        <input type="text" placeholder="Ex.: Plataforma Cloud">
+      </div>
+      <div class="field-group">
+        <label>Change Agent Responsável</label>
+        <input type="text" placeholder="Nome">
+      </div>
+      <div class="field-group">
+        <label>Data do Diagnóstico</label>
+        <input type="date">
+      </div>
+      <div class="field-group">
+        <label>Engineering Manager(s)</label>
+        <input type="text" placeholder="Nome(s)">
+      </div>
+      <div class="field-group" style="grid-column: span 2;">
+        <label>Período de Referência</label>
+        <input type="text" placeholder="Ex.: Q2 2026">
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegação rápida -->
+  <div class="block-nav no-print">
+    <a href="#bloco1" style="border-color:var(--tr-green-dark);background:var(--tr-green-light);"><strong>Bloco 1</strong>Jornada FORGE</a>
+    <a href="#bloco2"><strong>Bloco 2</strong>Mercado e Contexto</a>
+    <a href="#bloco3"><strong>Bloco 3</strong>Produto e Proposta de Valor</a>
+    <a href="#bloco4"><strong>Bloco 4</strong>Arquitetura e Engenharia</a>
+    <a href="#bloco5"><strong>Bloco 5</strong>Organização e Capacidade</a>
+    <a href="#bloco6"><strong>Bloco 6</strong>Riscos e Restrições</a>
+    <a href="#bloco7"><strong>Bloco 7</strong>Métricas e Milestones</a>
+  </div>
+
+  <!-- BLOCO 1 — FORGE -->
+  <div class="section-card" id="bloco1" style="border-left:4px solid var(--tr-green-dark);">
+    <h2>Bloco 1 — Jornada FORGE e Transformação Agêntica</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>Em que estágio da transformação FORGE o segmento se encontra e qual a maturidade do modelo agêntico?</strong></p>
+
+    <h3>Posição nas 4 Fases do FORGE</h3>
+    <table class="q-table">
+      <tr><td>1.1</td><td>Em qual fase FORGE o segmento está predominantemente? (1 — Fundação/Dupla de Ação · 2 — Escalabilidade · 3 — Guardrails · 4 — Maestria Operacional)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.2</td><td>Existe uma Dupla de Ação (Dev + QA) operando com IA? Quantas duplas/células ativas?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.3</td><td>Qual o range de assertividade dos agentes de IA? (50-80% inicial → 80% constante)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.4</td><td>O benchmark de aceleração está sendo medido? (dupla 1 levou Xh → dupla 2 levou X/2?)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.5</td><td>O Engineering Manager apresentou um plano direcional de 3 meses com ondas (Estabilização → Expansão → Consolidação)?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Maturidade dos Papéis Agênticos</h3>
+    <table class="q-table">
+      <tr><td>1.6</td><td>Desenvolvedor → Eng. Software Agêntico: opera com time virtual? TDD como prática? Foco em arquitetura e validação vs. execução manual?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.7</td><td>QA → QA Agêntico: construiu arcabouço de testes com agentes? Estratégia cobrindo funcional, técnico, segurança e performance?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.8</td><td>DBA → DBA Agêntico: atua com agentes no desenvolvimento e em produção? Monitoramento proativo de saúde dos dados?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.9</td><td>DevOps → DevSecOps Agêntico: segurança integrada ao pipeline (SAST, SCA, Snyk)? Gestão de secrets automatizada?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.10</td><td>Eng. Manager → Orquestrador de sistemas: combina ritmo humano e capacidade de IA? Gestão de feedback para agentes? Visão holística?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>SRE e Guardrails</h3>
+    <table class="q-table">
+      <tr><td>1.11</td><td>Os 4 Signals estão monitorados? (Latência, Tráfego, Erros, Saturação) + Database?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.12</td><td>Existem SLOs definidos e usados como linguagem comum do time? Error Budget?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.13</td><td>Quality Gates: Pre-Commit, Pull Request (cobertura ≥80%, SAST/DAST), Release Candidate — quais existem?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.14</td><td>Release Gates automatizados? (Performance, Error Rate, Security, Stability)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.15</td><td>Estratégia de Progressive Delivery? (Blue/Green, Canary, Feature Flags)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Maturidade de IA no Ciclo de Desenvolvimento</h3>
+    <table class="q-table">
+      <tr><td>1.16</td><td>Qual o % estimado do PDLC realizado com apoio de IA vs. humano?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.17</td><td>A documentação dos agentes é simples o suficiente para um perfil não-técnico operar?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.18</td><td>O tempo ganho com IA está sendo reinvestido na expansão do modelo ou apenas absorvido por demanda corrente?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.19</td><td>Existem blockers de Day 1 não resolvidos? (CI/CD, rollback, processos de aprovação, arquitetura engessada)</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>1.20</td><td>Blameless postmortems são praticados? Aprendizados retroalimentam os agentes e o processo?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 2 -->
+  <div class="section-card" id="bloco2">
+    <h2>Bloco 2 — Mercado e Contexto</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>Para quem estamos entregando valor?</strong></p>
+
+    <h3>Segmentação de Clientes</h3>
+    <table class="q-table">
+      <tr><td>2.1</td><td>Qual é a base total de clientes/usuários ativos?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.2</td><td>Como se distribui por segmento?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.3</td><td>Qual a taxa de adoção do produto atual vs. alternativas internas?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Proposta de Valor</h3>
+    <table class="q-table">
+      <tr><td>2.4</td><td>O que o cliente ganha ao usar o produto? A proposta de valor é clara?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.5</td><td>Quais são os jobs-to-be-done que o produto resolve (bem, mal ou não resolve)?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Churn e Retenção</h3>
+    <table class="q-table">
+      <tr><td>2.6</td><td>Existem dados de churn? Quais segmentos em risco?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.7</td><td>O que faz um cliente trocar de solução?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.8</td><td>O que faz o cliente ficar mesmo insatisfeito?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Concorrência</h3>
+    <table class="q-table">
+      <tr><td>2.9</td><td>Quem são os concorrentes diretos e indiretos?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>2.10</td><td>Existe risco de disrupção?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 3 -->
+  <div class="section-card" id="bloco3">
+    <h2>Bloco 3 — Produto e Proposta de Valor</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>Qual a estratégia de produto e como ela se traduz em entrega?</strong></p>
+
+    <h3>Estratégia de Produto</h3>
+    <table class="q-table">
+      <tr><td>3.1</td><td>Qual o objetivo estratégico do produto para os próximos 12–24 meses?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.2</td><td>Quais módulos/capacidades compõem o produto? Interdependência?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.3</td><td>Existe um "core" sem o qual nenhum módulo funciona?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.4</td><td>Quais funcionalidades são deal-breakers para poucos clientes?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Go-to-Market</h3>
+    <table class="q-table">
+      <tr><td>3.5</td><td>Qual a estratégia de rollout?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.6</td><td>Como se valida que o produto está "pronto" para um segmento?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.7</td><td>O modelo de precificação é adequado?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Contexto Regulatório</h3>
+    <table class="q-table">
+      <tr><td>3.8</td><td>Existem mudanças regulatórias que impactam o produto?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>3.9</td><td>Mudanças regulatórias criam oportunidade ou risco?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 4 -->
+  <div class="section-card" id="bloco4">
+    <h2>Bloco 4 — Arquitetura e Engenharia</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>A fundação técnica suporta a estratégia de produto?</strong></p>
+
+    <h3>Fundações Técnicas</h3>
+    <table class="q-table">
+      <tr><td>4.1</td><td>Qual o stack tecnológico principal?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.2</td><td>Qual a arquitetura-alvo?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.3</td><td>Existe plataforma compartilhada (IAM, billing, notificações)?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.4</td><td>Qual a estratégia de dados? Dados históricos?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Integrações</h3>
+    <table class="q-table">
+      <tr><td>4.5</td><td>Quais integrações externas o produto mantém?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.6</td><td>Existe camada de API aberta?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Qualidade e Confiabilidade</h3>
+    <table class="q-table">
+      <tr><td>4.7</td><td>Qual o nível de cobertura de testes?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.8</td><td>Quais os requisitos não-funcionais críticos?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.9</td><td>Quais cenários não podem ter erro?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Saúde do Fluxo (Flow Health)</h3>
+    <table class="q-table">
+      <tr><td>4.10</td><td>O time acompanha as 4 métricas de fluxo (Cycle Time, Throughput, WIP, Age of WIP)? Quais estão visíveis?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.11</td><td>Qual o WIP atual? Existe política de limite de WIP?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.12</td><td>Existem itens envelhecendo no board (age of WIP >> cycle time P85)?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.13</td><td>Os bloqueios são categorizados e rastreados (Blocker Clustering)? Qual categoria mais impacta?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.14</td><td>Existe DoR e DoD documentados e praticados? Critérios de aceite antes do início?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.15</td><td>O time usa forecasting probabilístico (percentis) ou estimativas subjetivas?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Enablers</h3>
+    <table class="q-table">
+      <tr><td>4.16</td><td>Design System — existe? Nível de adoção?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.17</td><td>Testes de performance — existe estratégia?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>4.18</td><td>Outros enablers bloqueadores?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 5 -->
+  <div class="section-card" id="bloco5">
+    <h2>Bloco 5 — Organização e Capacidade</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>Com que capacidade contamos para executar?</strong></p>
+
+    <h3>Times</h3>
+    <table class="q-table">
+      <tr><td>5.1</td><td>Qual o tamanho total do time de engenharia?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.2</td><td>Como estão organizados?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.3</td><td>Existe gap de competência? Plano de reskilling?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.4</td><td>Maturidade de engenharia por squad?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Processos e Governança</h3>
+    <table class="q-table">
+      <tr><td>5.5</td><td>Como são tomadas decisões de priorização?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.6</td><td>Qual o ciclo de planejamento?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.7</td><td>% sustentação vs. desenvolvimento novo?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Investimento</h3>
+    <table class="q-table">
+      <tr><td>5.8</td><td>Budget disponível? Tendência?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>5.9</td><td>Competição por budget com outras iniciativas?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 6 -->
+  <div class="section-card" id="bloco6">
+    <h2>Bloco 6 — Riscos e Restrições</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>O que pode bloquear a entrega?</strong></p>
+
+    <h3>Riscos de Execução</h3>
+    <table class="q-table">
+      <tr><td>6.1</td><td>Qual o maior risco que tira o sono hoje?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>6.2</td><td>Risco de perder clientes durante a execução?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>6.3</td><td>Dependência de times/plataformas globais?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>6.4</td><td>Risco reputacional de falha na entrega?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>Restrições</h3>
+    <table class="q-table">
+      <tr><td>6.5</td><td>Deadlines regulatórios/contratuais não negociáveis?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>6.6</td><td>Plano B se o cronograma atrasar?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>6.7</td><td>Como se comunica mudanças de plano?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- BLOCO 7 -->
+  <div class="section-card" id="bloco7">
+    <h2>Bloco 7 — Métricas e Milestones</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Pergunta-chave: <strong>Como sabemos que estamos no caminho certo?</strong></p>
+
+    <h3>Métricas Atuais</h3>
+    <table class="q-table">
+      <tr><td>7.1</td><td>Como se mede sucesso hoje?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>7.2</td><td>Existe scorecard de acompanhamento?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+
+    <h3>KPIs Propostos</h3>
+    <table class="q-table">
+      <tr><td>7.3</td><td>Quais KPIs definiriam sucesso nos próximos 6 meses?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>7.4</td><td>Meta principal e de onde veio?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+      <tr><td>7.5</td><td>Abertura para renegociar metas com evidências?</td><td><textarea class="resp" placeholder="Resposta..."></textarea></td><td><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td></tr>
+    </table>
+  </div>
+
+  <!-- RESUMO EXECUTIVO -->
+  <div class="section-card" style="border-left: 4px solid var(--tr-green-dark);">
+    <h2>Resumo Executivo do Diagnóstico</h2>
+    <table style="width:100%; font-size:0.88rem;">
+      <thead>
+        <tr><th>Bloco</th><th>Pergunta-chave</th><th style="width:64px;text-align:center;">Status</th><th>Observação</th></tr>
+      </thead>
+      <tbody>
+        <tr style="background:var(--tr-green-light);"><td><strong>1. FORGE</strong></td><td>Onde estamos na jornada agêntica?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>2. Mercado</strong></td><td>Para quem entregamos valor?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>3. Produto</strong></td><td>Qual a estratégia de produto?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>4. Engenharia</strong></td><td>A fundação técnica suporta?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>5. Capacidade</strong></td><td>Temos capacidade para executar?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>6. Riscos</strong></td><td>O que pode bloquear?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+        <tr><td><strong>7. Métricas</strong></td><td>Como medimos progresso?</td><td style="text-align:center;"><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></td><td><textarea class="resp" style="min-height:36px;" placeholder="Síntese..."></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px;">Próximos Passos</h3>
+    <div class="field-group"><label>1.</label><input type="text" placeholder="Ação prioritária..."></div>
+    <div class="field-group"><label>2.</label><input type="text" placeholder="Ação prioritária..."></div>
+    <div class="field-group"><label>3.</label><input type="text" placeholder="Ação prioritária..."></div>
+  </div>
+
+  <div class="footer">
+    Thomson Reuters · TR Change System · Diagnóstico de Vertical · Confidencial
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback Loop — TR Change System</title>
+<link rel="stylesheet" href="../../assets/css/change-system.css">
+<style>
+  .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 12px 0; }
+  .metric-card { border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 16px; }
+  .metric-card h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--gray-500); margin-bottom: 10px; }
+  .metric-row { display: grid; grid-template-columns: 1fr 90px 90px 60px 60px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.84rem; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row .label { font-weight: 600; color: var(--gray-700); }
+  .metric-row input { width: 100%; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.84rem; text-align: center; }
+  .metric-row input:focus { outline: none; border-color: var(--tr-green-mid); box-shadow: 0 0 0 2px rgba(26,92,58,0.12); }
+  .trend-select, .sem-select { padding: 4px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 0.8rem; text-align: center; }
+
+  .practice-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .practice-table th { background: var(--gray-50); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--gray-500); padding: 8px 10px; text-align: left; }
+  .practice-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .practice-table input, .practice-table textarea, .practice-table select { width: 100%; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.84rem; }
+  .practice-table textarea { min-height: 40px; resize: vertical; }
+  .practice-table select { width: auto; min-width: 90px; }
+
+  .feedback-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+  .fb-card { border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 20px; position: relative; overflow: hidden; }
+  .fb-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .fb-card.fb-good::before { background: var(--sem-green); }
+  .fb-card.fb-bad::before { background: var(--sem-red); }
+  .fb-card.fb-try::before { background: var(--status-active); }
+  .fb-card h3 { font-size: 0.9rem; font-weight: 700; color: var(--tr-green-dark); margin-bottom: 12px; }
+  .fb-item { margin-bottom: 10px; }
+  .fb-item textarea { width: 100%; min-height: 44px; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.84rem; resize: vertical; }
+  .fb-item textarea:focus { outline: none; border-color: var(--tr-green-mid); box-shadow: 0 0 0 2px rgba(26,92,58,0.12); }
+  .fb-item .votes { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 0.75rem; color: var(--gray-500); }
+  .fb-item .votes input { width: 40px; padding: 2px 6px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 0.8rem; text-align: center; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 16px 0; }
+  .summary-card { text-align: center; padding: 20px 12px; border: 1px solid var(--gray-200); border-radius: var(--radius-md); }
+  .summary-card .dim { font-size: 0.68rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .summary-card .sem { font-size: 1.4rem; }
+  .summary-card textarea { width: 100%; margin-top: 8px; min-height: 36px; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-family: inherit; font-size: 0.8rem; resize: vertical; text-align: center; }
+
+  @media print {
+    .no-print { display: none; }
+    textarea, input, select { border: 1px solid var(--gray-300) !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header-bar" style="margin: -32px -40px 24px; border-radius: 0;">
+    <div class="label">TR Change System</div>
+    <h1>Feedback Loop — Retrospectiva Trimestral de Transformação</h1>
+    <div class="subtitle">Avaliação do ciclo de transformação com métricas, feedback e ações</div>
+  </div>
+
+  <!-- DADOS GERAIS -->
+  <div class="section-card">
+    <h2>Dados Gerais</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+      <div class="field-group"><label>Vertical / Produto</label><input type="text" placeholder="Ex.: Plataforma Cloud"></div>
+      <div class="field-group"><label>Período Avaliado</label><input type="text" placeholder="Ex.: Q1 2026 — Jan a Mar"></div>
+      <div class="field-group"><label>Data da Sessão</label><input type="date"></div>
+      <div class="field-group"><label>Change Agent</label><input type="text" placeholder="Nome"></div>
+      <div class="field-group"><label>Engineering Manager</label><input type="text" placeholder="Nome"></div>
+      <div class="field-group"><label>Participantes</label><input type="text" placeholder="Nomes dos participantes"></div>
+    </div>
+  </div>
+
+  <!-- BLOCO 1: MÉTRICAS -->
+  <div class="section-card">
+    <h2>Bloco 1 — Métricas de Evolução</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Preencher <strong>antes</strong> da sessão. Comparar dados do início vs. final do período.</p>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <h4>Fluxo</h4>
+        <div class="metric-row"><span class="label">Cycle Time P85</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Throughput</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">WIP médio</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Aging Items (>P85)</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+      </div>
+      <div class="metric-card">
+        <h4>Qualidade</h4>
+        <div class="metric-row"><span class="label">Cobertura de testes</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Bloqueios/sprint</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Incidentes prod.</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Aging bugs</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+      </div>
+      <div class="metric-card">
+        <h4>Previsibilidade</h4>
+        <div class="metric-row"><span class="label">% entregas no prazo</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Itens replanejados</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Capacity desviado</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↓</option><option>↑</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+      </div>
+      <div class="metric-card">
+        <h4>Transformação</h4>
+        <div class="metric-row"><span class="label">% PDLC novo modelo</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Autonomia squads</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <div class="metric-row"><span class="label">Blockers removidos</span><input placeholder="Início"><input placeholder="Final"><select class="trend-select"><option>→</option><option>↑</option><option>↓</option></select><select class="sem-select"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 2: O QUE MUDOU -->
+  <div class="section-card">
+    <h2>Bloco 2 — O que Mudou?</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Preencher <strong>antes</strong> da sessão. Listar práticas adotadas, abandonadas e ajustadas.</p>
+
+    <h3>Práticas Adotadas</h3>
+    <table class="practice-table">
+      <thead><tr><th style="width:30px;">#</th><th>Prática</th><th>Impacto observado</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input placeholder="Prática adotada"></td><td><input placeholder="Impacto observado"></td></tr>
+        <tr><td>2</td><td><input placeholder="Prática adotada"></td><td><input placeholder="Impacto observado"></td></tr>
+        <tr><td>3</td><td><input placeholder="Prática adotada"></td><td><input placeholder="Impacto observado"></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:16px;">Práticas Abandonadas</h3>
+    <table class="practice-table">
+      <thead><tr><th style="width:30px;">#</th><th>Prática</th><th>Por que foi abandonada</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input placeholder="Prática abandonada"></td><td><input placeholder="Motivo"></td></tr>
+        <tr><td>2</td><td><input placeholder="Prática abandonada"></td><td><input placeholder="Motivo"></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:16px;">Práticas Ajustadas</h3>
+    <table class="practice-table">
+      <thead><tr><th style="width:30px;">#</th><th>Prática</th><th>O que mudou</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input placeholder="Prática"></td><td><input placeholder="Ajuste feito"></td><td><input placeholder="Resultado"></td></tr>
+        <tr><td>2</td><td><input placeholder="Prática"></td><td><input placeholder="Ajuste feito"></td><td><input placeholder="Resultado"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BLOCO 3: FEEDBACK DO TIME -->
+  <div class="section-card">
+    <h2>Bloco 3 — Feedback do Time</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Preencher <strong>durante</strong> a sessão. Formato participativo (1-2-4-All, post-its, dot voting).</p>
+
+    <div class="feedback-cards">
+      <div class="fb-card fb-good">
+        <h3>O que funcionou bem?</h3>
+        <div class="fb-item"><textarea placeholder="Feedback positivo 1..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+        <div class="fb-item"><textarea placeholder="Feedback positivo 2..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+        <div class="fb-item"><textarea placeholder="Feedback positivo 3..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+      </div>
+      <div class="fb-card fb-bad">
+        <h3>O que não funcionou?</h3>
+        <div class="fb-item"><textarea placeholder="Ponto de melhoria 1..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+        <div class="fb-item"><textarea placeholder="Ponto de melhoria 2..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+        <div class="fb-item"><textarea placeholder="Ponto de melhoria 3..."></textarea><div class="votes">Votos: <input type="number" min="0" value="0"></div></div>
+      </div>
+      <div class="fb-card fb-try">
+        <h3>O que queremos tentar?</h3>
+        <div class="fb-item"><textarea placeholder="Experimento 1..."></textarea><div class="votes">Sponsor: <input type="text" style="width:100px;" placeholder="Nome"></div></div>
+        <div class="fb-item"><textarea placeholder="Experimento 2..."></textarea><div class="votes">Sponsor: <input type="text" style="width:100px;" placeholder="Nome"></div></div>
+        <div class="fb-item"><textarea placeholder="Experimento 3..."></textarea><div class="votes">Sponsor: <input type="text" style="width:100px;" placeholder="Nome"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 4: AÇÕES -->
+  <div class="section-card">
+    <h2>Bloco 4 — Ações para o Próximo Ciclo</h2>
+    <p style="color:var(--gray-500); font-size:0.82rem; margin-bottom:12px;">Priorizar <strong>durante</strong> a sessão. Máximo 5 ações — menos é mais.</p>
+    <table class="practice-table">
+      <thead><tr><th style="width:30px;">#</th><th>Ação</th><th style="width:120px;">Owner</th><th style="width:100px;">Prazo</th><th style="width:100px;">Prioridade</th><th style="width:110px;">Status</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input placeholder="Ação"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><select><option>Alta</option><option>Média</option><option>Baixa</option></select></td><td><select><option>⬜ Pendente</option><option>🔄 Em andamento</option><option>✅ Concluído</option><option>🚫 Cancelado</option></select></td></tr>
+        <tr><td>2</td><td><input placeholder="Ação"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><select><option>Alta</option><option>Média</option><option>Baixa</option></select></td><td><select><option>⬜ Pendente</option><option>🔄 Em andamento</option><option>✅ Concluído</option><option>🚫 Cancelado</option></select></td></tr>
+        <tr><td>3</td><td><input placeholder="Ação"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><select><option>Alta</option><option>Média</option><option>Baixa</option></select></td><td><select><option>⬜ Pendente</option><option>🔄 Em andamento</option><option>✅ Concluído</option><option>🚫 Cancelado</option></select></td></tr>
+        <tr><td>4</td><td><input placeholder="Ação"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><select><option>Alta</option><option>Média</option><option>Baixa</option></select></td><td><select><option>⬜ Pendente</option><option>🔄 Em andamento</option><option>✅ Concluído</option><option>🚫 Cancelado</option></select></td></tr>
+        <tr><td>5</td><td><input placeholder="Ação"></td><td><input placeholder="Owner"></td><td><input type="date"></td><td><select><option>Alta</option><option>Média</option><option>Baixa</option></select></td><td><select><option>⬜ Pendente</option><option>🔄 Em andamento</option><option>✅ Concluído</option><option>🚫 Cancelado</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RESUMO EXECUTIVO -->
+  <div class="section-card" style="border-left: 4px solid var(--tr-green-dark);">
+    <h2>Resumo Executivo do Ciclo</h2>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="dim">Fluxo</div>
+        <div class="sem"><select class="sem-select" style="font-size:1.2rem;"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <textarea placeholder="Síntese..."></textarea>
+      </div>
+      <div class="summary-card">
+        <div class="dim">Qualidade</div>
+        <div class="sem"><select class="sem-select" style="font-size:1.2rem;"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <textarea placeholder="Síntese..."></textarea>
+      </div>
+      <div class="summary-card">
+        <div class="dim">Previsibilidade</div>
+        <div class="sem"><select class="sem-select" style="font-size:1.2rem;"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <textarea placeholder="Síntese..."></textarea>
+      </div>
+      <div class="summary-card">
+        <div class="dim">Transformação</div>
+        <div class="sem"><select class="sem-select" style="font-size:1.2rem;"><option>⬜</option><option>🟢</option><option>🟡</option><option>🔴</option></select></div>
+        <textarea placeholder="Síntese..."></textarea>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">Revisão das Ações do Ciclo Anterior</h3>
+    <table class="practice-table">
+      <thead><tr><th style="width:30px;">#</th><th>Ação (ciclo anterior)</th><th style="width:110px;">Status Final</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><input placeholder="Ação do ciclo anterior"></td><td><select><option>✅ Concluído</option><option>🔄 Em andamento</option><option>🚫 Cancelado</option></select></td><td><input placeholder="Resultado observado"></td></tr>
+        <tr><td>2</td><td><input placeholder="Ação do ciclo anterior"></td><td><select><option>✅ Concluído</option><option>🔄 Em andamento</option><option>🚫 Cancelado</option></select></td><td><input placeholder="Resultado observado"></td></tr>
+        <tr><td>3</td><td><input placeholder="Ação do ciclo anterior"></td><td><select><option>✅ Concluído</option><option>🔄 Em andamento</option><option>🚫 Cancelado</option></select></td><td><input placeholder="Resultado observado"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Thomson Reuters · TR Change System · Feedback Loop · Confidencial
+  </div>
+</div>
+
+</body>
+</html>

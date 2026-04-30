@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(pip --version)",
+      "Bash(pip install *)",
+      "Bash(python generate_pptx.py dados/dom-nio-cloud_sprint-08.json)",
+      "Bash(python setup.py --check)",
+      "Bash(python setup.py --demo)",
+      "Bash(ls -la templates/*/*.html)"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-dev": true
+  }
+}

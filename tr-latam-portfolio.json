@@ -1,0 +1,315 @@
+{
+  "meta": {
+    "produto": "Thomson Reuters - LatAm Product Portfolio",
+    "periodo": "Sprint 15 - Q2 2026",
+    "data": "2026-04-15",
+    "responsavel": "Adriana Dorigao - Change Agent",
+    "organizacao": "Thomson Reuters Latin America",
+    "escopo": "Portfólio completo de produtos e soluções"
+  },
+  "projetos_principais": {
+    "produtos_core": [
+      {
+        "nome": "LegalOne",
+        "categoria": "Legal Technology",
+        "status": "🟢 Ativo",
+        "repositorios": 92,
+        "pipelines": 308
+      },
+      {
+        "nome": "Legal Content",
+        "categoria": "Content Management",
+        "status": "🟢 Ativo",
+        "repositorios": "N/A",
+        "pipelines": "N/A"
+      }
+    ],
+    "mastersaf_suite": [
+      {
+        "nome": "Mastersaf Fiscal Solutions",
+        "categoria": "Tax & Compliance",
+        "status": "🟢 Ativo",
+        "repositorios": 1,
+        "pipelines": 1
+      },
+      {
+        "nome": "Mastersaf DF-e",
+        "categoria": "Electronic Documents",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "Mastersaf DW",
+        "categoria": "Data Warehouse",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "Mastersaf Interfaces",
+        "categoria": "Integration Layer",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      }
+    ],
+    "cloud_data": [
+      {
+        "nome": "Datacloud",
+        "categoria": "Cloud Platform",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "Domínio",
+        "categoria": "Domain Services",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      }
+    ],
+    "financial_solutions": [
+      {
+        "nome": "OneSource BR",
+        "categoria": "Tax Technology",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "ONVIO BR",
+        "categoria": "Cloud Tax Platform",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "TR Fintech",
+        "categoria": "Financial Technology",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      }
+    ],
+    "business_intelligence": [
+      {
+        "nome": "OBI",
+        "categoria": "Business Intelligence",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      }
+    ],
+    "regional_frameworks": [
+      {
+        "nome": "South Latam",
+        "categoria": "Regional Platform",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      },
+      {
+        "nome": "Tax Declaration Framework",
+        "categoria": "Tax Infrastructure",
+        "status": "🟢 Ativo",
+        "repositorios": "TBD",
+        "pipelines": "TBD"
+      }
+    ],
+    "infraestrutura": [
+      {
+        "nome": "Projetos de Infraestrutura/Operações",
+        "categoria": "Infrastructure & Operations",
+        "status": "🟢 Ativo",
+        "repositorios": 50,
+        "pipelines": 37
+      }
+    ]
+  },
+  "kpi-assumidas": 127,
+  "kpi-realizadas": 95,
+  "kpi-bloqueadas": 8,
+  "kpi-atrasadas": 12,
+  "prog-conclusao": "75%",
+  "prog-velocity": "31",
+  "prog-backlog": "247",
+  "resumo_portfolio": {
+    "total_produtos": 15,
+    "categorias": 8,
+    "produtos_ativos": 15,
+    "produtos_core": 2,
+    "suite_mastersaf": 4,
+    "solucoes_financeiras": 3
+  },
+  "tbl-concluidas": [
+    [
+      { "value": "LegalOne" },
+      { "value": "Migração pipelines CI/CD - 308 pipelines ativos" },
+      { "value": "2026-04-12" }
+    ],
+    [
+      { "value": "Mastersaf Suite" },
+      { "value": "Integração DF-e com Fiscal Solutions" },
+      { "value": "2026-04-10" }
+    ],
+    [
+      { "value": "Infraestrutura" },
+      { "value": "Consolidação repositórios DevOps" },
+      { "value": "2026-04-08" }
+    ]
+  ],
+  "tbl-andamento": [
+    [
+      { "value": "LegalOne" },
+      { "value": "Otimização performance - 92 repositórios" },
+      { "value": "92" },
+      { "value": "68" },
+      { "value": "2026-04-25" },
+      { "value": "🟡" }
+    ],
+    [
+      { "value": "OneSource BR" },
+      { "value": "Migração para cloud platform" },
+      { "value": "100%" },
+      { "value": "70%" },
+      { "value": "2026-05-01" },
+      { "value": "🟢" }
+    ],
+    [
+      { "value": "TR Fintech" },
+      { "value": "Implementação APIs modernas" },
+      { "value": "15" },
+      { "value": "12" },
+      { "value": "2026-04-30" },
+      { "value": "🟢" }
+    ],
+    [
+      { "value": "Datacloud" },
+      { "value": "Integração com produtos Mastersaf" },
+      { "value": "8" },
+      { "value": "5" },
+      { "value": "2026-05-10" },
+      { "value": "🟡" }
+    ]
+  ],
+  "tbl-atencao": [
+    [
+      { "value": "ONVIO BR" },
+      { "value": "Dependência de recursos externos" },
+      { "value": "Aguardando aprovação orçamentária" },
+      { "value": "18" }
+    ],
+    [
+      { "value": "OBI" },
+      { "value": "Performance de queries" },
+      { "value": "Necessário otimização de database" },
+      { "value": "12" }
+    ]
+  ],
+  "tbl-riscos": [
+    [
+      { "value": "🟡" },
+      { "value": "Complexidade do portfolio" },
+      { "value": "15 produtos com diferentes tecnologias" },
+      { "value": "Padronizar stack tecnológico" },
+      { "value": "Architecture Team" },
+      { "value": "2026-06-01" }
+    ],
+    [
+      { "value": "🟠" },
+      { "value": "Dependência LegalOne" },
+      { "value": "Produto concentra 70% dos recursos" },
+      { "value": "Diversificar investimentos" },
+      { "value": "Product Management" },
+      { "value": "2026-05-15" }
+    ],
+    [
+      { "value": "🟢" },
+      { "value": "Integração entre produtos" },
+      { "value": "Produtos Mastersaf precisam se integrar" },
+      { "value": "Roadmap de integrações definido" },
+      { "value": "Integration Team" },
+      { "value": "2026-07-01" }
+    ]
+  ],
+  "tbl-milestones": [
+    [
+      { "value": "Outcome" },
+      { "value": "Portfolio Modernization" },
+      { "value": "% produtos em cloud" },
+      { "value": "40%" },
+      { "value": "73%" },
+      { "value": "2026-09-30" },
+      { "value": "🟢" }
+    ],
+    [
+      { "value": "Outcome" },
+      { "value": "Integration Excellence" },
+      { "value": "APIs padronizadas" },
+      { "value": "60%" },
+      { "value": "45%" },
+      { "value": "2026-08-31" },
+      { "value": "🟡" }
+    ],
+    [
+      { "value": "Projeto" },
+      { "value": "Mastersaf Suite Unification" },
+      { "value": "Produtos integrados" },
+      { "value": "4" },
+      { "value": "2" },
+      { "value": "2026-12-31" },
+      { "value": "🟡" }
+    ]
+  ],
+  "tbl-enablers": [
+    [
+      { "value": "Cloud Migration Framework" },
+      { "value": "🟢" },
+      { "value": "80" },
+      { "value": "2026-06-30" },
+      { "value": "Cloud Team" },
+      { "value": "Migração LegalOne e OneSource em progresso" }
+    ],
+    [
+      { "value": "API Gateway Implementation" },
+      { "value": "🟡" },
+      { "value": "45" },
+      { "value": "2026-07-31" },
+      { "value": "Integration Team" },
+      { "value": "Dependente de decisões arquiteturais" }
+    ],
+    [
+      { "value": "DevOps Standardization" },
+      { "value": "🟢" },
+      { "value": "90" },
+      { "value": "2026-05-31" },
+      { "value": "Platform Engineering" },
+      { "value": "Templates CI/CD implementados" }
+    ]
+  ],
+  "tbl-decisoes": [
+    [
+      { "value": "Estratégia Portfolio" },
+      { "value": "15 produtos diferentes requerem estratégia unificada" },
+      { "value": "Manter separados vs Portfolio único" },
+      { "value": "Portfolio unificado com governança centralizada" },
+      { "value": "2026-04-30" }
+    ],
+    [
+      { "value": "Investment Allocation" },
+      { "value": "LegalOne consome 70% dos recursos" },
+      { "value": "Manter foco vs Diversificar" },
+      { "value": "Rebalancear: 50% LegalOne, 50% outros" },
+      { "value": "2026-05-15" }
+    ],
+    [
+      { "value": "Technology Stack" },
+      { "value": "Produtos usam tecnologias diferentes" },
+      { "value": "Padronizar vs Manter flexibilidade" },
+      { "value": "Padronizar com exceções justificadas" },
+      { "value": "2026-06-01" }
+    ]
+  ]
+}

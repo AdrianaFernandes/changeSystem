@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa/Produto - Seleção TR LatAm</title>
+    <style>
+        .form-group {
+            margin: 20px 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #133C2C;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-select {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #133C2C;
+            box-shadow: 0 0 0 3px rgba(19, 60, 44, 0.1);
+        }
+
+        .form-select:hover {
+            border-color: #1a5c3a;
+        }
+
+        .projeto-info {
+            margin-top: 16px;
+            padding: 12px;
+            background: #f9fafb;
+            border-left: 4px solid #133C2C;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #374151;
+            display: none;
+        }
+
+        .projeto-info.show {
+            display: block;
+        }
+
+        .projeto-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .stat {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            display: block;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #133C2C;
+            font-size: 16px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .status.ativo { background: #dcfce7; color: #166534; }
+        .status.desenvolvimento { background: #fef3c7; color: #92400e; }
+        .status.missing { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div class="form-group">
+        <label for="programa-produto" class="form-label">Programa / Produto</label>
+        <select id="programa-produto" class="form-select" onchange="showProjectInfo(this.value)">
+            <option value="">Selecione um programa/produto...</option>
+            <option value="datacloud" data-repos="145" data-pipelines="305" data-status="ativo">Datacloud</option>
+            <option value="dominio" data-repos="0" data-pipelines="0" data-status="missing">Domínio</option>
+            <option value="legal-content" data-repos="1" data-pipelines="0" data-status="desenvolvimento">Legal Content</option>
+            <option value="legalone" data-repos="92" data-pipelines="308" data-status="ativo">LegalOne</option>
+            <option value="mastersaf-dfe" data-repos="1" data-pipelines="1" data-status="ativo">Mastersaf DF-e</option>
+            <option value="mastersaf-dw" data-repos="0" data-pipelines="0" data-status="missing">Mastersaf DW</option>
+            <option value="mastersaf-fiscal" data-repos="1" data-pipelines="1" data-status="ativo">Mastersaf Fiscal Solutions</option>
+            <option value="mastersaf-interfaces" data-repos="1" data-pipelines="0" data-status="desenvolvimento">Mastersaf Interfaces</option>
+            <option value="obi" data-repos="1" data-pipelines="3" data-status="ativo">OBI</option>
+            <option value="onesource-br" data-repos="1" data-pipelines="0" data-status="desenvolvimento">OneSource BR</option>
+            <option value="onvio-br" data-repos="1" data-pipelines="0" data-status="desenvolvimento">ONVIO BR</option>
+            <option value="infraestrutura" data-repos="50" data-pipelines="37" data-status="ativo">Projetos de Infraestrutura/Operações</option>
+            <option value="south-latam" data-repos="5" data-pipelines="0" data-status="desenvolvimento">South Latam</option>
+            <option value="tax-framework" data-repos="1" data-pipelines="3" data-status="ativo">Tax Declaration Framework</option>
+            <option value="tr-fintech" data-repos="1" data-pipelines="1" data-status="ativo">TR Fintech</option>
+        </select>
+
+        <div id="projeto-info" class="projeto-info">
+            <div id="projeto-nome"></div>
+            <div class="projeto-stats">
+                <div class="stat">
+                    <span class="stat-label">Repositórios</span>
+                    <span class="stat-value" id="stat-repos">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Pipelines</span>
+                    <span class="stat-value" id="stat-pipelines">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">% Portfolio</span>
+                    <span class="stat-value" id="stat-percent">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const projectData = {
+            'datacloud': {
+                nome: 'Datacloud',
+                categoria: 'Cloud Platform',
+                descricao: 'Maior projeto do portfolio - Plataforma cloud principal',
+                percent: '48%'
+            },
+            'dominio': {
+                nome: 'Domínio',
+                categoria: 'Domain Services',
+                descricao: 'Projeto não encontrado no Azure DevOps',
+                percent: '0%'
+            },
+            'legal-content': {
+                nome: 'Legal Content',
+                categoria: 'Content Management',
+                descricao: 'Gestão de conteúdo jurídico',
+                percent: '0.3%'
+            },
+            'legalone': {
+                nome: 'LegalOne',
+                categoria: 'Legal Technology',
+                descricao: 'Segundo maior projeto - Plataforma jurídica principal',
+                percent: '31%'
+            },
+            'mastersaf-dfe': {
+                nome: 'Mastersaf DF-e',
+                categoria: 'Electronic Documents',
+                descricao: 'Documentos fiscais eletrônicos',
+                percent: '0.3%'
+            },
+            'mastersaf-dw': {
+                nome: 'Mastersaf DW',
+                categoria: 'Data Warehouse',
+                descricao: 'Projeto não encontrado no Azure DevOps',
+                percent: '0%'
+            },
+            'mastersaf-fiscal': {
+                nome: 'Mastersaf Fiscal Solutions',
+                categoria: 'Tax & Compliance',
+                descricao: 'Soluções fiscais e compliance',
+                percent: '0.3%'
+            },
+            'mastersaf-interfaces': {
+                nome: 'Mastersaf Interfaces',
+                categoria: 'Integration Layer',
+                descricao: 'Camada de integração Mastersaf',
+                percent: '0.3%'
+            },
+            'obi': {
+                nome: 'OBI',
+                categoria: 'Business Intelligence',
+                descricao: 'Plataforma de business intelligence',
+                percent: '0.3%'
+            },
+            'onesource-br': {
+                nome: 'OneSource BR',
+                categoria: 'Tax Technology',
+                descricao: 'Tecnologia fiscal Brasil',
+                percent: '0.3%'
+            },
+            'onvio-br': {
+                nome: 'ONVIO BR',
+                categoria: 'Cloud Tax Platform',
+                descricao: 'Plataforma fiscal em cloud',
+                percent: '0.3%'
+            },
+            'infraestrutura': {
+                nome: 'Projetos de Infraestrutura/Operações',
+                categoria: 'Infrastructure & Operations',
+                descricao: 'Infraestrutura e operações',
+                percent: '17%'
+            },
+            'south-latam': {
+                nome: 'South Latam',
+                categoria: 'Regional Platform',
+                descricao: 'Plataforma regional América Latina',
+                percent: '2%'
+            },
+            'tax-framework': {
+                nome: 'Tax Declaration Framework',
+                categoria: 'Tax Infrastructure',
+                descricao: 'Framework para declarações fiscais',
+                percent: '0.3%'
+            },
+            'tr-fintech': {
+                nome: 'TR Fintech',
+                categoria: 'Financial Technology',
+                descricao: 'Soluções de tecnologia financeira',
+                percent: '0.3%'
+            }
+        };
+
+        function showProjectInfo(value) {
+            const infoDiv = document.getElementById('projeto-info');
+
+            if (!value) {
+                infoDiv.classList.remove('show');
+                return;
+            }
+
+            const option = document.querySelector(`option[value="${value}"]`);
+            const project = projectData[value];
+
+            if (option && project) {
+                const repos = option.dataset.repos;
+                const pipelines = option.dataset.pipelines;
+                const status = option.dataset.status;
+
+                let statusClass = 'ativo';
+                let statusText = '🟢 Ativo';
+
+                if (status === 'desenvolvimento') {
+                    statusClass = 'desenvolvimento';
+                    statusText = '🟡 Em Desenvolvimento';
+                } else if (status === 'missing') {
+                    statusClass = 'missing';
+                    statusText = '❌ Não Encontrado';
+                }
+
+                document.getElementById('projeto-nome').innerHTML =
+                    `<strong>${project.nome}</strong> <span class="status ${statusClass}">${statusText}</span><br>
+                     <small>${project.categoria} • ${project.descricao}</small>`;
+
+                document.getElementById('stat-repos').textContent = repos;
+                document.getElementById('stat-pipelines').textContent = pipelines;
+                document.getElementById('stat-percent').textContent = project.percent;
+
+                infoDiv.classList.add('show');
+            }
+        }
+
+        // Auto-select Datacloud como exemplo
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('programa-produto');
+            // Opcional: Auto-selecionar o primeiro item
+            // select.value = 'datacloud';
+            // showProjectInfo('datacloud');
+        });
+    </script>
+</body>
+</html>

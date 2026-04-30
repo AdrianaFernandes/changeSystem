@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo - Work Items Cards Layout</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .demo-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #1f2937;
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 16px;
+      margin: 0 0 30px 0;
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    p {
+      margin: 0 0 20px 0;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .work-item-actions-top {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .btn-action {
+      background: none;
+      border: none;
+      color: #0078d4;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background-color: #f0f8ff;
+      color: #106ebe;
+    }
+
+    .work-item-cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .work-item-card {
+      position: relative;
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .work-item-card:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .work-item-card.selected {
+      border-color: #10b981;
+      background-color: #ecfdf5;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+    }
+
+    .work-item-card.selected .work-item-card-checkmark {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .work-item-card-checkmark {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.2s ease;
+    }
+
+    .work-item-card-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .work-item-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .work-item-card-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #111827;
+      margin: 0 0 4px 0;
+      line-height: 1.2;
+    }
+
+    .work-item-card-description {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      color: #166534;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <h1>🎯 Work Items - Layout em Cards</h1>
+    <p class="subtitle">Demonstração do novo layout horizontal com cards selecionáveis</p>
+
+    <div class="success-message">
+      <strong>✅ Implementação Concluída!</strong><br>
+      Os work items agora são exibidos como cards horizontais, exatamente como solicitado na imagem.
+    </div>
+
+    <h3>TIPOS DE WORK ITEMS</h3>
+    <p>Selecione um ou mais tipos de work items para incluir no relatório</p>
+
+    <div class="work-item-actions-top">
+      <button type="button" onclick="selectAllCards()" class="btn-action">Selecionar Todos</button>
+      <button type="button" onclick="clearAllCards()" class="btn-action">Limpar Seleção</button>
+    </div>
+
+    <div class="work-item-cards-container" id="work-item-cards-container">
+      <!-- Epic -->
+      <div class="work-item-card" onclick="toggleCard(this)">
+        <div class="work-item-card-icon">🎯</div>
+        <div class="work-item-card-content">
+          <div class="work-item-card-title">Epic</div>
+          <div class="work-item-card-description">Iniciativas de grande escala</div>
+        </div>
+        <div class="work-item-card-checkmark">✓</div>
+      </div>
+
+      <!-- Feature -->
+      <div class="work-item-card selected" onclick="toggleCard(this)">
+        <div class="work-item-card-icon">⭐</div>
+        <div class="work-item-card-content">
+          <div class="work-item-card-title">Feature</div>
+          <div class="work-item-card-description">Funcionalidades do produto</div>
+        </div>
+        <div class="work-item-card-checkmark">✓</div>
+      </div>
+
+      <!-- User Story -->
+      <div class="work-item-card" onclick="toggleCard(this)">
+        <div class="work-item-card-icon">👤</div>
+        <div class="work-item-card-content">
+          <div class="work-item-card-title">User Story</div>
+          <div class="work-item-card-description">Requisitos do usuário</div>
+        </div>
+        <div class="work-item-card-checkmark">✓</div>
+      </div>
+
+      <!-- Task -->
+      <div class="work-item-card" onclick="toggleCard(this)">
+        <div class="work-item-card-icon">📋</div>
+        <div class="work-item-card-content">
+          <div class="work-item-card-title">Task</div>
+          <div class="work-item-card-description">Atividades específicas</div>
+        </div>
+        <div class="work-item-card-checkmark">✓</div>
+      </div>
+
+      <!-- Bug -->
+      <div class="work-item-card" onclick="toggleCard(this)">
+        <div class="work-item-card-icon">🐛</div>
+        <div class="work-item-card-content">
+          <div class="work-item-card-title">Bug</div>
+          <div class="work-item-card-description">Correções e defeitos</div>
+        </div>
+        <div class="work-item-card-checkmark">✓</div>
+      </div>
+    </div>
+
+    <div class="status" id="status">
+      Selecionados: <strong>1</strong> work item type(s)
+    </div>
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+      <h3>✨ Funcionalidades Implementadas:</h3>
+      <ul style="margin: 8px 0; padding-left: 20px; color: #374151;">
+        <li>Layout em cards horizontais responsivo</li>
+        <li>Visual moderno com bordas arredondadas e sombras</li>
+        <li>Feedback visual ao selecionar (verde + checkmark)</li>
+        <li>Ícones específicos para cada tipo de work item</li>
+        <li>Botões "Selecionar Todos" e "Limpar Seleção"</li>
+        <li>Integração automática com dados do Azure DevOps</li>
+        <li>Carregamento dinâmico baseado no projeto selecionado</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function toggleCard(card) {
+      card.classList.toggle('selected');
+      updateStatus();
+    }
+
+    function selectAllCards() {
+      const cards = document.querySelectorAll('.work-item-card');
+      cards.forEach(card => card.classList.add('selected'));
+      updateStatus();
+    }
+
+    function clearAllCards() {
+      const cards = document.querySelectorAll('.work-item-card');
+      cards.forEach(card => card.classList.remove('selected'));
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const selectedCards = document.querySelectorAll('.work-item-card.selected');
+      const status = document.getElementById('status');
+      status.innerHTML = `Selecionados: <strong>${selectedCards.length}</strong> work item type(s)`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+﻿{
+    "iterations_encontradas":  0,
+    "timestamp":  {
+                      "value":  "\/Date(1776261776306)\/",
+                      "DisplayHint":  2,
+                      "DateTime":  "quarta-feira, 15 de abril de 2026 11:02:56"
+                  },
+    "iterations_template":  [
+                                "Sprint 13 - Q2 2026",
+                                "Sprint 14 - Q2 2026",
+                                "Sprint 15 - Q2 2026",
+                                "Sprint 16 - Q2 2026",
+                                "Sprint 17 - Q3 2026",
+                                "Sprint 18 - Q3 2026",
+                                "Sprint 19 - Q3 2026",
+                                "Sprint 20 - Q3 2026",
+                                "Sprint 21 - Q4 2026",
+                                "Sprint 22 - Q4 2026",
+                                "Sprint 23 - Q4 2026",
+                                "Sprint 24 - Q4 2026"
+                            ],
+    "projetos_verificados":  13,
+    "iterations_raw":  [
+
+                       ]
+}

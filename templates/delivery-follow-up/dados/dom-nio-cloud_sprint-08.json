@@ -1,0 +1,479 @@
+{
+  "meta": {
+    "produto": "Domínio Cloud",
+    "periodo": "Sprint 08",
+    "data": "2026-04-16",
+    "responsavel": "Mateus Bianchini"
+  },
+  "kpi-assumidas": "10",
+  "kpi-realizadas": "8",
+  "kpi-bloqueadas": "1",
+  "kpi-atrasadas": "1",
+  "prog-conclusao": "70%",
+  "prog-velocity": "8",
+  "prog-backlog": "10",
+  "tbl-concluidas": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste I"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": "2026-04-07"
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ]
+  ],
+  "tbl-andamento": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste andamento"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste II"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "79"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "79"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": "2026-04-13"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟡"
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟢"
+      }
+    ]
+  ],
+  "tbl-atencao": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Folha"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "XYZ"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste "
+      },
+      {
+        "tag": "input",
+        "type": "number",
+        "value": "5"
+      }
+    ]
+  ],
+  "tbl-riscos": [
+    [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🔴"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Plataforma"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Mudar"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "DM"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": "2026-04-14"
+      }
+    ],
+    [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟡"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ],
+    [
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟡"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ]
+  ],
+  "tbl-milestones": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "M1"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Entregar X, Objetivo Y"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "05/2026"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟢"
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "🟡"
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "⬜"
+      }
+    ]
+  ],
+  "tbl-enablers": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste"
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "On Track"
+      },
+      {
+        "tag": "input",
+        "type": "number",
+        "value": "50"
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": "2026-04-22"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "Teste"
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": "123"
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "On Track"
+      },
+      {
+        "tag": "input",
+        "type": "number",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "select",
+        "type": "select-one",
+        "value": "On Track"
+      },
+      {
+        "tag": "input",
+        "type": "number",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      }
+    ]
+  ],
+  "tbl-decisoes": [
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ],
+    [
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "value": ""
+      },
+      {
+        "tag": "input",
+        "type": "date",
+        "value": ""
+      }
+    ]
+  ],
+  "_savedAt": "2026-04-11T19:53:31.664Z"
+}

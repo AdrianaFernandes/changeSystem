@@ -2338,7 +2338,7 @@
         </div>
 
         <!-- Resultados da Query -->
-        <div id="query-results" style="margin-top: 16px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: none;">
+        <div id="areas-visualization" style="margin-top: 16px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: none;">
           <div style="font-weight: 600; margin-bottom: 12px; color: #1e40af; display: flex; align-items: center;">
             📊 Resultados da Query:
             <span id="results-count" style="background: #dbeafe; color: #1d4ed8; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">0 work items</span>
@@ -2706,22 +2706,39 @@
   };
 
   // ── Executar Query Azure DevOps ── (definição inicial)
-  window.executarQuery = function() {
+  window.executarQuery = async function() {
     // Verificar se a implementação completa já foi carregada
     if (typeof window._executarQueryReal === 'function') {
-      return window._executarQueryReal();
+      return await window._executarQueryReal();
     }
 
     console.log('Query solicitada, aguardando inicialização...');
 
-    // Tentar novamente após um pequeno delay
-    setTimeout(() => {
-      if (typeof window._executarQueryReal === 'function') {
-        window._executarQueryReal();
-      } else {
-        console.error('Implementação completa da query não foi carregada');
-      }
-    }, 100);
+    // Aguardar com polling até a função estar disponível
+    return new Promise((resolve, reject) => {
+      let tentativas = 0;
+      const maxTentativas = 50; // 5 segundos total (50 x 100ms)
+
+      const verificar = async () => {
+        if (typeof window._executarQueryReal === 'function') {
+          try {
+            const resultado = await window._executarQueryReal();
+            resolve(resultado);
+          } catch (error) {
+            reject(error);
+          }
+        } else if (tentativas < maxTentativas) {
+          tentativas++;
+          setTimeout(verificar, 100);
+        } else {
+          const erro = 'Implementação completa da query não foi carregada após 5 segundos';
+          console.error(erro);
+          reject(new Error(erro));
+        }
+      };
+
+      verificar();
+    });
   };
 
   // ── Label ──
@@ -2926,21 +2943,6 @@
     updatePeriodTypeCompatibility(type);
   };
 
-  // Função para toggle do dropdown de iteration paths
-  window.toggleIterationPathsDropdown = function() {
-    const dropdown = document.getElementById('iteration-paths-dropdown');
-    const selector = document.getElementById('iteration-path-selector');
-
-    const isOpen = dropdown.style.display !== 'none';
-
-    if (isOpen) {
-      dropdown.style.display = 'none';
-      selector.classList.remove('open');
-    } else {
-      dropdown.style.display = 'block';
-      selector.classList.add('open');
-    }
-  };
 
   // Função para manter compatibilidade com código existente
   function updatePeriodTypeCompatibility(type) {
@@ -4313,25 +4315,6 @@
     console.log('✅ Area paths encontradas:', matches, 'de', items.length);
   };
 
-  // Selecionar todas as area paths
-  window.selecionarTodasAreaPaths = function() {
-    var checkboxes = document.querySelectorAll('#area-paths-list input[type="checkbox"]');
-    checkboxes.forEach(function(checkbox) {
-      if (checkbox.closest('div').style.display !== 'none') { // Só selecionar visíveis
-        checkbox.checked = true;
-      }
-    });
-    atualizarSelecaoAreaPaths();
-  };
-
-  // Limpar seleção das area paths
-  window.limparSelecaoAreaPaths = function() {
-    var checkboxes = document.querySelectorAll('#area-paths-list input[type="checkbox"]');
-    checkboxes.forEach(function(checkbox) {
-      checkbox.checked = false;
-    });
-    atualizarSelecaoAreaPaths();
-  };
 
   // === AREA PATHS MANAGER - SOLUÇÃO PROFISSIONAL ===
 
@@ -10529,6 +10512,16 @@ Token:`);
     const errorDiv = document.getElementById('query-error');
     const resultsDiv = document.getElementById('query-results');
 
+    // Verificar se elementos existem
+    if (!loadingDiv || !errorDiv || !resultsDiv) {
+      console.error('Elementos da UI de query não encontrados:', {
+        loading: !!loadingDiv,
+        error: !!errorDiv,
+        results: !!resultsDiv
+      });
+      return;
+    }
+
     // Limpar estados anteriores
     loadingDiv.style.display = 'none';
     errorDiv.style.display = 'none';
@@ -10553,8 +10546,8 @@ Token:`);
         return;
       }
 
-      // Buscar detalhes dos work items
-      const workItemsDetalhados = await buscarDetalhesWorkItems(workItems.map(wi => wi.id));
+      // Buscar detalhes dos work items (todos os projetos)
+      const workItemsDetalhados = await buscarDetalhesWorkItems(workItems.map(wi => wi.id), null);
 
       // Preencher tabela
       preencherTabelaResultados(workItemsDetalhados);
@@ -10686,6 +10679,17 @@ Token:`);
   function preencherTabelaResultados(workItems) {
     const tbody = document.querySelector('#tbl-query-results tbody');
     const countEl = document.getElementById('query-count');
+
+    // Verificar se elementos existem
+    if (!tbody) {
+      console.error('Elemento tbody da tabela de resultados não encontrado');
+      return;
+    }
+
+    if (!countEl) {
+      console.error('Elemento contador de resultados não encontrado');
+      return;
+    }
 
     // Limpar tabela
     tbody.innerHTML = '';

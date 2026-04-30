@@ -11425,27 +11425,18 @@ Token:`);
     }
   }
 
+  // Listen for external query requests
+  document.addEventListener('executeQueryRequest', function() {
+    console.log('Recebida solicitação de query externa');
+    if (typeof window.executarQuery === 'function') {
+      window.executarQuery();
+    } else {
+      console.error('Função interna executarQuery não está disponível');
+    }
+  });
+
 })();
 
-// Global wrapper to ensure executarQuery is accessible
-function executarQuery() {
-  console.log('Global executarQuery wrapper called');
-
-  // Check if the internal function is available
-  if (typeof window.executarQuery === 'function') {
-    return window.executarQuery();
-  } else {
-    // Wait a bit and try again
-    setTimeout(() => {
-      if (typeof window.executarQuery === 'function') {
-        return window.executarQuery();
-      } else {
-        console.error('executarQuery still not available');
-        alert('Função não carregada. Tente recarregar a página.');
-      }
-    }, 100);
-  }
-}
 
 </script>
 

@@ -10623,6 +10623,9 @@ Token:`);
     return result.workItems || [];
   }
 
+  // Expose executarQueryWIQL function globally immediately after definition
+  window.executarQueryWIQL = executarQueryWIQL;
+
   function obterAreaPathsSelecionadas() {
     const checkboxes = document.querySelectorAll('#area-paths-list input[type="checkbox"]:checked');
     return Array.from(checkboxes).map(cb => cb.value);
@@ -10771,9 +10774,6 @@ Token:`);
   window.limparResultados = function() {
     document.getElementById('query-results').style.display = 'none';
   };
-
-  // Expose executarQueryWIQL function globally
-  window.executarQueryWIQL = executarQueryWIQL;
 
   function getStateClass(state) {
     switch (state?.toLowerCase()) {

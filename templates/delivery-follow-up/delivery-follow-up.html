@@ -2078,6 +2078,15 @@
     100% { transform: rotate(360deg); }
   }
 </style>
+
+<!-- Error Handling System CSS -->
+<link rel="stylesheet" href="../../assets/css/feedback-system.css">
+
+<!-- Error Handling System Scripts - Traditional Loading -->
+<script src="../../assets/js/constants.js"></script>
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/error-handler.js"></script>
+<script src="../../assets/js/user-feedback.js"></script>
 </head>
 <body>
 
@@ -11485,6 +11494,78 @@ window.addEventListener('load', function() {
     }
   }, 2000); // Aguardar carregamento completo
 });
+
+// Error Handling System - Integration with Azure DevOps queries
+// Initialize and integrate error handling with existing application
+(function initializeErrorHandlingIntegration() {
+  console.log('🛡️ Initializing error handling integration...');
+
+  // Hook into existing executarQuery function to add error handling
+  if (window.executarQueryWIQL) {
+    const originalExecutarQuery = window.executarQueryWIQL;
+
+    window.executarQueryWIQL = async function(...args) {
+      try {
+        // Show loading indicator
+        const loaderId = window.showLoading && window.showLoading('Executando query no Azure DevOps...');
+
+        // Execute original function
+        const result = await originalExecutarQuery.apply(this, args);
+
+        // Hide loading indicator
+        if (loaderId && window.hideLoading) {
+          window.hideLoading(loaderId);
+        }
+
+        // Show success toast
+        if (window.showToast && result && result.workItems) {
+          window.showToast(`Query executada com sucesso! ${result.workItems.length} items encontrados.`, 'success');
+        }
+
+        return result;
+      } catch (error) {
+        console.error('Error in executarQueryWIQL:', error);
+
+        // Hide loading indicator
+        if (window.hideLoading) {
+          window.hideLoading();
+        }
+
+        // Use error handling system
+        if (window.handleAPIError) {
+          window.handleAPIError(error, {
+            operation: 'Azure DevOps Query',
+            query: args[0]
+          });
+        } else {
+          // Fallback error handling
+          if (window.showToast) {
+            window.showToast('Erro ao executar query no Azure DevOps. Tente novamente.', 'error');
+          }
+        }
+
+        throw error;
+      }
+    };
+  }
+
+  // Hook into general error handling for the application
+  window.addEventListener('error', function(event) {
+    console.error('Global error caught:', event.error);
+    if (window.errorHandler) {
+      window.errorHandler.handleGlobalError(event);
+    }
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Unhandled promise rejection:', event.reason);
+    if (window.errorHandler) {
+      window.errorHandler.handleUnhandledRejection(event);
+    }
+  });
+
+  console.log('✅ Error handling integration initialized');
+})();
 </script>
 
 </body>

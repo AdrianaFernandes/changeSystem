@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Error Handling Integration</title>
+    <link rel="stylesheet" href="assets/css/change-system.css">
+    <link rel="stylesheet" href="assets/css/feedback-system.css">
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h1>Test Error Handling Integration</h1>
+
+        <div style="margin: 20px 0;">
+            <button onclick="testToast()">Test Toast Notification</button>
+            <button onclick="testErrorHandling()">Test Error Handling</button>
+            <button onclick="testLoadingIndicator()">Test Loading Indicator</button>
+            <button onclick="testConfirmDialog()">Test Confirm Dialog</button>
+            <button onclick="testFormValidation()">Test Form Validation</button>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <input type="text" id="test-input" placeholder="Type something for validation test">
+        </div>
+
+        <div id="results" style="margin: 20px 0; padding: 10px; border: 1px solid #ccc; min-height: 100px;">
+            <h3>Test Results:</h3>
+        </div>
+    </div>
+
+    <!-- Error Handling System Scripts -->
+    <script src="assets/js/constants.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/user-feedback.js"></script>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function log(message) {
+            results.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+        }
+
+        function testToast() {
+            if (typeof window.showToast === 'function') {
+                window.showToast('Test toast notification!', 'info');
+                log('✅ Toast notification tested successfully');
+            } else {
+                log('❌ showToast function not available');
+            }
+        }
+
+        function testErrorHandling() {
+            if (typeof window.errorHandler === 'object') {
+                try {
+                    throw new Error('Test error for demonstration');
+                } catch (error) {
+                    window.errorHandler.handleError(error, {
+                        showToUser: true,
+                        context: 'Integration Test'
+                    });
+                    log('✅ Error handling tested successfully');
+                }
+            } else {
+                log('❌ errorHandler not available');
+            }
+        }
+
+        function testLoadingIndicator() {
+            if (typeof window.showLoading === 'function' && typeof window.hideLoading === 'function') {
+                const loaderId = window.showLoading('Testing loading indicator...');
+                setTimeout(() => {
+                    window.hideLoading(loaderId);
+                    log('✅ Loading indicator tested successfully');
+                }, 2000);
+            } else {
+                log('❌ Loading functions not available');
+            }
+        }
+
+        function testConfirmDialog() {
+            if (typeof window.showConfirm === 'function') {
+                window.showConfirm('This is a test confirmation dialog. Continue?', {
+                    onConfirm: () => log('✅ Confirm dialog tested - User clicked OK'),
+                    onCancel: () => log('✅ Confirm dialog tested - User clicked Cancel')
+                });
+            } else {
+                log('❌ showConfirm function not available');
+            }
+        }
+
+        function testFormValidation() {
+            const input = document.getElementById('test-input');
+            if (typeof window.showInlineValidation === 'function') {
+                if (input.value.trim() === '') {
+                    window.showInlineValidation(input, 'This field is required', 'error');
+                    log('✅ Form validation tested - Error shown');
+                } else {
+                    window.clearInlineValidation(input);
+                    window.showInlineValidation(input, 'Valid input', 'success');
+                    log('✅ Form validation tested - Success shown');
+                }
+            } else {
+                log('❌ Validation functions not available');
+            }
+        }
+
+        // Test initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Testing error handling integration...');
+
+            // Test basic availability
+            const systems = {
+                'Constants': typeof window.ERROR_CONFIG !== 'undefined',
+                'Utils': typeof window.toast === 'function',
+                'Error Handler': typeof window.errorHandler === 'object',
+                'User Feedback': typeof window.userFeedback === 'object'
+            };
+
+            Object.entries(systems).forEach(([name, available]) => {
+                log(`${available ? '✅' : '❌'} ${name}: ${available ? 'Available' : 'Not Available'}`);
+            });
+
+            if (Object.values(systems).every(Boolean)) {
+                log('🎉 All systems initialized successfully!');
+            } else {
+                log('⚠️ Some systems are missing');
+            }
+        });
+    </script>
+</body>
+</html>

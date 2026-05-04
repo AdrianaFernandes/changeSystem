@@ -1,0 +1,912 @@
+/* ============================================================
+   TR Change System — Feedback & User Interface System
+   Comprehensive styling for error handling, notifications, and user feedback
+   Accessible, responsive, and following Thomson Reuters design system
+   ============================================================ */
+
+/* CSS Custom Properties for Feedback System */
+:root {
+  /* Feedback Colors */
+  --feedback-success: #22c55e;
+  --feedback-success-light: #dcfce7;
+  --feedback-success-dark: #166534;
+
+  --feedback-error: #ef4444;
+  --feedback-error-light: #fef2f2;
+  --feedback-error-dark: #991b1b;
+
+  --feedback-warning: #f59e0b;
+  --feedback-warning-light: #fef3c7;
+  --feedback-warning-dark: #92400e;
+
+  --feedback-info: #3b82f6;
+  --feedback-info-light: #dbeafe;
+  --feedback-info-dark: #1d4ed8;
+
+  /* Feedback Sizing */
+  --feedback-toast-width: 380px;
+  --feedback-toast-height: auto;
+  --feedback-toast-gap: 12px;
+
+  /* Z-Index Layering */
+  --z-toast: 1050;
+  --z-modal: 1060;
+  --z-notification-center: 1040;
+  --z-loading: 1055;
+
+  --feedback-border-radius: 8px;
+  --feedback-border-radius-lg: 12px;
+
+  /* Animation Durations */
+  --feedback-duration-fast: 200ms;
+  --feedback-duration-normal: 300ms;
+  --feedback-duration-slow: 500ms;
+
+  /* Z-Index Stack */
+  --z-toast: 1050;
+  --z-modal: 1060;
+  --z-notification-center: 1040;
+
+  /* Shadows */
+  --feedback-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --feedback-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --feedback-shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   Screen Reader Only / Accessibility Utilities
+   ============================================================ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   Focus Management & Accessibility
+   ============================================================ */
+
+/* Focus trap styling for modals and dialogs */
+.focus-trap:focus {
+  outline: 2px solid var(--tr-green-accent, #16a34a);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .focus-trap:focus {
+    outline: 3px solid;
+    outline-offset: 3px;
+  }
+}
+
+/* Focus visible for modern browsers with better keyboard navigation */
+.toast:focus-visible,
+.modal-dialog:focus-visible,
+.notification-center:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--tr-green-accent, #16a34a);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline for mouse/touch interactions */
+.toast:focus:not(:focus-visible),
+.modal-dialog:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Keyboard navigation indicators */
+.toast.keyboard-focused,
+.modal-dialog.keyboard-focused {
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+}
+
+/* Focus within containers */
+.toast-container:focus-within {
+  z-index: calc(var(--z-toast) + 1);
+}
+
+.modal-container:focus-within {
+  z-index: calc(var(--z-modal) + 1);
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--tr-green-dark, #15803d);
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .focus-trap:focus,
+  .toast:focus-visible,
+  .modal-dialog:focus-visible,
+  button:focus-visible {
+    transition: none;
+  }
+
+  .toast.keyboard-focused,
+  .modal-dialog.keyboard-focused {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Toast Notification System
+   ============================================================ */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: var(--z-toast);
+  max-width: var(--feedback-toast-width);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--feedback-toast-gap);
+  padding: 16px;
+  background: var(--white);
+  border-radius: var(--feedback-border-radius);
+  box-shadow: var(--feedback-shadow);
+  border-left: 4px solid var(--gray-300);
+  pointer-events: auto;
+  transform: translateX(100%);
+  transition: all var(--feedback-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast.dismissing {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* Toast Types */
+.toast-success {
+  border-left-color: var(--feedback-success);
+}
+
+.toast-success .toast-icon {
+  color: var(--feedback-success);
+}
+
+.toast-error {
+  border-left-color: var(--feedback-error);
+}
+
+.toast-error .toast-icon {
+  color: var(--feedback-error);
+}
+
+.toast-warning {
+  border-left-color: var(--feedback-warning);
+}
+
+.toast-warning .toast-icon {
+  color: var(--feedback-warning);
+}
+
+.toast-info {
+  border-left-color: var(--feedback-info);
+}
+
+.toast-info .toast-icon {
+  color: var(--feedback-info);
+}
+
+.toast-loading {
+  border-left-color: var(--tr-green-accent);
+}
+
+.toast-loading .toast-icon {
+  color: var(--tr-green-accent);
+  animation: spin 1s linear infinite;
+}
+
+/* Toast Content */
+.toast-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gray-800);
+  margin: 0;
+}
+
+.toast-action {
+  background: transparent;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all var(--feedback-duration-fast) ease;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.toast-action:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.toast-action:focus {
+  outline: 2px solid var(--tr-green-accent);
+  outline-offset: 2px;
+}
+
+.toast-dismiss {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 8px;
+  border-radius: 4px;
+  transition: color var(--feedback-duration-fast) ease;
+}
+
+.toast-dismiss:hover {
+  color: var(--gray-600);
+  background: var(--gray-100);
+}
+
+.toast-dismiss:focus {
+  outline: 2px solid var(--tr-green-accent);
+  outline-offset: 2px;
+}
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gray-200);
+  border-radius: 0 0 var(--feedback-border-radius) var(--feedback-border-radius);
+  overflow: hidden;
+}
+
+.toast-progress::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--tr-green-accent);
+  width: 100%;
+  animation: toast-progress 3s linear;
+}
+
+@keyframes toast-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* ============================================================
+   Loading Indicators & Progress
+   ============================================================ */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: var(--z-modal);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--feedback-duration-normal) ease;
+}
+
+.loading-overlay.show {
+  opacity: 1;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--white);
+  padding: 32px;
+  border-radius: var(--feedback-border-radius-lg);
+  box-shadow: var(--feedback-shadow-lg);
+  max-width: 300px;
+  text-align: center;
+}
+
+.loading-message {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin: 0;
+}
+
+/* Progress Indicators */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-circular .circular-progress {
+  width: 40px;
+  height: 40px;
+}
+
+.progress-ring-indeterminate {
+  stroke: var(--tr-green-accent);
+  stroke-linecap: round;
+  animation: spin 1s linear infinite;
+  transform-origin: center;
+}
+
+.progress-ring-determinate {
+  stroke: var(--tr-green-accent);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.progress-linear {
+  width: 200px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill-indeterminate {
+  height: 100%;
+  background: var(--tr-green-accent);
+  border-radius: 2px;
+  animation: progress-indeterminate 2s infinite linear;
+}
+
+.progress-fill-determinate {
+  height: 100%;
+  background: var(--tr-green-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Modal & Dialog System
+   ============================================================ */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--feedback-duration-normal) ease;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.modal-container.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-dialog {
+  background: var(--white);
+  border-radius: var(--feedback-border-radius-lg);
+  box-shadow: var(--feedback-shadow-modal);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform var(--feedback-duration-normal) ease;
+}
+
+.modal-container.show .modal-dialog {
+  transform: scale(1);
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.dialog-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all var(--feedback-duration-fast) ease;
+}
+
+.dialog-close:hover {
+  color: var(--gray-600);
+  background: var(--gray-100);
+}
+
+.dialog-close:focus {
+  outline: 2px solid var(--tr-green-accent);
+  outline-offset: 2px;
+}
+
+.dialog-body {
+  padding: 16px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dialog-body p {
+  margin: 0 0 16px;
+  line-height: 1.6;
+  color: var(--gray-700);
+}
+
+.dialog-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* Dialog types */
+.dialog-confirm .dialog-header h2::before {
+  content: '❓';
+  margin-right: 8px;
+}
+
+.dialog-alert .dialog-header h2::before {
+  content: '⚠️';
+  margin-right: 8px;
+}
+
+/* ============================================================
+   Button Styles for Dialogs
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--feedback-duration-fast) ease;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.btn:focus {
+  outline: 2px solid var(--tr-green-accent);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--tr-green-accent);
+  color: var(--white);
+  border-color: var(--tr-green-accent);
+}
+
+.btn-primary:hover {
+  background: var(--tr-green-dark);
+  border-color: var(--tr-green-dark);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+
+.btn-secondary:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.btn-danger {
+  background: var(--feedback-error);
+  color: var(--white);
+  border-color: var(--feedback-error);
+}
+
+.btn-danger:hover {
+  background: var(--feedback-error-dark);
+  border-color: var(--feedback-error-dark);
+}
+
+/* ============================================================
+   Notification Center
+   ============================================================ */
+.notification-center {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 380px;
+  max-height: 70vh;
+  background: var(--white);
+  border-radius: var(--feedback-border-radius-lg);
+  box-shadow: var(--feedback-shadow-lg);
+  border: 1px solid var(--gray-200);
+  z-index: var(--z-notification-center);
+  transform: translateX(100%);
+  transition: transform var(--feedback-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.notification-center.show {
+  transform: translateX(0);
+}
+
+.notification-center-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.notification-center-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.notification-center-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all var(--feedback-duration-fast) ease;
+}
+
+.notification-center-close:hover {
+  color: var(--gray-600);
+  background: var(--gray-200);
+}
+
+.notification-center-content {
+  max-height: calc(70vh - 60px);
+  overflow-y: auto;
+}
+
+.notification-center-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--gray-500);
+}
+
+/* ============================================================
+   Inline Validation Messages
+   ============================================================ */
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.validation-message::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.validation-error {
+  color: var(--feedback-error-dark);
+}
+
+.validation-error::before {
+  background: var(--feedback-error);
+}
+
+.validation-warning {
+  color: var(--feedback-warning-dark);
+}
+
+.validation-warning::before {
+  background: var(--feedback-warning);
+}
+
+.validation-success {
+  color: var(--feedback-success-dark);
+}
+
+.validation-success::before {
+  background: var(--feedback-success);
+}
+
+/* Form field states */
+input.validation-error,
+select.validation-error,
+textarea.validation-error {
+  border-color: var(--feedback-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+input.validation-warning,
+select.validation-warning,
+textarea.validation-warning {
+  border-color: var(--feedback-warning);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+input.validation-success,
+select.validation-success,
+textarea.validation-success {
+  border-color: var(--feedback-success);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* ============================================================
+   Responsive Design
+   ============================================================ */
+@media (max-width: 480px) {
+  .toast-container {
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    max-width: none;
+  }
+
+  .toast {
+    max-width: none;
+  }
+
+  .notification-center {
+    left: 20px;
+    right: 20px;
+    top: 60px;
+    width: auto;
+  }
+
+  .modal-container {
+    padding: 10px;
+  }
+
+  .dialog-content {
+    max-height: 95vh;
+  }
+
+  .dialog-header,
+  .dialog-body,
+  .dialog-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .dialog-footer {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   Reduced Motion Support
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .modal-container,
+  .modal-dialog,
+  .notification-center,
+  .loading-overlay,
+  .progress-ring-indeterminate,
+  .progress-fill-indeterminate,
+  .toast-progress::after {
+    animation: none;
+    transition: none;
+  }
+
+  .toast.show {
+    transform: none;
+    opacity: 1;
+  }
+
+  .modal-container.show .modal-dialog {
+    transform: none;
+  }
+
+  .notification-center.show {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   High Contrast Mode Support
+   ============================================================ */
+@media (prefers-contrast: high) {
+  .toast {
+    border: 2px solid;
+  }
+
+  .modal-dialog {
+    border: 2px solid var(--gray-800);
+  }
+
+  .btn {
+    border-width: 2px;
+  }
+
+  .notification-center {
+    border-width: 2px;
+  }
+}
+
+/* ============================================================
+   Print Styles
+   ============================================================ */
+@media print {
+  .toast-container,
+  .modal-container,
+  .notification-center,
+  .loading-indicator {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   Dark Mode Support (Future Enhancement)
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --feedback-bg: #1f2937;
+    --feedback-text: #f9fafb;
+    --feedback-border: #374151;
+  }
+
+  .toast,
+  .modal-dialog,
+  .notification-center,
+  .loading-content {
+    background: var(--feedback-bg);
+    color: var(--feedback-text);
+    border-color: var(--feedback-border);
+  }
+
+  .dialog-header,
+  .dialog-footer {
+    border-color: var(--feedback-border);
+  }
+
+  .btn-secondary {
+    background: var(--feedback-bg);
+    color: var(--feedback-text);
+    border-color: var(--feedback-border);
+  }
+}
+
+console.log('🎨 Feedback System CSS loaded');

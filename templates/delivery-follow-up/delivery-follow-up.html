@@ -9874,18 +9874,33 @@ Token:`);
       if (typeof window.handleNetworkError === 'function') {
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
           // Erro de CORS ou conectividade
-          window.handleNetworkError(error, {
-            userMessage: 'Não foi possível conectar com a API do Azure DevOps devido a políticas CORS do navegador. Para usar dados reais, é necessário um proxy backend ou executar via PowerShell. Usando dados de exemplo por enquanto.',
-            context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
-            recoveryStrategy: 'FALLBACK'
-          });
+          window.handleNetworkError(
+            error,
+            null, // sem retry callback para CORS
+            'Azure DevOps API - buscarProjetosReaisAzureDevOps (CORS)'
+          );
+
+          // Mostrar toast explicativo sobre CORS
+          if (typeof window.userFeedback?.showToast === 'function') {
+            window.userFeedback.showToast(
+              'CORS: Não é possível conectar diretamente com Azure DevOps do navegador. Usando dados de exemplo.',
+              'warning'
+            );
+          }
         } else {
           // Outros erros de API
-          window.handleAPIError(error, {
-            userMessage: 'Erro ao buscar projetos do Azure DevOps. Usando dados de exemplo.',
-            context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
-            recoveryStrategy: 'FALLBACK'
-          });
+          window.handleAPIError(
+            error,
+            'Azure DevOps API - buscarProjetosReaisAzureDevOps'
+          );
+
+          // Mostrar toast para erros gerais de API
+          if (typeof window.userFeedback?.showToast === 'function') {
+            window.userFeedback.showToast(
+              'Erro ao conectar com Azure DevOps. Usando dados de exemplo.',
+              'error'
+            );
+          }
         }
       } else {
         // Fallback se sistema de erro não estiver disponível

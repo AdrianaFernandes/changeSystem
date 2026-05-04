@@ -9868,8 +9868,7 @@ Token:`);
         window.userFeedback.hideLoading('loading-projects');
       }
 
-      console.error('❌ Erro ao buscar projetos da API:', error);
-
+      // Console log removido - o sistema de tratamento de erro já faz logging adequado
       // Usar sistema de tratamento de erro para feedback ao usuário
       if (typeof window.handleNetworkError === 'function') {
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
@@ -9904,7 +9903,7 @@ Token:`);
         }
       } else {
         // Fallback se sistema de erro não estiver disponível
-        console.warn('⚠️ Sistema de tratamento de erro não disponível');
+        // Warning removido - evitar ruído no console
 
         // Mostrar notificação simples se userFeedback estiver disponível
         if (typeof window.userFeedback?.showToast === 'function') {
@@ -9915,7 +9914,7 @@ Token:`);
         }
       }
 
-      console.log('🔄 Usando fallback...');
+      // Log removido - toast notifications já informam sobre fallback
       return buscarProjetosFallback();
     }
   }

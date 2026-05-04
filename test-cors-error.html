@@ -103,11 +103,11 @@
                 // Usar sistema de tratamento de erro
                 if (typeof window.handleNetworkError === 'function') {
                     log('🛡️ Usando sistema de tratamento de erro...');
-                    window.handleNetworkError(error, {
-                        userMessage: 'Erro CORS detectado durante teste. Esta é uma limitação esperada do navegador.',
-                        context: 'Teste CORS - test-cors-error.html',
-                        recoveryStrategy: 'FALLBACK'
-                    });
+                    window.handleNetworkError(
+                        error,
+                        null, // sem retry para CORS
+                        'Teste CORS - test-cors-error.html'
+                    );
                 } else {
                     log('⚠️ Sistema de tratamento de erro não disponível');
                 }
@@ -122,11 +122,18 @@
 
             if (typeof window.handleNetworkError === 'function') {
                 log('🛡️ Processando com handleNetworkError...');
-                window.handleNetworkError(error, {
-                    userMessage: 'Erro de rede simulado para teste do sistema.',
-                    context: 'Simulação - test-cors-error.html',
-                    recoveryStrategy: 'RETRY'
-                });
+
+                // Função de retry para demonstrar funcionalidade
+                const retryCallback = () => {
+                    log('🔄 Retry simulado executado');
+                    return Promise.resolve('Retry simulado bem-sucedido');
+                };
+
+                window.handleNetworkError(
+                    error,
+                    retryCallback,
+                    'Simulação Rede - test-cors-error.html'
+                );
             } else {
                 log('⚠️ handleNetworkError não está disponível');
             }
@@ -139,11 +146,10 @@
 
             if (typeof window.handleAPIError === 'function') {
                 log('🛡️ Processando com handleAPIError...');
-                window.handleAPIError(error, {
-                    userMessage: 'Erro de API simulado para teste do sistema.',
-                    context: 'Simulação - test-cors-error.html',
-                    recoveryStrategy: 'FALLBACK'
-                });
+                window.handleAPIError(
+                    error,
+                    'Simulação API - test-cors-error.html'
+                );
             } else {
                 log('⚠️ handleAPIError não está disponível');
             }

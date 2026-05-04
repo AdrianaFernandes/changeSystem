@@ -9871,18 +9871,17 @@ Token:`);
       console.error('❌ Erro ao buscar projetos da API:', error);
 
       // Usar sistema de tratamento de erro para feedback ao usuário
-      if (window.errorHandler) {
+      if (typeof window.handleNetworkError === 'function') {
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
           // Erro de CORS ou conectividade
-          window.errorHandler.handleNetworkError(error, {
+          window.handleNetworkError(error, {
             userMessage: 'Não foi possível conectar com a API do Azure DevOps devido a políticas CORS do navegador. Para usar dados reais, é necessário um proxy backend ou executar via PowerShell. Usando dados de exemplo por enquanto.',
             context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
-            recoveryStrategy: 'FALLBACK',
-            retryAction: false // Não permitir retry pois é um problema de CORS
+            recoveryStrategy: 'FALLBACK'
           });
         } else {
           // Outros erros de API
-          window.errorHandler.handleAPIError(error, {
+          window.handleAPIError(error, {
             userMessage: 'Erro ao buscar projetos do Azure DevOps. Usando dados de exemplo.',
             context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
             recoveryStrategy: 'FALLBACK'
@@ -9891,6 +9890,14 @@ Token:`);
       } else {
         // Fallback se sistema de erro não estiver disponível
         console.warn('⚠️ Sistema de tratamento de erro não disponível');
+
+        // Mostrar notificação simples se userFeedback estiver disponível
+        if (typeof window.userFeedback?.showToast === 'function') {
+          window.userFeedback.showToast(
+            'Erro CORS: Não é possível conectar diretamente com Azure DevOps do navegador. Usando dados de exemplo.',
+            'warning'
+          );
+        }
       }
 
       console.log('🔄 Usando fallback...');
@@ -11600,20 +11607,9 @@ window.addEventListener('load', function() {
     };
   }
 
-  // Hook into general error handling for the application
-  window.addEventListener('error', function(event) {
-    console.error('Global error caught:', event.error);
-    if (window.errorHandler) {
-      window.errorHandler.handleGlobalError(event);
-    }
-  });
-
-  window.addEventListener('unhandledrejection', function(event) {
-    console.error('Unhandled promise rejection:', event.reason);
-    if (window.errorHandler) {
-      window.errorHandler.handleUnhandledRejection(event);
-    }
-  });
+  // Sistema de tratamento de erro global já ativo via error-handler.js
+  // Event listeners globais são inicializados automaticamente - não duplicar
+  console.log('🛡️ Sistema de tratamento de erro ativo - captura global automática');
 
   console.log('✅ Error handling integration initialized');
 })();

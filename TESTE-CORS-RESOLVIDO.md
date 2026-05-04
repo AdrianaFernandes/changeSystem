@@ -19,9 +19,10 @@ templates/delivery-follow-up/delivery-follow-up.html
 ### 2. O que você deve ver:
 
 **✅ NO CONSOLE:**
-- Apenas logs informativos do sistema de tratamento de erro
+- Error handler log classificado como `network/error` (não mais `system/critical`)
 - Nenhum erro vermelho de "Failed to fetch"
 - Nenhum console.error ou console.warn relacionado ao CORS
+- Apenas logs estruturados do sistema de tratamento de erro
 
 **✅ NA TELA:**
 - Toast amarelo (warning) explicando limitação CORS

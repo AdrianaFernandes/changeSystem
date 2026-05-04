@@ -9793,10 +9793,26 @@ Token:`);
     var config = debugConfiguracaoAzureDevOps();
     if (!config || !config.token) {
       console.log('⚠️ Token Azure DevOps não configurado - usando fallback');
+
+      // Notificar usuário sobre falta de configuração
+      if (window.userFeedback) {
+        window.userFeedback.showToast(
+          'Token do Azure DevOps não configurado. Usando dados de exemplo.',
+          'warning'
+        );
+      }
+
       return buscarProjetosFallback();
     }
 
     try {
+      // Mostrar indicador de carregamento
+      if (window.userFeedback) {
+        window.userFeedback.showLoading('Carregando projetos do Azure DevOps...', {
+          id: 'loading-projects'
+        });
+      }
+
       // API para listar TODOS os projetos da organização tr-ggo
       var url = 'https://dev.azure.com/tr-ggo/_apis/projects?api-version=7.0';
 
@@ -9817,6 +9833,12 @@ Token:`);
       }
 
       var resultado = await response.json();
+
+      // Remover indicador de carregamento
+      if (window.userFeedback) {
+        window.userFeedback.hideLoading('loading-projects');
+      }
+
       console.log('✅ SUCESSO! Projetos recebidos da API:', resultado);
 
       if (resultado.value && resultado.value.length > 0) {
@@ -9841,7 +9863,36 @@ Token:`);
       }
 
     } catch (error) {
+      // Remover indicador de carregamento em caso de erro
+      if (window.userFeedback) {
+        window.userFeedback.hideLoading('loading-projects');
+      }
+
       console.error('❌ Erro ao buscar projetos da API:', error);
+
+      // Usar sistema de tratamento de erro para feedback ao usuário
+      if (window.errorHandler) {
+        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+          // Erro de CORS ou conectividade
+          window.errorHandler.handleNetworkError(error, {
+            userMessage: 'Não foi possível conectar com a API do Azure DevOps devido a políticas CORS do navegador. Para usar dados reais, é necessário um proxy backend ou executar via PowerShell. Usando dados de exemplo por enquanto.',
+            context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
+            recoveryStrategy: 'FALLBACK',
+            retryAction: false // Não permitir retry pois é um problema de CORS
+          });
+        } else {
+          // Outros erros de API
+          window.errorHandler.handleAPIError(error, {
+            userMessage: 'Erro ao buscar projetos do Azure DevOps. Usando dados de exemplo.',
+            context: 'Azure DevOps API - buscarProjetosReaisAzureDevOps',
+            recoveryStrategy: 'FALLBACK'
+          });
+        }
+      } else {
+        // Fallback se sistema de erro não estiver disponível
+        console.warn('⚠️ Sistema de tratamento de erro não disponível');
+      }
+
       console.log('🔄 Usando fallback...');
       return buscarProjetosFallback();
     }

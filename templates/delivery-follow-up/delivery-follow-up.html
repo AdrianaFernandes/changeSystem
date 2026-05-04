@@ -9859,7 +9859,7 @@ Token:`);
         return projetos;
       } else {
         console.log('⚠️ Nenhum projeto encontrado na resposta');
-        return buscarProjetosFallback();
+        return await tentarCarregarProjetosLocal();
       }
 
     } catch (error) {
@@ -9915,7 +9915,7 @@ Token:`);
       }
 
       // Log removido - toast notifications já informam sobre fallback
-      return buscarProjetosFallback();
+      return await tentarCarregarProjetosLocal();
     }
   }
 
@@ -9959,16 +9959,74 @@ Token:`);
 
   // Fallback se API falhar
   function buscarProjetosFallback() {
-    console.log('🔄 Fallback: Usando lista básica de projetos');
+    console.log('🔄 Fallback: Usando lista expandida de projetos Thomson Reuters');
 
     var projetosFallback = [
-      { name: "Mastersaf Fiscal Solutions", id: "mfs", description: "Sistema Fiscal" },
-      { name: "TR Fintech", id: "trf", description: "Fintech Solutions" },
-      { name: "Tax Declaration Framework", id: "tdf", description: "Framework de Declarações" }
+      // Projetos principais Thomson Reuters
+      { name: "Checkpoint - Edge", id: "checkpoint-edge", description: "Checkpoint Edge Platform" },
+      { name: "Checkpoint - NextGen", id: "checkpoint-nextgen", description: "Checkpoint Next Generation" },
+      { name: "ONESOURCE", id: "onesource", description: "ONESOURCE Tax Technology" },
+      { name: "Practical Law", id: "practical-law", description: "Practical Law Platform" },
+      { name: "Westlaw Edge", id: "westlaw-edge", description: "Westlaw Edge Research" },
+      { name: "Reuters News", id: "reuters-news", description: "Reuters News Platform" },
+      { name: "TR DataScope", id: "tr-datascope", description: "DataScope Analytics" },
+      { name: "Risk Solutions", id: "risk-solutions", description: "Risk Management Platform" },
+      { name: "CLEAR", id: "clear", description: "CLEAR Investigation Platform" },
+      { name: "Elite 3E", id: "elite-3e", description: "Elite 3E Legal Management" },
+
+      // Projetos internos e frameworks
+      { name: "TR Change System", id: "tr-change-system", description: "Change Management Platform" },
+      { name: "Mastersaf Fiscal Solutions", id: "mfs", description: "Brazilian Tax Solutions" },
+      { name: "TR Fintech", id: "tr-fintech", description: "Fintech Solutions Brazil" },
+      { name: "Tax Declaration Framework", id: "tdf", description: "Tax Framework Platform" },
+      { name: "Thomson Reuters Brasil", id: "tr-brasil", description: "TR Brazil Operations" },
+
+      // Plataformas técnicas
+      { name: "API Gateway", id: "api-gateway", description: "Internal API Gateway" },
+      { name: "Auth Platform", id: "auth-platform", description: "Authentication Platform" },
+      { name: "Data Lake", id: "data-lake", description: "Enterprise Data Lake" },
+      { name: "ML Platform", id: "ml-platform", description: "Machine Learning Platform" },
+      { name: "DevOps Tools", id: "devops-tools", description: "DevOps Automation" }
     ];
+
+    // Notificar usuário sobre fallback
+    if (typeof window.userFeedback?.showToast === 'function') {
+      window.userFeedback.showToast(
+        `Carregados ${projetosFallback.length} projetos de exemplo (dados limitados pelo navegador)`,
+        'info'
+      );
+    }
 
     popularDropdownComProjetosReais(projetosFallback);
     return projetosFallback;
+  }
+
+  // Tentar carregar projetos de arquivo JSON local (alternativa)
+  async function tentarCarregarProjetosLocal() {
+    try {
+      console.log('🔍 Tentando carregar projetos de arquivo local...');
+
+      const response = await fetch('./tr-projetos-locais.json');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Projetos carregados do arquivo local:', data.length);
+
+        if (typeof window.userFeedback?.showToast === 'function') {
+          window.userFeedback.showToast(
+            `${data.length} projetos carregados do arquivo local`,
+            'success'
+          );
+        }
+
+        popularDropdownComProjetosReais(data);
+        return data;
+      } else {
+        throw new Error(`Arquivo local não encontrado: ${response.status}`);
+      }
+    } catch (error) {
+      console.log('ℹ️ Arquivo local não disponível, usando fallback hardcoded');
+      return buscarProjetosFallback();
+    }
   }
 
   // Carregar dados específicos do projeto selecionado

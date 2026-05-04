@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Checkpoint - Edge",
+    "id": "checkpoint-edge",
+    "description": "Checkpoint Edge Platform - Next-generation tax and accounting research"
+  },
+  {
+    "name": "Checkpoint - NextGen",
+    "id": "checkpoint-nextgen",
+    "description": "Checkpoint Next Generation - Modern tax research platform"
+  },
+  {
+    "name": "ONESOURCE",
+    "id": "onesource",
+    "description": "ONESOURCE Tax Technology - Comprehensive tax management solution"
+  },
+  {
+    "name": "Practical Law",
+    "id": "practical-law",
+    "description": "Practical Law Platform - Legal guidance and resources"
+  },
+  {
+    "name": "Westlaw Edge",
+    "id": "westlaw-edge",
+    "description": "Westlaw Edge Research - Advanced legal research platform"
+  },
+  {
+    "name": "Reuters News",
+    "id": "reuters-news",
+    "description": "Reuters News Platform - Global news and information services"
+  },
+  {
+    "name": "TR DataScope",
+    "id": "tr-datascope",
+    "description": "DataScope Analytics - Financial market data and analytics"
+  },
+  {
+    "name": "Risk Solutions",
+    "id": "risk-solutions",
+    "description": "Risk Management Platform - Enterprise risk assessment tools"
+  },
+  {
+    "name": "CLEAR",
+    "id": "clear",
+    "description": "CLEAR Investigation Platform - Public records and investigation tools"
+  },
+  {
+    "name": "Elite 3E",
+    "id": "elite-3e",
+    "description": "Elite 3E Legal Management - Law firm management software"
+  },
+  {
+    "name": "TR Change System",
+    "id": "tr-change-system",
+    "description": "Change Management Platform - Internal change tracking and analytics"
+  },
+  {
+    "name": "Mastersaf Fiscal Solutions",
+    "id": "mfs",
+    "description": "Brazilian Tax Solutions - Comprehensive tax compliance for Brazil"
+  },
+  {
+    "name": "TR Fintech",
+    "id": "tr-fintech",
+    "description": "Fintech Solutions Brazil - Financial technology solutions for Latin America"
+  },
+  {
+    "name": "Tax Declaration Framework",
+    "id": "tdf",
+    "description": "Tax Framework Platform - Unified tax declaration processing"
+  },
+  {
+    "name": "Thomson Reuters Brasil",
+    "id": "tr-brasil",
+    "description": "TR Brazil Operations - Brazilian market operations and solutions"
+  },
+  {
+    "name": "API Gateway",
+    "id": "api-gateway",
+    "description": "Internal API Gateway - Enterprise API management and routing"
+  },
+  {
+    "name": "Auth Platform",
+    "id": "auth-platform",
+    "description": "Authentication Platform - Single sign-on and identity management"
+  },
+  {
+    "name": "Data Lake",
+    "id": "data-lake",
+    "description": "Enterprise Data Lake - Centralized data storage and analytics"
+  },
+  {
+    "name": "ML Platform",
+    "id": "ml-platform",
+    "description": "Machine Learning Platform - AI/ML model development and deployment"
+  },
+  {
+    "name": "DevOps Tools",
+    "id": "devops-tools",
+    "description": "DevOps Automation - CI/CD and infrastructure automation tools"
+  },
+  {
+    "name": "Customer Portal",
+    "id": "customer-portal",
+    "description": "Customer Portal - Self-service customer interface"
+  },
+  {
+    "name": "Partner Connect",
+    "id": "partner-connect",
+    "description": "Partner Connect - Partner integration and management platform"
+  },
+  {
+    "name": "Content Management",
+    "id": "content-mgmt",
+    "description": "Content Management - Editorial and content workflow system"
+  },
+  {
+    "name": "Analytics Engine",
+    "id": "analytics-engine",
+    "description": "Analytics Engine - Business intelligence and reporting platform"
+  },
+  {
+    "name": "Mobile Apps",
+    "id": "mobile-apps",
+    "description": "Mobile Apps - iOS and Android mobile applications"
+  },
+  {
+    "name": "Cloud Infrastructure",
+    "id": "cloud-infra",
+    "description": "Cloud Infrastructure - AWS/Azure cloud platform management"
+  },
+  {
+    "name": "Security Platform",
+    "id": "security-platform",
+    "description": "Security Platform - Cybersecurity and threat detection systems"
+  },
+  {
+    "name": "Billing System",
+    "id": "billing-system",
+    "description": "Billing System - Customer billing and subscription management"
+  },
+  {
+    "name": "Support Tools",
+    "id": "support-tools",
+    "description": "Support Tools - Customer support and ticketing systems"
+  },
+  {
+    "name": "Compliance Suite",
+    "id": "compliance-suite",
+    "description": "Compliance Suite - Regulatory compliance and audit tools"
+  }
+]

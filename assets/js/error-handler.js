@@ -757,6 +757,8 @@ const errorHandler = new ErrorHandler();
 const handleNetworkError = (error, retryCallback, context = null) => {
   return errorHandler.handleError(error, {
     showToUser: true,
+    category: ERROR_CATEGORY.NETWORK,
+    severity: ERROR_SEVERITY.ERROR,
     strategy: RECOVERY_STRATEGY.RETRY,
     context,
     retryCallback,
@@ -767,6 +769,8 @@ const handleNetworkError = (error, retryCallback, context = null) => {
 const handleAPIError = (error, context = null) => {
   return errorHandler.handleError(error, {
     showToUser: true,
+    category: ERROR_CATEGORY.API,
+    severity: ERROR_SEVERITY.ERROR,
     strategy: RECOVERY_STRATEGY.FALLBACK,
     context
   });
@@ -775,6 +779,8 @@ const handleAPIError = (error, context = null) => {
 const handleValidationError = (error, context = null) => {
   return errorHandler.handleError(error, {
     showToUser: true,
+    category: ERROR_CATEGORY.VALIDATION,
+    severity: ERROR_SEVERITY.WARNING,
     strategy: RECOVERY_STRATEGY.USER_ACTION,
     context
   });
@@ -783,6 +789,8 @@ const handleValidationError = (error, context = null) => {
 const handleCriticalError = (error, context = null) => {
   return errorHandler.handleError(error, {
     showToUser: true,
+    category: ERROR_CATEGORY.SYSTEM,
+    severity: ERROR_SEVERITY.CRITICAL,
     strategy: RECOVERY_STRATEGY.RELOAD,
     context
   });

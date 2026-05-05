@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Unhandled Promise Rejection Corrigido</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #133C2C; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .log { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 4px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; max-height: 400px; overflow-y: auto; }
+        .counter { background: #e9ecef; padding: 10px; border-radius: 4px; margin: 10px 0; text-align: center; font-weight: bold; }
+    </style>
+    <!-- Carregar sistema de feedback -->
+    <script src="assets/js/constants.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/user-feedback.js"></script>
+    <link rel="stylesheet" href="assets/css/feedback-system.css">
+    <link rel="stylesheet" href="assets/css/change-system.css">
+</head>
+<body>
+    <h1>🧪 Teste - Promise Rejection de CORS Corrigido</h1>
+
+    <div class="info">
+        <strong>Objetivo:</strong> Verificar se erros CORS não aparecem mais como "system/critical" unhandled promises.
+    </div>
+
+    <div class="counter">
+        <div>Erros system/critical: <span id="critical-count">0</span></div>
+        <div>Erros network/error: <span id="network-count">0</span></div>
+        <div>Unhandled rejections: <span id="rejection-count">0</span></div>
+    </div>
+
+    <div>
+        <button onclick="iniciarMonitoramento()">🔍 Iniciar Monitoramento (10s)</button>
+        <button onclick="simularCORS()">🌐 Simular Erro CORS</button>
+        <button onclick="pararMonitoramento()">⏹️ Parar Monitoramento</button>
+        <button onclick="limparLog()">🧹 Limpar Log</button>
+    </div>
+
+    <div id="status" class="status info">
+        Aguardando início do monitoramento...
+    </div>
+
+    <div id="log" class="log"></div>
+
+    <script>
+        let monitoramentoAtivo = false;
+        let intervaloMonitoramento = null;
+        let contadores = {
+            critical: 0,
+            network: 0,
+            rejections: 0
+        };
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function updateCounters() {
+            document.getElementById('critical-count').textContent = contadores.critical;
+            document.getElementById('network-count').textContent = contadores.network;
+            document.getElementById('rejection-count').textContent = contadores.rejections;
+        }
+
+        function limparLog() {
+            document.getElementById('log').textContent = '';
+            contadores = { critical: 0, network: 0, rejections: 0 };
+            updateCounters();
+        }
+
+        function iniciarMonitoramento() {
+            if (monitoramentoAtivo) {
+                log('⚠️ Monitoramento já está ativo');
+                return;
+            }
+
+            monitoramentoAtivo = true;
+            log('🔍 Iniciando monitoramento de erros...');
+            updateStatus('🔍 Monitoramento ativo - capturando erros por 10 segundos', 'info');
+
+            // Interceptar console.error para detectar erros críticos
+            const originalConsoleError = console.error;
+            console.error = function(...args) {
+                const message = args.join(' ');
+
+                if (message.includes('system') && message.includes('critical')) {
+                    contadores.critical++;
+                    log('❌ SYSTEM/CRITICAL detectado: ' + message.substring(0, 100) + '...');
+                } else if (message.includes('network') && message.includes('error')) {
+                    contadores.network++;
+                    log('✅ NETWORK/ERROR detectado: ' + message.substring(0, 100) + '...');
+                }
+
+                updateCounters();
+                originalConsoleError.apply(console, args);
+            };
+
+            // Interceptar unhandled rejections
+            const rejectionHandler = function(event) {
+                contadores.rejections++;
+                log('⚠️ UNHANDLED REJECTION: ' + (event.reason?.message || event.reason));
+                updateCounters();
+            };
+
+            window.addEventListener('unhandledrejection', rejectionHandler);
+
+            // Parar monitoramento após 10 segundos
+            setTimeout(() => {
+                monitoramentoAtivo = false;
+                console.error = originalConsoleError;
+                window.removeEventListener('unhandledrejection', rejectionHandler);
+
+                log('⏹️ Monitoramento finalizado após 10 segundos');
+
+                // Análise dos resultados
+                if (contadores.critical === 0 && contadores.rejections === 0) {
+                    updateStatus('✅ SUCESSO: Nenhum erro system/critical ou unhandled rejection detectado!', 'success');
+                    log('🎉 CORREÇÃO CONFIRMADA: Sistema está tratando erros CORS corretamente!');
+                } else if (contadores.critical > 0) {
+                    updateStatus(`❌ PROBLEMA: ${contadores.critical} erros system/critical detectados`, 'error');
+                    log('⚠️ Ainda há erros sendo classificados incorretamente como system/critical');
+                } else if (contadores.rejections > 0) {
+                    updateStatus(`⚠️ PROBLEMA: ${contadores.rejections} unhandled rejections detectadas`, 'warning');
+                    log('⚠️ Ainda há promises não capturadas sendo rejeitadas');
+                }
+
+                if (contadores.network > 0) {
+                    log(`✅ Bom: ${contadores.network} erros classificados corretamente como network/error`);
+                }
+            }, 10000);
+        }
+
+        function simularCORS() {
+            log('🌐 Simulando erro CORS com fetch direto...');
+
+            fetch('https://dev.azure.com/tr-ggo/_apis/projects?api-version=7.0', {
+                headers: {
+                    'Authorization': 'Basic ' + btoa(':9Lm1hR53FW4XeWobu3jWZZ7TXqDmTXLu9CokH9IudYmUFDnHMserJQQJ99CCACAAAAADXeeUAAASAZDO2NyW')
+                }
+            }).then(response => {
+                log('✅ Sucesso inesperado na simulação CORS');
+            }).catch(error => {
+                log('📡 Erro CORS simulado capturado: ' + error.message);
+
+                // Testar sistema de tratamento
+                if (typeof window.handleNetworkError === 'function') {
+                    window.handleNetworkError(error, null, 'Simulação CORS - teste');
+                    log('🛡️ handleNetworkError chamado para tratar erro simulado');
+                }
+            });
+        }
+
+        function pararMonitoramento() {
+            monitoramentoAtivo = false;
+            log('⏹️ Monitoramento interrompido manualmente');
+            updateStatus('⏹️ Monitoramento parado', 'info');
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Sistema de teste carregado');
+            updateStatus('✅ Pronto para testar correção de Promise Rejection', 'success');
+
+            // Verificar se sistemas estão disponíveis
+            if (typeof window.handleNetworkError === 'function') {
+                log('✅ handleNetworkError disponível');
+            } else {
+                log('❌ handleNetworkError NÃO disponível');
+            }
+
+            if (typeof window.errorHandler !== 'undefined') {
+                log('✅ errorHandler disponível');
+            } else {
+                log('❌ errorHandler NÃO disponível');
+            }
+
+            updateCounters();
+        });
+    </script>
+</body>
+</html>

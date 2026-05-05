@@ -2714,41 +2714,8 @@
     toast('Configuracao salva', 'success');
   };
 
-  // ── Executar Query Azure DevOps ── (definição inicial)
-  window.executarQuery = async function() {
-    // Verificar se a implementação completa já foi carregada
-    if (typeof window._executarQueryReal === 'function') {
-      return await window._executarQueryReal();
-    }
-
-    console.log('Query solicitada, aguardando inicialização...');
-
-    // Aguardar com polling até a função estar disponível
-    return new Promise((resolve, reject) => {
-      let tentativas = 0;
-      const maxTentativas = 50; // 5 segundos total (50 x 100ms)
-
-      const verificar = async () => {
-        if (typeof window._executarQueryReal === 'function') {
-          try {
-            const resultado = await window._executarQueryReal();
-            resolve(resultado);
-          } catch (error) {
-            reject(error);
-          }
-        } else if (tentativas < maxTentativas) {
-          tentativas++;
-          setTimeout(verificar, 100);
-        } else {
-          const erro = 'Implementação completa da query não foi carregada após 5 segundos';
-          console.error(erro);
-          reject(new Error(erro));
-        }
-      };
-
-      verificar();
-    });
-  };
+  // ── Executar Query Azure DevOps ── (definição inicial - removida implementação de polling)
+  // A função real será definida mais abaixo quando todo o sistema estiver carregado
 
   // ── Label ──
   // ── Funções da Interface de Iterações ──
@@ -10650,8 +10617,8 @@ Token:`);
     console.warn('Element tbl-andamento not found during IIFE execution');
   }
 
-  // ── Executar Query Azure DevOps ── (implementação completa)
-  window._executarQueryReal = async function() {
+  // ── Executar Query Azure DevOps ── (implementação completa - substitui definição inicial)
+  window.executarQuery = async function() {
     const loadingDiv = document.getElementById('query-loading');
     const errorDiv = document.getElementById('query-error');
     const resultsDiv = document.getElementById('query-results');

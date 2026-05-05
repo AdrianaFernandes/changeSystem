@@ -10003,8 +10003,11 @@ Token:`);
     // baseado no projeto selecionado
   }
 
-  // EXECUTAR BUSCA DE PROJETOS REAIS IMEDIATAMENTE
-  buscarProjetosReaisAzureDevOps();
+  // EXECUTAR BUSCA DE PROJETOS REAIS IMEDIATAMENTE (com tratamento de erro)
+  buscarProjetosReaisAzureDevOps().catch(error => {
+    // Erro já tratado dentro da função, apenas evitar unhandled promise rejection
+    console.log('🔄 Busca de projetos finalizada com fallback');
+  });
 
   // Tentar também carregar dados reais em paralelo
   carregarDadosReais();

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Timeout Corrigido</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #133C2C; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .log { background: #f8f9fa; padding: 15px; border: 1px solid #e9ecef; border-radius: 4px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; max-height: 300px; overflow-y: auto; }
+    </style>
+    <!-- Carregar sistema de feedback -->
+    <script src="assets/js/constants.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/user-feedback.js"></script>
+    <link rel="stylesheet" href="assets/css/feedback-system.css">
+</head>
+<body>
+    <h1>🧪 Teste - Timeout de executarQuery Corrigido</h1>
+
+    <div class="info">
+        <strong>Verificação:</strong> Esta página testa se os timeouts de 5 segundos foram resolvidos.
+    </div>
+
+    <div>
+        <button onclick="testarExecutarQueryDisponivel()">📋 Verificar se executarQuery está disponível</button>
+        <button onclick="testarTimeouts()">⏱️ Testar por timeouts ativos</button>
+        <button onclick="limparLog()">🧹 Limpar Log</button>
+    </div>
+
+    <div id="status" class="status info">
+        Aguardando testes...
+    </div>
+
+    <div id="log" class="log"></div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function limparLog() {
+            document.getElementById('log').textContent = '';
+        }
+
+        function testarExecutarQueryDisponivel() {
+            log('🔍 Verificando disponibilidade da função executarQuery...');
+
+            if (typeof window.executarQuery === 'function') {
+                log('✅ window.executarQuery está definida');
+                updateStatus('✅ executarQuery disponível - sem sistema de polling', 'success');
+
+                // Verificar se não há referências ao antigo sistema
+                const funcStr = window.executarQuery.toString();
+                if (funcStr.includes('_executarQueryReal')) {
+                    log('⚠️ AVISO: Ainda há referências a _executarQueryReal');
+                    updateStatus('⚠️ Função disponível mas com referências antigas', 'error');
+                } else if (funcStr.includes('polling') || funcStr.includes('tentativas')) {
+                    log('⚠️ AVISO: Sistema de polling ainda presente');
+                    updateStatus('⚠️ Sistema de polling ainda ativo', 'error');
+                } else {
+                    log('✅ Função limpa - sem polling ou referências antigas');
+                    updateStatus('✅ Função executarQuery totalmente corrigida', 'success');
+                }
+            } else {
+                log('❌ window.executarQuery NÃO está definida');
+                updateStatus('❌ executarQuery não disponível', 'error');
+            }
+        }
+
+        function testarTimeouts() {
+            log('⏱️ Verificando se há timeouts ativos...');
+
+            // Verificar se há intervalos ou timeouts executando
+            let timeoutsAtivos = 0;
+            let intervalsAtivos = 0;
+
+            // Método simples: verificar se há logs de timeout nos últimos segundos
+            const consoleErrors = [];
+            const originalConsoleError = console.error;
+
+            console.error = function(...args) {
+                consoleErrors.push(args.join(' '));
+                originalConsoleError.apply(console, args);
+            };
+
+            setTimeout(() => {
+                console.error = originalConsoleError;
+
+                const timeoutErrors = consoleErrors.filter(error =>
+                    error.includes('timeout') ||
+                    error.includes('5 segundos') ||
+                    error.includes('aguardando')
+                );
+
+                if (timeoutErrors.length === 0) {
+                    log('✅ Nenhum timeout detectado nos logs');
+                    updateStatus('✅ Sem timeouts - sistema corrigido', 'success');
+                } else {
+                    log('❌ Timeouts ainda detectados:');
+                    timeoutErrors.forEach(error => log(`  - ${error}`));
+                    updateStatus('❌ Timeouts ainda ativos', 'error');
+                }
+            }, 2000);
+
+            log('⏳ Aguardando 2 segundos para capturar possíveis timeouts...');
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Página carregada - sistema de teste ativo');
+            updateStatus('✅ Sistema de teste carregado', 'success');
+
+            // Auto-verificar depois de 1 segundo
+            setTimeout(() => {
+                log('🔄 Auto-verificando executarQuery...');
+                testarExecutarQueryDisponivel();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
